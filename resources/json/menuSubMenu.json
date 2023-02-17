@@ -43,6 +43,58 @@
                     "status": 1
                 }
             ]
+        },
+        {
+            "parent_menu":"Parent",
+            "name": "Supplier",
+            "slug": "suppliers",
+            "icon": "nav-icon fas fa-parachute-box",
+            "serial": 18,
+            "status": 1,
+            "submenu": []
+        },
+        {
+            "parent_menu":"Parent",
+            "name": "Customer",
+            "slug": "customers",
+            "icon": "nav-icon fas fa-user-plus",
+            "serial": 19,
+            "status": 1,
+            "submenu": []
+        },
+        {
+            "parent_menu":"Collapse",
+            "name": "Product Management",
+            "slug": "javascript:void(0)",
+            "icon": "nav-icon fas fa-barcode",
+            "serial": 20,
+            "status": 1,
+            "submenu": [
+                {
+                    "parent_menu":"Product Management",
+                    "name": "Category",
+                    "slug": "categories",
+                    "icon": "nav-icon fas fa-boxes",
+                    "serial": 25,
+                    "status": 1
+                },
+                {
+                    "parent_menu":"Product Management",
+                    "name": "Product",
+                    "slug": "products",
+                    "icon": "nav-icon fab fa-product-hunt",
+                    "serial": 21,
+                    "status": 1
+                },
+                {
+                    "parent_menu":"Product Management",
+                    "name": "Package",
+                    "slug": "packages",
+                    "icon": "nav-icon fab fa-product-hunt",
+                    "serial": 21,
+                    "status": 1
+                }
+            ]
         }
     ],
     "permission": [
@@ -81,6 +133,66 @@
         },
         {
             "name":"users-delete"
+        },
+        {
+            "name":"suppliers-list"
+        },
+        {
+            "name":"suppliers-create"
+        },
+        {
+            "name":"suppliers-edit"
+        },
+        {
+            "name":"suppliers-delete"
+        },
+        {
+            "name":"customers-list"
+        },
+        {
+            "name":"customers-create"
+        },
+        {
+            "name":"customers-edit"
+        },
+        {
+            "name":"customers-delete"
+        },
+        {
+            "name":"categories-list"
+        },
+        {
+            "name":"categories-create"
+        },
+        {
+            "name":"categories-edit"
+        },
+        {
+            "name":"categories-delete"
+        },
+        {
+            "name":"products-list"
+        },
+        {
+            "name":"products-create"
+        },
+        {
+            "name":"products-edit"
+        },
+        {
+            "name":"products-delete"
+        },
+        {
+            "name":"packages-list"
+        },
+        {
+            "name":"packages-create"
+        },
+        {
+            "name":"packages-edit"
+        },
+        {
+            "name":"packages-delete"
         }
     ]
 }
