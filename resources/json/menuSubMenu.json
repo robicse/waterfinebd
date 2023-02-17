@@ -1,0 +1,86 @@
+{
+    "menu": [
+        {
+            "parent_menu":"Collapse",
+            "name": "User",
+            "slug": "javascript:void(0)",
+            "icon": "nav-icon fas fa-users",
+            "serial": 3,
+            "status": 1,
+            "submenu": [
+                {
+                    "parent_menu":"User",
+                    "name": "Role",
+                    "slug": "roles",
+                    "icon": "nav-icon fas fa-circle",
+                    "serial": 4,
+                    "status": 1
+                },
+                {
+                    "parent_menu":"User",
+                    "name": "Users",
+                    "slug": "users",
+                    "icon": "nav-icon fas fa-circle",
+                    "serial": 5,
+                    "status": 1
+                }
+            ]
+        },
+        {
+            "parent_menu":"Collapse",
+            "name": "Company",
+            "slug": "javascript:void(0)",
+            "icon": "nav-icon fas fa-users",
+            "serial": 1,
+            "status": 1,
+            "submenu": [
+                {
+                    "parent_menu":"Company",
+                    "name": "Store",
+                    "slug": "stores",
+                    "icon": "nav-icon fas fa-shuttle-van",
+                    "serial": 2,
+                    "status": 1
+                }
+            ]
+        }
+    ],
+    "permission": [
+        {
+            "name":"stores-list"
+        },
+        {
+            "name":"stores-create"
+        },
+        {
+            "name":"stores-edit"
+        },
+        {
+            "name":"stores-delete"
+        },
+        {
+            "name":"roles-list"
+        },
+        {
+            "name":"roles-create"
+        },
+        {
+            "name":"roles-edit"
+        },
+        {
+            "name":"roles-delete"
+        },
+        {
+            "name":"users-list"
+        },
+        {
+            "name":"users-create"
+        },
+        {
+            "name":"users-edit"
+        },
+        {
+            "name":"users-delete"
+        }
+    ]
+}
