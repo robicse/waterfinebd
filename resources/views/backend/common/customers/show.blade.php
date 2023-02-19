@@ -1,18 +1,17 @@
-@extends('backend.layouts.master')
-@section("title","Customer Show")
+<strong> @extends('backend.layouts.master') </strong>@section("title","Supplier Show")
 @section('content')
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Customers</h1>
+                    <h1>Supplers</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item active"><a
                                 href="{{route(Request::segment(1).'.dashboard')}}">Home</a></li>
-                        <li class="breadcrumb-item active">customers</li>
+                        <li class="breadcrumb-item active">supplers</li>
                         <li class="breadcrumb-item active">show</li>
                     </ol>
                 </div>
@@ -27,9 +26,9 @@
                 <div class="col-12">
                     <div class="card card-info card-outline">
                         <div class="card-header">
-                            <h3 class="card-title">Customers Details</h3>
+                            <h3 class="card-title">Supplers Details</h3>
                             <div class="float-right">
-                                <a href="{{ route(Request::segment(1).'.customers.index') }}">
+                                <a href="{{ route(Request::segment(1).'.suppliers.index') }}">
                                     <button class="btn btn-success">
                                         <i class="fa fa-plus-circle"></i>
                                         Back
@@ -41,40 +40,33 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-lg-6">
-                                    <h6><strong>Name: </strong> {{$name=$customer->name}}</h6>
-                                    <h6><strong>Arabic Name: </strong> {{$customer->arabic_name}}</h6>
-                                    <h6><strong>Address: </strong> {{$customer->address}}</h6>
-                                    <h6><strong>Qr Code: </strong> {{$code = $customer->customer->code}}</h6>
-                                    <h6><strong>Phone: </strong> {{$customer->phone}}</h6>
-                                    <h6><strong>Email: </strong> {{$customer->email}}</h6>
-                                    {{-- <h6><strong>Pay Type: </strong> {{$customer->pay_type}}</h6> --}}
+                                    <h6><strong> Name: </strong> {{$supplier->name}}</h6>
+                                    <h6><strong> Type: </strong> {{$supplier->supplier->type}}</h6>
+                                    <h6><strong> Address: </strong> {{$supplier->address}}</h6>
+                                    <h6><strong> Code: </strong> {{$supplier->supplier->code}}</h6>
+                                    <h6><strong> Vat No: </strong> {{$supplier->supplier->vat_no}}</h6>
+                                    <h6><strong> Phone: </strong> {{$supplier->phone}}</h6>
+                                    <h6><strong> Supplier Location : </strong>{{$supplier->supplier->supplier_location }}</h6>
+                                    <h6><strong> Comercial Registration No: </strong>{{$supplier->supplier->comercial_registration_no  }}</h6>
+                                    <h6><strong>Warehouse: </strong> {{@$supplier->warehouse->name}}</h6>
+                                    <h6><strong>Pay Type: </strong> {{$supplier->pay_type}}</h6>
                                 </div>
                                 <div class="col-lg-6">
-                                    <h6><strong>Customer NID: </strong> {{$customer->customer->nid}}</h6>
-                                    <h6><strong>Auto Generate Code: </strong> {{$customer->customer->auto_generate_code}}</h6>
-                                    <h6><strong>Contact Person: </strong> {{$customer->customer->contact_person}}</h6>
-                                    <h6><strong>Contact Person No: </strong> {{$customer->customer->contact_person_no}}</h6>
-                                    <h6><strong>Credit Limit: </strong> {{$customer->customer->credit_limit}}</h6>
-                                    <h6><strong>Days Limit: </strong> {{$customer->customer->days_limit}}</h6>
-                                    {{-- <h6><strong>Latitude: </strong> {{$customer->latitude}}</h6>
-                                    <h6><strong>Longitude: </strong> {{$customer->longitude}}</h6> --}}
-                                    <h6><strong>VAT Type: </strong> {{$vattype=$customer->customer->type}}</h6>
-                                    <h6><strong>VAT NO: </strong> {{$vatnumber= $customer->customer->vat_no}}</h6>
-                                    <h6><strong>Status: </strong> {{$customer->status == 0 ? 'Inactive' : 'Active'}}
-                                    </h6>
-                                    <h6><strong>Store Name: </strong> {{$storeinfo=$customer->customer->store_name}}</h6>
-                                    {!! $info="Store : $storeinfo \n Name : $name \n Code : $code \n Vat-Type : $vattype \n Vat-No : $vatnumber"  !!}
                                     
+                                    <h6><strong> Bank Accounts Details: </strong>{{$supplier->supplier->bank_accounts_details  }}</h6>
+                                    <h6><strong> Product Groups: </strong>{{$supplier->supplier->bank_accounts_details   }}</h6>
+                                    <h6><strong> Credit Limit: </strong> {{$supplier->supplier->credit_limit}}</h6>
+                                    <h6><strong> Days Limit: </strong> {{$supplier->supplier->days_limit}}</h6>
+                                    <h6><strong> Payment Terms: </strong> {{$supplier->supplier->payment_terms}}</h6>
+                                    <h6><strong> Email: </strong> {{$supplier->email}}</h6>
+                                   {{--  <h6><strong> Latitude: </strong> {{$supplier->lat}}</h6>
+                                    <h6><strong> Longitude: </strong> {{$supplier->lng}}</h6> --}}
+                                    <h6><strong> Status: </strong> {{$supplier->status == 0 ? 'Inactive' : 'Active'}}
+                                    </h6>
                                 </div>
-                                <div class="col-md-12">
-                             
-                                <img class="img-fluid"   src="data:image/png;base64,{!! DNS2D::getBarcodePNG($info, 'QRCODE') !!}" alt="barcode"/>
-                            </div>
                             </div>
                         </div>
                         <!-- /.card-body -->
-
-                        
                     </div>
                     <!-- /.card -->
                 </div>

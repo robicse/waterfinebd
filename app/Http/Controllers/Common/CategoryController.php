@@ -77,10 +77,9 @@ class CategoryController extends Controller
 
         try {
             $category = new Category();
-            $category->created_by_user_id = Auth::User()->id;
-            $category->updated_by_user_id = Auth::User()->id;
             $category->name = $request->name;
             $category->status = $request->status;
+            $category->created_by_user_id = Auth::User()->id;
             $category->save();
 
             Toastr::success("Category Created Successfully", "Success");
@@ -114,9 +113,9 @@ class CategoryController extends Controller
         try {
 
             $category = Category::findOrFail($id);
-            $category->updated_by_user_id = Auth::User()->id;
             $category->name = $request->name;
             $category->status = $request->status;
+            $category->updated_by_user_id = Auth::User()->id;
             $category->save();
 
             Toastr::success("Category Updated Successfully", "Success");

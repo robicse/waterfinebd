@@ -50,25 +50,13 @@
                                     </ul>
                                 </div>
                             @endif
-                            {!! Form::model($category, array('route' =>[Request::segment(1).'.categories.update',$category->id],'method'=>'PUT','files'=>true)) !!}
-                                <div class="form-group">
-                                    <label for="name">Name <span class="required">*</span></label>
-                                    {!! Form::text('name', $category->name, [
-                                            'id' => 'name',
-                                            'class' => 'form-control',
-                                            'required',
-                                            'placeholder' => 'Enter Name',
-                                        ]) !!}
-                                </div>
-                                <div class="form-group">
-                                    <label for="inputStatus">Status <span
-                                        class="required">*</span></label>
-                                    {!! Form::select('status', [1 => 'Active', 0 => 'In-Active'], $category->status, ['id' => 'status', 'class' => 'form-control', 'required','placeholder' => 'Select One']) !!}
-                                </div>
-                                <div class="card-footer">
-                                    <button type="submit" class="btn btn-primary">Update</button>
-                                </div>
-                            {!! Form::close()!!}
+                            {!! Form::model($category, [
+                                'route' => [Request::segment(1) . '.categories.update', $category->id],
+                                'method' => 'PATCH',
+                                'files' => true,
+                            ]) !!}
+                            @include('backend.common.categories.form')
+                            {!! Form::close() !!}
                         </div>
                         <!-- /.card-body -->
                     </div>

@@ -1,5 +1,5 @@
 @extends('backend.layouts.master')
-@section("title","Product Lists")
+@section("title","Products Lists")
 @push('css')
     <!-- DataTables -->
     <link rel="stylesheet" href="{{asset('backend/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
@@ -16,8 +16,9 @@
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route(Request::segment(1).'.dashboard')}}">Home</a></li>
-                        <li class="breadcrumb-item active">Products</li>
+                        <li class="breadcrumb-item active"><a
+                                href="{{route(Request::segment(1).'.dashboard')}}">Home</a></li>
+                        <li class="breadcrumb-item active">products</li>
                     </ol>
                 </div>
             </div>
@@ -29,11 +30,14 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    <div class="card card-info card-outline">
+                    <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Products Lists</h3>
+                            <h3 class="card-title">Product Lists</h3>
                             <div class="float-right">
                                 @can('products-create')
+                                {{-- <a href="{{ @url('/backend/demo_xlsx/product.xlsx') }}"> <button class="btn btn-info">
+                                        Download Demo <i class="fa fa-download"></i>
+                                    </button></a> --}}
                                 <a href="{{route(Request::segment(1).'.products.create')}}">
                                     <button class="btn btn-success">
                                         <i class="fa fa-plus-circle"></i>
@@ -45,26 +49,23 @@
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body table-responsive">
-                            <table id="example1" class="table table-bordered table-striped data-table">
+                            @if ($errors->any())
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
+                            <table class="table table-bordered table-striped data-table">
                                 <thead>
                                 <tr>
-                                    <th>#Id</th>
+                                    <th>Sl</th>
                                     <th>Name</th>
-                                    <th>Specification</th>
-                                    <th>Unit / Measurement</th>
-                                    <th>Barcode</th>
-                                    <th>Local Purchase Price ({{ $default_currency->symbol }})</th>
-                                    <th>Internation Purchase Price ({{ $default_currency->symbol }})</th>
-                                    
-                                    <th>War Sale Price ({{ $default_currency->symbol }})</th>
-                                    <th>Min War Sale Price ({{ $default_currency->symbol }})</th>
-                                    <th>Local Sale Price ({{ $default_currency->symbol }})</th>
-                                    <th>Min Local Sale Price ({{ $default_currency->symbol }})</th>
-                                    <th>Outer Sale Price ({{ $default_currency->symbol }})</th>
-                                    <th>Min Outer Sale Price ({{ $default_currency->symbol }})</th>
-                                    <th>Variant</th>
-                                    <th>Unit</th>
-                                    <th>Status</th>
+                                    <th>Phone</th>
+                                    <th>Email</th>
+                                    <th>Address</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
@@ -73,22 +74,11 @@
                                 </tbody>
                                 <tfoot>
                                 <tr>
-                                    <th>#Id</th>
+                                    <th>Sl</th>
                                     <th>Name</th>
-                                    <th>Specification</th>
-                                    <th>Unit / Measurement</th>
-                                    <th>Barcode</th>
-                                    <th>Local Purchase Price</th>
-                                    <th>Internation Purchase Price</th>
-                                    <th>War Sale Price</th>
-                                    <th>Min War Sale Price</th>
-                                    <th>Local Sale Price</th>
-                                    <th>Min Local Sale Price</th>
-                                    <th>Outer Sale Price</th>
-                                    <th>Min Outer Sale Price</th>
-                                    <th>Variant</th>
-                                    <th>Unit</th>
-                                    <th>Status</th>
+                                    <th>Phone</th>
+                                    <th>Email</th>
+                                    <th>Address</th>
                                     <th>Action</th>
                                 </tr>
                                 </tfoot>
@@ -105,9 +95,10 @@
         <!-- /.container-fluid -->
     </section>
     <!-- /.content -->
-@stop
 
+@stop
 @push('js')
+
     <!-- DataTables  & Plugins -->
     <script src="{{asset('backend/plugins/datatables/jquery.dataTables.min.js')}}"></script>
     <script src="{{asset('backend/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
@@ -119,9 +110,9 @@
     <script src="{{asset('backend/plugins/pdfmake/pdfmake.min.js')}}"></script>
     <script src="{{asset('backend/plugins/pdfmake/vfs_fonts.js')}}"></script>
     <script src="{{asset('backend/plugins/datatables-buttons/js/buttons.html5.min.js')}}"></script>
-  <script src="{{asset('backend/plugins/datatables-buttons/js/buttons.print.min.js')}}"></script>
-   <script src="{{asset('backend/plugins/datatables-buttons/js/buttons.colVis.min.js')}}"></script>
-    <script>
+<script src="{{asset('backend/plugins/datatables-buttons/js/buttons.print.min.js')}}"></script>
+    <script src="{{asset('backend/plugins/datatables-buttons/js/buttons.colVis.min.js')}}"></script>
+   <script>
         $(document).ready(function () {
             $.ajaxSetup({
                 headers: {
@@ -131,10 +122,10 @@
             $('.data-table').DataTable({
                 processing: true,
                 serverSide: true,
-                responsive: true,
                 dom: 'Bflrtip',
                 lengthMenu :
                 [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+
                 buttons: [
                     {
                         extend: 'csv',
@@ -152,7 +143,6 @@
                             columns: ':visible'
                         }
                     },
-
                     {
                         extend: 'print',
                         text: 'Print',
@@ -167,25 +157,25 @@
                 ajax: "{{ route(Request::segment(1).'.products.index') }}",
                 columns: [
                     {data: 'id', name: 'id'},
-                    {data: 'name', name: 'name'},
-                    {data: 'detail', name: 'detail'},
-                    {data: 'unit_measurement', name: 'unit_measurement'},
-                    {data: 'barcode', name: 'barcode'},
-                    {data: 'local_purchase_price', name: 'local_purchase_price'},
-                    {data: 'international_purchase_price', name: 'international_purchase_price'},
-                    {data: 'warehouse_sale_price', name: 'warehouse_sale_price'},
-                    {data: 'min_warehouse_sale_price', name: 'min_warehouse_sale_price'},
-                    {data: 'local_sale_price', name: 'local_sale_price'},
-                    {data: 'minimum_local_sale_price', name: 'minimum_local_sale_price'},
-                    {data: 'outer_sale_price', name: 'outer_sale_price'},
-                    {data: 'minimum_outer_sale_price', name: 'minimum_outer_sale_price'},
-                    {data: 'unit_variant', name: 'unit_variant'},
-                    {data: 'unit', name: 'unit'},
-                    {data: 'status', name: 'status'},
-                    {data: 'action', name: 'action', orderable: false, searchable: true},
+                    {
+                            data: 'name',
+                            name: 'name'
+                        },
+                        {
+                            data: 'phone',
+                            name: 'phone'
+                        },
+                        {
+                            data: 'email',
+                            name: 'email'
+                        },
+                        {
+                            data: 'address',
+                            name: 'address'
+                        },
+                    {data: 'action', name: 'action', orderable: false, searchable: false},
                 ]
             });
         });
     </script>
-
 @endpush

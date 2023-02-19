@@ -50,30 +50,12 @@
                                     </ul>
                                 </div>
                             @endif
-                             {!! Form::open([
-                                'route' => Request::segment(1) . '.categories.store',
-                                'method' => 'POST',
-                                'files' => true,
-                            ]) !!}
-                                <div class="form-group">
-                                    <label for="name">Name <span class="required">*</span></label>
-                                    {!! Form::text('name', null, [
-                                            'id' => 'name',
-                                            'class' => 'form-control',
-                                            'required',
-                                            'placeholder' => 'Enter Name',
-                                            'autofocus'
-                                        ]) !!}
-                                </div>
-                                <div class="form-group">
-                                    <label for="inputStatus">Status <span
-                                        class="required">*</span></label>
-                                    {!! Form::select('status', [1 => 'Active', 0 => 'In-Active'], 1, ['id' => 'status', 'class' => 'form-control', 'required','placeholder' => 'Select One']) !!}
-                                </div>
-                                <div class="card-footer">
-                                    <button type="submit" class="btn btn-primary">Submit</button>
-                                </div>
-                            {!! Form::close()!!}
+                            @php
+                            $category = '';
+                            @endphp
+                            {!! Form::open(['route' => Request::segment(1) . '.categories.store', 'method' => 'POST', 'files' => true]) !!}
+                            @include('backend.common.categories.form')
+                            {!! Form::close() !!}
                         </div>
                         <!-- /.card-body -->
                     </div>

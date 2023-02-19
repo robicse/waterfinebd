@@ -1,4 +1,4 @@
-<div class="form-group col-md-12">
+<div class="form-group col-md-4">
     <label for="address" class="form-control-label">Address * </label>
     {!! Form::text('address', null, ['id' => 'address', 'class' => 'form-control', 'required']) !!}
     @if ($errors->has('address'))

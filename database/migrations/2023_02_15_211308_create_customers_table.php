@@ -17,6 +17,7 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->string('name',100)->nullable();
             $table->string('phone')->nullable();
+            $table->string('email')->nullable();
             $table->text('address',300)->nullable();
             $table->timestamp('start_date')->nullable();
             $table->tinyInteger('status')->default(1);
