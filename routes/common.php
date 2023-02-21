@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Common\CommonController;
 use App\Http\Controllers\Common\RoleController;
 use App\Http\Controllers\Common\UserController;
 use App\Http\Controllers\Common\StoreController;
@@ -11,9 +12,9 @@ use App\Http\Controllers\Common\CategoryController;
 use App\Http\Controllers\Common\ProductController;
 use App\Http\Controllers\Common\PackageController;
 
+Route::post('update-status', [CommonController::class, 'updateStatus'])->name('updateStatus');
 Route::resource('roles', RoleController::class);
 Route::resource('users', UserController::class);
-Route::post('user-status', [UserController::class, 'updateStatus'])->name('userStatus');
 Route::resource('stores', StoreController::class);
 Route::get('changepassword', [UserController::class, 'changepassword'])->name('changepassword');
 Route::post('updatepassword', [UserController::class, 'updatepassword']);

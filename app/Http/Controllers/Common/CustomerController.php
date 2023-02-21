@@ -41,21 +41,21 @@ class CustomerController extends Controller
                 $customers = Customer::latest();
                 return Datatables::of($customers)
                     ->addIndexColumn()
-                    ->addColumn('action', function ($customer) use($User) {
+                    ->addColumn('status', function ($data) {
+                        if ($data->status == 0) {
+                            return '<div class="form-check form-switch"><input type="checkbox" id="flexSwitchCheckDefault" onchange="updateStatus(this,\'customers\')" class="form-check-input"  value=' . $data->id . ' /></div>';
+                        } else {
+                            return '<div class="form-check form-switch"><input type="checkbox" id="flexSwitchCheckDefault" checked="" onchange="updateStatus(this,\'customers\')" class="form-check-input"  value=' . $data->id . ' /></div>';
+                        }
+                    })
+                    ->addColumn('action', function ($data) use($User) {
                         $btn='';
-                        //$btn = '<span  class="d-inline-flex"><a href=' . route(\Request::segment(1) . '.customers.show', $customer->id) . ' class="btn btn-warning btn-sm waves-effect"><i class="fa fa-eye"></i></a>';
+                        //$btn = '<span  class="d-inline-flex"><a href=' . route(\Request::segment(1) . '.customers.show', $data->id) . ' class="btn btn-warning btn-sm waves-effect"><i class="fa fa-eye"></i></a>';
                         if($User->can('customers-edit')){
-                        $btn .= '<a href=' . route(\Request::segment(1) . '.customers.edit', $customer->id) . ' class="btn btn-info waves-effect btn-sm float-left" style="margin-left: 5px"><i class="fa fa-edit"></i></a>';
+                        $btn .= '<a href=' . route(\Request::segment(1) . '.customers.edit', $data->id) . ' class="btn btn-info waves-effect btn-sm float-left" style="margin-left: 5px"><i class="fa fa-edit"></i></a>';
                         }
                         $btn .= '</span>';
                         return $btn;
-                    })
-                    ->addColumn('status', function ($customer) {
-                        if ($customer->status == 0) {
-                            return '<span class="badge badge-danger"> <i class="fa fa-ban"></i> </span>';
-                        } else {
-                            return '<span class="badge badge-success"><i class="fa fa-check-square"></i></span>';
-                        }
                     })
                     ->rawColumns(['action', 'status'])
                     ->make(true);

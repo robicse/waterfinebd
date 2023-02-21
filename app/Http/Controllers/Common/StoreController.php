@@ -48,6 +48,13 @@ class StoreController extends Controller
             if ($request->ajax()) {
                 return Datatables::of($data)
                     ->addIndexColumn()
+                    ->addColumn('status', function ($data) {
+                        if ($data->status == 0) {
+                            return '<div class="form-check form-switch"><input type="checkbox" id="flexSwitchCheckDefault" onchange="updateStatus(this,\'stores\')" class="form-check-input"  value=' . $data->id . ' /></div>';
+                        } else {
+                            return '<div class="form-check form-switch"><input type="checkbox" id="flexSwitchCheckDefault" checked="" onchange="updateStatus(this,\'stores\')" class="form-check-input"  value=' . $data->id . ' /></div>';
+                        }
+                    })
                     ->addColumn('action', function ($data) use ($User) {
                         $btn = '';
                         // if ($User->can('slides-edit')) {
@@ -61,13 +68,6 @@ class StoreController extends Controller
                         // }
                         $btn .= '</span>';
                         return $btn;
-                    })
-                    ->addColumn('status', function ($data) {
-                        if ($data->status == 0) {
-                            return '<span class="badge badge-danger"> <i class="fa fa-ban"></i> </span>';
-                        } else {
-                            return '<span class="badge badge-success"><i class="fa fa-check-square"></i></span>';
-                        }
                     })
                     ->addColumn('logo', function ($data) {
                         return '<img class="border-radius-lg shadow" src="' .

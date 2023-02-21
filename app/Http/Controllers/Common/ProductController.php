@@ -40,19 +40,19 @@ class ProductController extends Controller
                     ->addColumn('category', function ($products) {
                         return $products?->category?->name;
                     })
+                    ->addColumn('status', function ($data) {
+                        if ($data->status == 0) {
+                            return '<div class="form-check form-switch"><input type="checkbox" id="flexSwitchCheckDefault" onchange="updateStatus(this,\'products\')" class="form-check-input"  value=' . $data->id . ' /></div>';
+                        } else {
+                            return '<div class="form-check form-switch"><input type="checkbox" id="flexSwitchCheckDefault" checked="" onchange="updateStatus(this,\'products\')" class="form-check-input"  value=' . $data->id . ' /></div>';
+                        }
+                    })
                     ->addColumn('action', function ($product)use($User) {
                         $btn='';
                         if($User->can('products-edit')){
                         $btn = '<a href=' . route(\Request::segment(1) . '.products.edit', $product->id) . ' class="btn btn-info btn-sm waves-effect"><i class="fa fa-edit"></i></a>';
                         }
                         return $btn;
-                    })
-                    ->addColumn('status', function ($product) {
-                        if ($product->status == 0) {
-                            return '<span class="badge badge-danger"> <i class="fa fa-ban"></i> </span>';
-                        } else {
-                            return '<span class="badge badge-success"><i class="fa fa-check-square"></i></span>';
-                        }
                     })
                     ->rawColumns(['category','action', 'status'])
                     ->make(true);

@@ -36,19 +36,19 @@ class CategoryController extends Controller
                 $categories = Category::orderBy('id', 'DESC');
                 return Datatables::of($categories)
                     ->addIndexColumn()
+                    ->addColumn('status', function ($data) {
+                        if ($data->status == 0) {
+                            return '<div class="form-check form-switch"><input type="checkbox" id="flexSwitchCheckDefault" onchange="updateStatus(this,\'categories\')" class="form-check-input"  value=' . $data->id . ' /></div>';
+                        } else {
+                            return '<div class="form-check form-switch"><input type="checkbox" id="flexSwitchCheckDefault" checked="" onchange="updateStatus(this,\'categories\')" class="form-check-input"  value=' . $data->id . ' /></div>';
+                        }
+                    })
                     ->addColumn('action', function ($category)use($User) {
                         $btn='';
                         if($User->can('categories-edit')){
                         $btn = '<a href=' . route(\Request::segment(1) . '.categories.edit', $category->id) . ' class="btn btn-info btn-sm waves-effect"><i class="fa fa-edit"></i></a>';
                         }
                         return $btn;
-                    })
-                    ->addColumn('status', function ($category) {
-                        if ($category->status == 0) {
-                            return '<span class="badge badge-danger"> <i class="fa fa-ban"></i> </span>';
-                        } else {
-                            return '<span class="badge badge-success"><i class="fa fa-check-square"></i></span>';
-                        }
                     })
                     ->rawColumns(['action', 'status'])
                     ->make(true);

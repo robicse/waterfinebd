@@ -56,6 +56,7 @@
                                     <th>Website</th>
                                     <th>Address</th>
                                     <th>Logo</th>
+                                    <th>Status</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
@@ -72,6 +73,7 @@
                                     <th>Website</th>
                                     <th>Address</th>
                                     <th>Logo</th>
+                                    <th>Status</th>
                                     <th>Action</th>
                                 </tr>
                                 </tfoot>
@@ -178,10 +180,30 @@
                             data: 'logo',
                             name: 'logo'
                         },
+                        {data: 'status'},
                     {data: 'action', name: 'action', orderable: false, searchable: true},
                 ]
             });
         });
+
+        function updateStatus(el,tableName){
+            if(el.checked){
+                var status = 1;
+            }
+            else{
+                var status = 0;
+            }
+            $.post("{{ route(Request::segment(1).'.updateStatus')  }}",
+                {_token:'{{ csrf_token() }}', id:el.value, status:status,tableName:tableName},
+                function(data){
+                if(data == 1){
+                    toastr.success('success', 'Status updated successfully');
+                }
+                else{
+                    toastr.danger('danger', 'Something went wrong');
+                }
+            });
+        }
     </script>
 
 @endpush

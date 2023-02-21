@@ -34,12 +34,19 @@ class PackageController extends Controller
 
     public function index(Request $request)
     {
-        // try {
+        try {
             $User=$this->User;
             if ($request->ajax()) {
                 $packages = Package::orderBy('id', 'DESC');
                 return Datatables::of($packages)
                     ->addIndexColumn()
+                    ->addColumn('status', function ($data) {
+                        if ($data->status == 0) {
+                            return '<div class="form-check form-switch"><input type="checkbox" id="flexSwitchCheckDefault" onchange="updateStatus(this,\'packages\')" class="form-check-input"  value=' . $data->id . ' /></div>';
+                        } else {
+                            return '<div class="form-check form-switch"><input type="checkbox" id="flexSwitchCheckDefault" checked="" onchange="updateStatus(this,\'packages\')" class="form-check-input"  value=' . $data->id . ' /></div>';
+                        }
+                    })
                     ->addColumn('action', function ($package)use($User) {
                         $btn='';
                         if($User->can('packages-edit')){
@@ -47,23 +54,16 @@ class PackageController extends Controller
                         }
                         return $btn;
                     })
-                    ->addColumn('status', function ($package) {
-                        if ($package->status == 0) {
-                            return '<span class="badge badge-danger"> <i class="fa fa-ban"></i> </span>';
-                        } else {
-                            return '<span class="badge badge-success"><i class="fa fa-check-square"></i></span>';
-                        }
-                    })
                     ->rawColumns(['category','action', 'status'])
                     ->make(true);
             }
 
             return view('backend.common.packages.index');
-        // } catch (\Exception $e) {
-        //     $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
-        //     Toastr::error($response['message'], "Error");
-        //     return back();
-        // }
+        } catch (\Exception $e) {
+            $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
+            Toastr::error($response['message'], "Error");
+            return back();
+        }
     }
 
     public function create()

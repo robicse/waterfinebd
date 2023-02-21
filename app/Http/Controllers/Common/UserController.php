@@ -71,11 +71,11 @@ class UserController extends Controller
 
                     ->addColumn('status', function ($data) {
                         if ($data->status == 0) {
-                            return '<div class="form-check form-switch"><input type="checkbox" id="flexSwitchCheckDefault" onchange="updateStatus(this)" class="form-check-input"  value=' .
+                            return '<div class="form-check form-switch"><input type="checkbox" id="flexSwitchCheckDefault" onchange="updateStatus(this,\'users\')" class="form-check-input"  value=' .
                                 $data->id .
                                 ' /></div>';
                         } else {
-                            return '<div class="form-check form-switch"><input type="checkbox" id="flexSwitchCheckDefault" checked="" onchange="updateStatus(this)" class="form-check-input"  value=' .
+                            return '<div class="form-check form-switch"><input type="checkbox" id="flexSwitchCheckDefault" checked="" onchange="updateStatus(this,\'users\')" class="form-check-input"  value=' .
                                 $data->id .
                                 ' /></div>';
                         }
@@ -232,16 +232,6 @@ class UserController extends Controller
             Toastr::success('Password Update Successfully', 'Success');
             return Redirect::to('login');
         }
-    }
-
-    public function updateStatus(Request $request)
-    {
-        $user = User::findOrFail($request->id);
-        $user->status = $request->status;
-        if ($user->save()) {
-            return 1;
-        }
-        return 0;
     }
 
     public function ban($id){

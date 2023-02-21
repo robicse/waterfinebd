@@ -41,21 +41,21 @@ class SupplierController extends Controller
                 $suppliers = Supplier::latest();
                 return Datatables::of($suppliers)
                     ->addIndexColumn()
-                    ->addColumn('action', function ($supplier) use($User) {
+                    ->addColumn('status', function ($data) {
+                        if ($data->status == 0) {
+                            return '<div class="form-check form-switch"><input type="checkbox" id="flexSwitchCheckDefault" onchange="updateStatus(this,\'suppliers\')" class="form-check-input"  value=' . $data->id . ' /></div>';
+                        } else {
+                            return '<div class="form-check form-switch"><input type="checkbox" id="flexSwitchCheckDefault" checked="" onchange="updateStatus(this,\'suppliers\')" class="form-check-input"  value=' . $data->id . ' /></div>';
+                        }
+                    })
+                    ->addColumn('action', function ($data) use($User) {
                         $btn='';
-                        //$btn = '<span  class="d-inline-flex"><a href=' . route(\Request::segment(1) . '.suppliers.show', $supplier->id) . ' class="btn btn-warning btn-sm waves-effect"><i class="fa fa-eye"></i></a>';
+                        //$btn = '<span  class="d-inline-flex"><a href=' . route(\Request::segment(1) . '.suppliers.show', $data->id) . ' class="btn btn-warning btn-sm waves-effect"><i class="fa fa-eye"></i></a>';
                         if($User->can('suppliers-edit')){
-                        $btn .= '<a href=' . route(\Request::segment(1) . '.suppliers.edit', $supplier->id) . ' class="btn btn-info waves-effect btn-sm float-left" style="margin-left: 5px"><i class="fa fa-edit"></i></a>';
+                        $btn .= '<a href=' . route(\Request::segment(1) . '.suppliers.edit', $data->id) . ' class="btn btn-info waves-effect btn-sm float-left" style="margin-left: 5px"><i class="fa fa-edit"></i></a>';
                         }
                         $btn .= '</span>';
                         return $btn;
-                    })
-                    ->addColumn('status', function ($supplier) {
-                        if ($supplier->status == 0) {
-                            return '<span class="badge badge-danger"> <i class="fa fa-ban"></i> </span>';
-                        } else {
-                            return '<span class="badge badge-success"><i class="fa fa-check-square"></i></span>';
-                        }
                     })
                     ->rawColumns(['action', 'status'])
                     ->make(true);
@@ -148,4 +148,14 @@ class SupplierController extends Controller
         Toastr::success("Supplier Created", "Success");
         return redirect()->back();
     }
+
+    // public function updateStatus(Request $request)
+    // {
+    //     $customer = Customer::findOrFail($request->id);
+    //     $customer->status = $request->status;
+    //     if ($customer->save()) {
+    //         return 1;
+    //     }
+    //     return 0;
+    // }
 }
