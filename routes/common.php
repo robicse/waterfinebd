@@ -11,6 +11,8 @@ use App\Http\Controllers\Common\CustomerController;
 use App\Http\Controllers\Common\CategoryController;
 use App\Http\Controllers\Common\ProductController;
 use App\Http\Controllers\Common\PackageController;
+use App\Http\Controllers\Common\PurchaseController;
+use App\Http\Controllers\Common\StockController;
 
 Route::post('update-status', [CommonController::class, 'updateStatus'])->name('updateStatus');
 Route::resource('roles', RoleController::class);
@@ -27,4 +29,6 @@ Route::resource('products', ProductController::class);
 Route::resource('packages', PackageController::class);
 Route::post('get-product-by-search', [PackageController::class, 'FindProductBySearchProductName']);
 Route::get('/category-product-info', [PackageController::class, 'categoryProductInfo'])->name('category.product.info');
+Route::resource('purchases', PurchaseController::class);
+Route::resource('stocks', StockController::class);
 
