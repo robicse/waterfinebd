@@ -1,5 +1,5 @@
 @extends('backend.layouts.master')
-@section("title","Products Lists")
+@section("title","Packages Lists")
 @push('css')
     <!-- DataTables -->
     <link rel="stylesheet" href="{{asset('backend/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
@@ -12,13 +12,13 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Products</h1>
+                    <h1>Packages</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item active"><a
                                 href="{{route(Request::segment(1).'.dashboard')}}">Home</a></li>
-                        <li class="breadcrumb-item active">products</li>
+                        <li class="breadcrumb-item active">packages</li>
                     </ol>
                 </div>
             </div>
@@ -32,13 +32,13 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Product Lists</h3>
+                            <h3 class="card-title">Package Lists</h3>
                             <div class="float-right">
-                                @can('products-create')
-                                {{-- <a href="{{ @url('/backend/demo_xlsx/product.xlsx') }}"> <button class="btn btn-info">
+                                @can('packages-create')
+                                {{-- <a href="{{ @url('/backend/demo_xlsx/package.xlsx') }}"> <button class="btn btn-info">
                                         Download Demo <i class="fa fa-download"></i>
                                     </button></a> --}}
-                                <a href="{{route(Request::segment(1).'.products.create')}}">
+                                <a href="{{route(Request::segment(1).'.packages.create')}}">
                                     <button class="btn btn-success">
                                         <i class="fa fa-plus-circle"></i>
                                         Add
@@ -62,8 +62,8 @@
                                 <thead>
                                 <tr>
                                     <th>Sl</th>
-                                    <th>Category Name</th>
-                                    <th>Product Name</th>
+                                    <th>Name</th>
+                                    <th>Amount</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
@@ -73,8 +73,8 @@
                                 <tfoot>
                                 <tr>
                                     <th>Sl</th>
-                                    <th>Category Name</th>
-                                    <th>Product Name</th>
+                                    <th>Name</th>
+                                    <th>Amount</th>
                                     <th>Action</th>
                                 </tr>
                                 </tfoot>
@@ -106,9 +106,9 @@
     <script src="{{asset('backend/plugins/pdfmake/pdfmake.min.js')}}"></script>
     <script src="{{asset('backend/plugins/pdfmake/vfs_fonts.js')}}"></script>
     <script src="{{asset('backend/plugins/datatables-buttons/js/buttons.html5.min.js')}}"></script>
-<script src="{{asset('backend/plugins/datatables-buttons/js/buttons.print.min.js')}}"></script>
+    <script src="{{asset('backend/plugins/datatables-buttons/js/buttons.print.min.js')}}"></script>
     <script src="{{asset('backend/plugins/datatables-buttons/js/buttons.colVis.min.js')}}"></script>
-   <script>
+    <script>
         $(document).ready(function () {
             $.ajaxSetup({
                 headers: {
@@ -150,16 +150,16 @@
                     'colvis'
 
                 ],
-                ajax: "{{ route(Request::segment(1).'.products.index') }}",
+                ajax: "{{ route(Request::segment(1).'.packages.index') }}",
                 columns: [
                     {data: 'id', name: 'id'},
                     {
-                        data: 'category',
-                        name: 'category'
-                    },
-                    {
                         data: 'name',
                         name: 'name'
+                    },
+                    {
+                        data: 'amount',
+                        name: 'amount'
                     },
                     {data: 'action', name: 'action', orderable: false, searchable: false},
                 ]

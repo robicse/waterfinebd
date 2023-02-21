@@ -1,5 +1,5 @@
 @extends('backend.layouts.master')
-@section('title', 'Supplier Create')
+@section('title', 'Product Create')
 @push('css')
     <link rel="stylesheet" href="{{ asset('backend/css/custom.css') }}">
 @endpush
@@ -9,13 +9,13 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Supplier</h1>
+                    <h1>Product</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{{ route(Request::segment(1) . '.dashboard') }}">Home</a>
                         </li>
-                        <li class="breadcrumb-item active">Supplier</li>
+                        <li class="breadcrumb-item active">Product</li>
                     </ol>
                 </div>
             </div>
@@ -29,10 +29,10 @@
                 <div class="col-12">
                     <div class="card card-info card-outline">
                         <div class="card-header">
-                            @can('suppliers-create')
-                            <h3 class="card-title">Supplier Create</h3>
+                            @can('products-create')
+                            <h3 class="card-title">Product Create</h3>
                             <div class="float-right">
-                                <a href="{{ route(Request::segment(1) . '.suppliers.index') }}">
+                                <a href="{{ route(Request::segment(1) . '.products.index') }}">
                                     <button class="btn btn-success">
                                         <i class="fa fa-plus-circle"></i>
                                         Back
@@ -52,8 +52,11 @@
                                     </ul>
                                 </div>
                             @endif
-                            {!! Form::open(['route' => Request::segment(1) . '.suppliers.store', 'method' => 'POST', 'files' => true]) !!}
-                            @include('backend.common.suppliers.form')
+                            @php
+                            $product = '';
+                            @endphp
+                            {!! Form::open(['route' => Request::segment(1) . '.products.store', 'method' => 'POST', 'files' => true]) !!}
+                            @include('backend.common.products.form')
                             {!! Form::close() !!}
                         </div>
                         <!-- /.card-body -->

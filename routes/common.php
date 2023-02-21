@@ -24,4 +24,6 @@ Route::resource('customers', CustomerController::class);
 Route::resource('categories', CategoryController::class);
 Route::resource('products', ProductController::class);
 Route::resource('packages', PackageController::class);
+Route::post('get-product-by-search', [PackageController::class, 'FindProductBySearchProductName']);
+Route::get('/category-product-info', [PackageController::class, 'categoryProductInfo'])->name('category.product.info');
 

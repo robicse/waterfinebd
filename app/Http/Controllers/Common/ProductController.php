@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Common;
 use App\Helpers\ErrorTryCatch;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use Brian2694\Toastr\Facades\Toastr;
@@ -67,7 +68,8 @@ class ProductController extends Controller
 
     public function create()
     {
-        return view('backend.common.products.create');
+        $categories = Category::pluck('name','id');
+        return view('backend.common.products.create', compact('categories'));
     }
 
     public function store(Request $request)
@@ -75,13 +77,14 @@ class ProductController extends Controller
 
         $this->validate($request, [
             'name' => 'required|min:1|max:190|unique:products',
-            'status' => 'required',
+            'category_id' => 'required',
         ]);
 
         try {
             $product = new Product();
+            $product->category_id = $request->category_id;
             $product->name = $request->name;
-            $product->status = $request->status;
+            //$product->status = $request->status;
             $product->created_by_user_id = Auth::User()->id;
             $product->save();
 
@@ -103,7 +106,8 @@ class ProductController extends Controller
     public function edit($id)
     {
         $product = Product::findOrFail($id);
-        return view('backend.common.products.edit', compact('product'));
+        $categories = Category::pluck('name','id');
+        return view('backend.common.products.edit', compact('product','categories'));
     }
 
     public function update(Request $request, $id)
@@ -114,13 +118,12 @@ class ProductController extends Controller
         ]);
 
         try {
-
             $product = Product::findOrFail($id);
+            $product->category_id = $request->category_id;
             $product->name = $request->name;
             $product->status = $request->status;
             $product->updated_by_user_id = Auth::User()->id;
             $product->save();
-
             Toastr::success("Product Updated Successfully", "Success");
             return redirect()->route(\Request::segment(1) . '.products.index');
         } catch (\Exception $e) {
