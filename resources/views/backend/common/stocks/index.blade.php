@@ -1,5 +1,5 @@
 @extends('backend.layouts.master')
-@section("title","Purchases Lists")
+@section("title","Stocks Lists")
 @push('css')
     <!-- DataTables -->
     <link rel="stylesheet" href="{{asset('backend/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
@@ -12,13 +12,13 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Purchases</h1>
+                    <h1>Stocks</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item active"><a
                                 href="{{route(Request::segment(1).'.dashboard')}}">Home</a></li>
-                        <li class="breadcrumb-item active">purchases</li>
+                        <li class="breadcrumb-item active">stocks</li>
                     </ol>
                 </div>
             </div>
@@ -32,13 +32,13 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Purchase Lists</h3>
+                            <h3 class="card-title">Stock Lists</h3>
                             <div class="float-right">
-                                @can('purchases-create')
-                                {{-- <a href="{{ @url('/backend/demo_xlsx/purchase.xlsx') }}"> <button class="btn btn-info">
+                                @can('stocks-create')
+                                {{-- <a href="{{ @url('/backend/demo_xlsx/stock.xlsx') }}"> <button class="btn btn-info">
                                         Download Demo <i class="fa fa-download"></i>
                                     </button></a> --}}
-                                <a href="{{route(Request::segment(1).'.purchases.create')}}">
+                                <a href="{{route(Request::segment(1).'.stocks.create')}}">
                                     <button class="btn btn-success">
                                         <i class="fa fa-plus-circle"></i>
                                         Add
@@ -62,16 +62,12 @@
                                 <thead>
                                 <tr>
                                     <th>Sl</th>
-                                    <th>Entry Date</th>
                                     <th>Store</th>
-                                    <th>Supplier</th>
-                                    <th>Total Quantity</th>
-                                    <th>Total Buy Amount</th>
-                                    <th>Total Sell Amount</th>
-                                    <th>Paid Amount</th>
-                                    <th>Discount Amount</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
+                                    <th>Category</th>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Buy Amount</th>
+                                    <th>Sell Amount</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -80,16 +76,12 @@
                                 <tfoot>
                                 <tr>
                                     <th>Sl</th>
-                                    <th>Entry Date</th>
                                     <th>Store</th>
-                                    <th>Supplier</th>
-                                    <th>Total Quantity</th>
-                                    <th>Total Buy Amount</th>
-                                    <th>Total Sell Amount</th>
-                                    <th>Paid Amount</th>
-                                    <th>Discount Amount</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
+                                    <th>Category</th>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Buy Amount</th>
+                                    <th>Sell Amount</th>
                                 </tr>
                                 </tfoot>
                             </table>
@@ -164,19 +156,15 @@
                     'colvis'
 
                 ],
-                ajax: "{{ route(Request::segment(1).'.purchases.index') }}",
+                ajax: "{{ route(Request::segment(1).'.stocks.index') }}",
                 columns: [
                     {data: 'id', name: 'id'},
-                    {data: 'entry_date',name: 'entry_date'},
                     {data: 'store',name: 'store'},
-                    {data: 'supplier',name: 'supplier'},
-                    {data: 'total_quantity',name: 'total_quantity'},
-                    {data: 'total_buy_amount',name: 'total_buy_amount'},
-                    {data: 'total_sell_amount',name: 'total_sell_amount'},
-                    {data: 'paid_amount',name: 'paid_amount'},
-                    {data: 'discount_amount',name: 'discount_amount'},
-                    {data: 'status'},
-                    {data: 'action', name: 'action', orderable: false, searchable: false},
+                    {data: 'category',name: 'category'},
+                    {data: 'product',name: 'product'},
+                    {data: 'quantity',name: 'quantity'},
+                    {data: 'buy_price',name: 'buy_price'},
+                    {data: 'sell_price',name: 'sell_price'},
                 ]
             });
         });

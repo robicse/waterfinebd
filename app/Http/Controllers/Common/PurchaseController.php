@@ -11,6 +11,7 @@ use App\Models\Purchase;
 use App\Models\Product;
 use App\Models\Store;
 use App\Models\Supplier;
+use App\Models\Stock;
 use Illuminate\Support\Facades\Auth;
 use Brian2694\Toastr\Facades\Toastr;
 use DataTables;
@@ -41,6 +42,12 @@ class PurchaseController extends Controller
                 $purchases = Purchase::orderBy('id', 'DESC');
                 return Datatables::of($purchases)
                     ->addIndexColumn()
+                    ->addColumn('store', function ($data) {
+                        return $data->store->name;
+                    })
+                    ->addColumn('supplier', function ($data) {
+                        return $data->supplier->name;
+                    })
                     ->addColumn('status', function ($data) {
                         if ($data->status == 0) {
                             return '<div class="form-check form-switch"><input type="checkbox" id="flexSwitchCheckDefault" onchange="updateStatus(this,\'purchases\')" class="form-check-input"  value=' . $data->id . ' /></div>';
@@ -77,35 +84,47 @@ class PurchaseController extends Controller
 
     public function store(Request $request)
     {
+        //dd($request->all());
         $this->validate($request, [
-            'name' => 'required|min:1|max:190|unique:purchases',
+            // 'name' => 'required|min:1|max:190|unique:purchases',
             'category_id' => 'required',
         ]);
 
-        try {
+        // try {
             $purchase = new Purchase();
-            $purchase->name = $request->name;
-            $purchase->amount = $request->amount;
+            $purchase->entry_date = $request->entry_date;
+            $purchase->store_id = $request->store_id;
+            $purchase->supplier_id = $request->supplier_id;
+            $purchase->total_quantity = $request->total_quantity;
+            $purchase->total_buy_amount = $request->total_buy_amount;
+            $purchase->paid_amount = $request->paid_amount;
+            $purchase->discount_amount = $request->discount_amount;
+            $purchase->total_sell_amount = $request->total_sell_amount;
             $purchase->status = 1;
             $purchase->created_by_user_id = Auth::User()->id;
             if($purchase->save()){
                 for($i=0; $i<count($request->category_id); $i++){
-                    $package_product = new PackageProduct();
-                    $package_product->package_id = $purchase->id;
-                    $package_product->product_id = $request->product_id[$i];
-                    $package_product->quantity = $request->quantity[$i];
-                    $package_product->created_by_user_id = Auth::User()->id;
-                    $package_product->save();
+                    $stock = new Stock();
+                    $stock->purchase_id = $purchase->id;
+                    $stock->store_id = $request->store_id;
+                    $stock->category_id = $request->category_id[$i];
+                    $stock->product_id = $request->product_id[$i];
+                    $stock->quantity = $request->quantity[$i];
+                    $stock->buy_price = $request->buy_price[$i];
+                    $stock->sell_price = $request->sell_price[$i];
+                    $stock->status = 1;
+                    $stock->created_by_user_id = Auth::User()->id;
+                    $stock->save();
                 }
             }
 
             Toastr::success("Purchase Created Successfully", "Success");
             return redirect()->route(\Request::segment(1) . '.purchases.index');
-        } catch (\Exception $e) {
-            $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
-            Toastr::error($response['message'], "Error");
-            return back();
-        }
+        // } catch (\Exception $e) {
+        //     $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
+        //     Toastr::error($response['message'], "Error");
+        //     return back();
+        // }
     }
 
     public function show($id)
@@ -117,7 +136,7 @@ class PurchaseController extends Controller
     public function edit($id)
     {
         $purchase = Purchase::findOrFail($id);
-        $packageProducts = PackageProduct::wherepackage_id($id)->get();
+        $packageProducts = Stock::wherepackage_id($id)->get();
         $categories = Category::wherestatus(1)->get();
         $products = Product::wherestatus(1)->get();
         return view('backend.common.purchases.edit', compact('purchase','packageProducts','categories','products'));
@@ -140,13 +159,13 @@ class PurchaseController extends Controller
             if($purchase->save()){
                 DB::table('package_products')->wherepackage_id($id)->delete();
                 for($i=0; $i<count($request->category_id); $i++){
-                    $package_product = new PackageProduct();
-                    $package_product->package_id = $id;
-                    $package_product->product_id = $request->product_id[$i];
-                    $package_product->quantity = $request->quantity[$i];
-                    $package_product->created_by_user_id = Auth::User()->id;
-                    $package_product->updated_by_user_id = Auth::User()->id;
-                    $package_product->save();
+                    $stock = new Stock();
+                    $stock->package_id = $id;
+                    $stock->product_id = $request->product_id[$i];
+                    $stock->quantity = $request->quantity[$i];
+                    $stock->created_by_user_id = Auth::User()->id;
+                    $stock->updated_by_user_id = Auth::User()->id;
+                    $stock->save();
                 }
             }
             Toastr::success("Purchase Updated Successfully", "Success");

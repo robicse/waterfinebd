@@ -99,25 +99,24 @@
                                                     </select>
                                                 </td>
                                                 <td>
-                                                    <input class="input-sm text-right form-control" type="number"
+                                                    <input class="input-sm text-right form-control quantity" type="number" onkeyup="quantitySum()"
                                                         name="quantity[]" id='quantity_id_1'
                                                         placeholder="0.00" data-cell="D1" step="any" min="0"
                                                         max="99999999999999" required data-format="0[.]00">
                                                 </td>
                                                 <td>
                                                     <input type="number"  step="any"
-                                                        onblur="CheckPrice(1,this);"
-                                                        class="input-sm text-right purchase_price
+                                                        class="input-sm text-right buy_price
                                                     form-control"
-                                                        placeholder="0.0000" name="purchase_price[]"
-                                                        id='purchase_price_id_1' required data-format="0[.]00"
+                                                        placeholder="0.0000" name="buy_price[]" onkeyup="buyPriceSum()"
+                                                        id='buy_price_id_1' required data-format="0[.]00"
                                                         data-cell="C1" step="any" min="0"
                                                         max="99999999999999">
                                                 </td>
                                                 <td>
-                                                    <input type="text" class="amount form-control input-sm text-right"
-                                                        name="total[]" placeholder="0.00" data-cell="F1"
-                                                        data-format="0[.]00" data-formula="(C1*D1)"
+                                                    <input type="text" class="form-control input-sm text-right sell_price" onkeyup="sellPriceSum()"
+                                                        name="sell_price[]" placeholder="0.00" data-cell="F1"
+                                                        data-format="0[.]00" data-formula=""
                                                         step="any" min="0" max="99999999999999">
                                                 </td>
                                                 <td>
@@ -137,26 +136,24 @@
                                                 </td>
                                                 <td>Total Buy Amount: <span class="required">*</span>
                                                     <input type="text" class="form-control input-sm text-right"
-                                                    name="total_buy_amount" placeholder="0.00" data-cell=""
+                                                    name="total_buy_amount" id="total_buy_amount" placeholder="0.00" data-cell=""
                                                     data-format="0[.]00" data-formula=""
                                                     step="any" min="0" max="99999999999999">
                                                 </td>
                                                 <td>Total Sell Amount: <span class="required">*</span>
                                                     <input type="text" class="form-control input-sm text-right"
-                                                    name="total_buy_amount" placeholder="0.00" data-cell=""
+                                                    name="total_sell_amount" id="total_sell_amount" placeholder="0.00" data-cell=""
                                                     data-format="0[.]00" data-formula=""
                                                     step="any" min="0" max="99999999999999">
                                                 </td>
                                                 <td>Discount Amount: <span class="required">*</span>
-                                                    <input type="text" class="form-control input-sm text-right"
-                                                    name="total_buy_amount" placeholder="0.00" data-cell=""
-                                                    data-format="0[.]00" data-formula=""
+                                                    <input type="text" class="form-control input-sm text-right"  onkeyup="discountAmount()"
+                                                    name="discount_amount" id="discount_amount" placeholder="0.00"
                                                     step="any" min="0" max="99999999999999">
                                                 </td>
                                                 <td>Paid Amount: <span class="required">*</span>
                                                     <input type="text" class="form-control input-sm text-right"
-                                                    name="total_buy_amount" placeholder="0.00" data-cell=""
-                                                    data-format="0[.]00" data-formula=""
+                                                    name="paid_amount" id="paid_amount" placeholder="0.00"
                                                     step="any" min="0" max="99999999999999">
                                                 </td>
                                             </tr>
@@ -200,19 +197,13 @@
                     n + '" onchange="getCategoryVal(' + n + ',this);" required>' + category +
                     '</select></div></td>' +
                     '<td width="12%"><select class="form-control product_id select2"  name="product_id[]" id="product_id_' +
-                    n + '" onchange="getval(' + n +
-                    ',this);" required></select> </td>' +
-                    '<td width="12%"><input type="number"  class="input-sm text-right form-control" name="quantity[]" id="quantity_id_' +
+                    n + '" required></select> </td>' +
+                    '<td width="12%"><input type="number"  class="input-sm text-right form-control quantity" onkeyup="quantitySum()" name="quantity[]" id="quantity_id_' +
                     n +
-                    '" required   step="any" min="0" max="99999999999999" placeholder="0.00" data-cell="D' +
-                    n +
-                    '" data-format="" data-format="0[.]00"></td>' +
-                    '<td width="12%"><input type="number"  onblur="CheckPrice(' + n +
-                    ',this);" class="input-sm text-right form-control purchase_price"  data-format="0[.]00" name="purchase_price[]" id="purchase_price_id_' +
-                    n + '" data-cell="c' + n +
-                    '"   value="" required  step="any" min="0" max="99999999999999"></td>' +
-                    '<td style="widht:12px"><input class="form-control input-sm text-right" placeholder="0.00" name="total[]"  data-cell="F' +
-                    n + '" data-format="0[.]00" data-formula="(C' + n + '*D' + n + ')"></td>' +
+                    '" required   step="any" min="0" max="99999999999999" placeholder="0.00" data-cell="" data-format="" data-format="0[.]00"></td>' +
+                    '<td width="12%"><input type="number" class="input-sm text-right form-control buy_price" onkeyup="buyPriceSum()"  data-format="0[.]00" name="buy_price[]" id="buy_price_id_' +
+                    n + '" data-cell=""   value="" required  step="any" min="0" max="99999999999999"></td>' +
+                    '<td style="widht:12px"><input class="form-control input-sm text-right sell_price" placeholder="0.00" name="sell_price[]" onkeyup="sellPriceSum()"  data-cell="" data-format="0[.]00" data-formula=""></td>' +
                     '<td><span class="d-inline-flex"><input type="button"  class="btn btn-success addProduct" value="+"> <input type="button" class="btn btn-danger delete float-left" style="margin-left: 5px" value="x" title="Remove This Product"></span></td>' +
                     '</tr>';
                 $('#itemlist').append(tr);
@@ -260,6 +251,44 @@
                 }
             })
         }
+
+        function quantitySum(){
+            var t = parseInt(0);
+            $('.quantity').each(function(i,e){
+                var amt = $(this).val();
+                t += parseInt(amt);
+            });
+            $('#total_quantity').val(t);
+        }
+
+        function buyPriceSum(){
+            console.log('ss')
+            var t = parseFloat(0);
+            $('.buy_price').each(function(i,e){
+                var amt = $(this).val();
+                t += parseFloat(amt);
+            });
+            $('#total_buy_amount').val(t);
+            $('#paid_amount').val(t);
+        }
+
+        function sellPriceSum(){
+            console.log('ss')
+            var t = parseFloat(0);
+            $('.sell_price').each(function(i,e){
+                var amt = $(this).val();
+                t += parseFloat(amt);
+            });
+            $('#total_sell_amount').val(t);
+        }
+
+        function discountAmount(){
+            var total = $('#total_buy_amount').val();
+            var paid_amount = parseFloat(total) - parseFloat($('#discount_amount').val());
+            $('#paid_amount').val(paid_amount);
+        }
+
+
     </script>
 @endpush
 
