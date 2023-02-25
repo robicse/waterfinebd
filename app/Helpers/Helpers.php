@@ -30,6 +30,7 @@ class Helper
                     ->where('parent_menu', 'Collapse')
                     ->orWhere('parent_menu', 'Parent');
             })
+            ->orderBy('serial', 'asc')
             ->get();
     }
 
@@ -80,6 +81,7 @@ class Helper
     {
         return DB::table('permissions')
             ->where('module_id', $module_id)
+            ->orderBy('serial', 'asc')
             ->get();
     }
 

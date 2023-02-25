@@ -1,5 +1,5 @@
 @extends('backend.layouts.master')
-@section('title', 'Purchase Create')
+@section('title', 'Purchase Return Create')
 @push('css')
     <link rel="stylesheet" href="{{ asset('backend/css/custom.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.min.css" rel="stylesheet">
@@ -13,13 +13,13 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Purchase</h1>
+                    <h1>Purchase Return</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{{ route(Request::segment(1) . '.dashboard') }}">Home</a>
                         </li>
-                        <li class="breadcrumb-item active">Purchase</li>
+                        <li class="breadcrumb-item active">Purchase Return</li>
                     </ol>
                 </div>
             </div>
@@ -33,10 +33,10 @@
                 <div class="col-12">
                     <div class="card card-info card-outline">
                         <div class="card-header">
-                            @can('purchases-create')
-                            <h3 class="card-title">Purchase Create</h3>
+                            @can('purchase-returns-create')
+                            <h3 class="card-title">Purchase Return Create</h3>
                             <div class="float-right">
-                                <a href="{{ route(Request::segment(1) . '.purchases.index') }}">
+                                <a href="{{ route(Request::segment(1) . '.purchase-returns.index') }}">
                                     <button class="btn btn-success">
                                         <i class="fa fa-plus-circle"></i>
                                         Back
@@ -59,8 +59,8 @@
                             @php
                             $purchase = '';
                             @endphp
-                            {!! Form::open(['route' => Request::segment(1) . '.purchases.store', 'method' => 'POST', 'files' => true]) !!}
-                            @include('backend.common.purchases.form')
+                            {!! Form::open(['route' => Request::segment(1) . '.purchase-returns.store', 'method' => 'POST', 'files' => true]) !!}
+                            @include('backend.common.purchase_returns.form')
                             <div class="col-lg-12 col-md-12 ">
                                 <div id="dynamic" class="row card-info  card border  customcontent" >
                                     <table class="table table-responsive" id="table1">
@@ -71,8 +71,8 @@
                                                     Product <span class="required">*</span>
                                                 </th>
                                                 <th>Quantity <span class="required">*</span></th>
-                                                <th>Buy Price (Unit) <span class="required">*</span></th>
-                                                <th>Min Sell Price (Unit) <span class="required">*</span></th>
+                                                {{-- <th>Buy Price (Unit) <span class="required">*</span></th>
+                                                <th>Min Sell Price (Unit) <span class="required">*</span></th> --}}
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -104,11 +104,11 @@
                                                         placeholder="0.00" data-cell="D1" step="any" min="0"
                                                         max="99999999999999" required data-format="0[.]00">
                                                 </td>
-                                                <td>
+                                                {{-- <td>
                                                     <input type="number"  step="any"
                                                         class="input-sm text-right buy_price
                                                     form-control"
-                                                        placeholder="0.00" name="buy_price[]" onkeyup="buyPriceSum()"
+                                                        placeholder="0.0000" name="buy_price[]" onkeyup="buyPriceSum()"
                                                         id='buy_price_id_1' required data-format="0[.]00"
                                                         data-cell="C1" step="any" min="0"
                                                         max="99999999999999">
@@ -118,7 +118,7 @@
                                                         name="sell_price[]" placeholder="0.00" data-cell="F1"
                                                         data-format="0[.]00" data-formula=""
                                                         step="any" min="0" max="99999999999999">
-                                                </td>
+                                                </td> --}}
                                                 <td>
                                                     <input type="button" class="btn btn-success addProduct"
                                                         value="+">
@@ -134,7 +134,7 @@
                                                         placeholder="0.00" data-cell="" step="any" min="0"
                                                         max="99999999999999" required data-format="0[.]00">
                                                 </td>
-                                                <td>Total Buy Amount: <span class="required">*</span>
+                                                {{-- <td>Total Buy Amount: <span class="required">*</span>
                                                     <input type="text" class="form-control input-sm text-right"
                                                     name="total_buy_amount" id="total_buy_amount" placeholder="0.00" data-cell=""
                                                     data-format="0[.]00" data-formula=""
@@ -155,7 +155,7 @@
                                                     <input type="text" class="form-control input-sm text-right"
                                                     name="paid_amount" id="paid_amount" placeholder="0.00"
                                                     step="any" min="0" max="99999999999999">
-                                                </td>
+                                                </td> --}}
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -201,9 +201,6 @@
                     '<td width="12%"><input type="number"  class="input-sm text-right form-control quantity" onkeyup="quantitySum()" name="quantity[]" id="quantity_id_' +
                     n +
                     '" required   step="any" min="0" max="99999999999999" placeholder="0.00" data-cell="" data-format="" data-format="0[.]00"></td>' +
-                    '<td width="12%"><input type="number" class="input-sm text-right form-control buy_price" onkeyup="buyPriceSum()"  data-format="0[.]00" name="buy_price[]" id="buy_price_id_' +
-                    n + '" data-cell=""   value="" required  step="any" min="0" max="99999999999999"></td>' +
-                    '<td style="widht:12px"><input class="form-control input-sm text-right sell_price" placeholder="0.00" name="sell_price[]" onkeyup="sellPriceSum()"  data-cell="" data-format="0[.]00" data-formula=""></td>' +
                     '<td><span class="d-inline-flex"><input type="button"  class="btn btn-success addProduct" value="+"> <input type="button" class="btn btn-danger delete float-left" style="margin-left: 5px" value="x" title="Remove This Product"></span></td>' +
                     '</tr>';
                 $('#itemlist').append(tr);

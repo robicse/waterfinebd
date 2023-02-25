@@ -49,7 +49,7 @@
             "name": "Supplier",
             "slug": "suppliers",
             "icon": "nav-icon fas fa-parachute-box",
-            "serial": 18,
+            "serial": 6,
             "status": 1,
             "submenu": []
         },
@@ -58,7 +58,7 @@
             "name": "Customer",
             "slug": "customers",
             "icon": "nav-icon fas fa-user-plus",
-            "serial": 19,
+            "serial": 7,
             "status": 1,
             "submenu": []
         },
@@ -67,7 +67,7 @@
             "name": "Product Management",
             "slug": "javascript:void(0)",
             "icon": "nav-icon fas fa-barcode",
-            "serial": 20,
+            "serial": 8,
             "status": 1,
             "submenu": [
                 {
@@ -75,7 +75,7 @@
                     "name": "Category",
                     "slug": "categories",
                     "icon": "nav-icon fas fa-boxes",
-                    "serial": 25,
+                    "serial": 9,
                     "status": 1
                 },
                 {
@@ -83,7 +83,7 @@
                     "name": "Product",
                     "slug": "products",
                     "icon": "nav-icon fab fa-product-hunt",
-                    "serial": 21,
+                    "serial": 10,
                     "status": 1
                 },
                 {
@@ -91,7 +91,7 @@
                     "name": "Package",
                     "slug": "packages",
                     "icon": "nav-icon fab fa-product-hunt",
-                    "serial": 21,
+                    "serial": 11,
                     "status": 1
                 }
             ]
@@ -101,7 +101,7 @@
             "name": "Purchase Stock",
             "slug": "javascript:void(0)",
             "icon": "nav-icon fas fa-barcode",
-            "serial": 20,
+            "serial": 12,
             "status": 1,
             "submenu": [
                 {
@@ -109,7 +109,7 @@
                     "name": "Purchase",
                     "slug": "purchases",
                     "icon": "nav-icon fas fa-boxes",
-                    "serial": 25,
+                    "serial": 13,
                     "status": 1
                 },
                 {
@@ -117,7 +117,33 @@
                     "name": "Stock",
                     "slug": "stocks",
                     "icon": "nav-icon fas fa-boxes",
-                    "serial": 25,
+                    "serial": 14,
+                    "status": 1
+                },
+                {
+                    "parent_menu":"Purchase Stock",
+                    "name": "Purchase Return",
+                    "slug": "purchase-returns",
+                    "icon": "nav-icon fas fa-boxes",
+                    "serial": 15,
+                    "status": 1
+                }
+            ]
+        },
+        {
+            "parent_menu":"Collapse",
+            "name": "Sale Information",
+            "slug": "javascript:void(0)",
+            "icon": "nav-icon fas fa-barcode",
+            "serial": 16,
+            "status": 1,
+            "submenu": [
+                {
+                    "parent_menu":"Sale Information",
+                    "name": "Sale",
+                    "slug": "sales",
+                    "icon": "nav-icon fas fa-boxes",
+                    "serial": 17,
                     "status": 1
                 }
             ]
@@ -234,6 +260,30 @@
         },
         {
             "name":"stocks-list"
+        },
+        {
+            "name":"purchases-return-list"
+        },
+        {
+            "name":"purchases-return-create"
+        },
+        {
+            "name":"purchases-return-edit"
+        },
+        {
+            "name":"purchases-return-delete"
+        },
+        {
+            "name":"sales-list"
+        },
+        {
+            "name":"sales-create"
+        },
+        {
+            "name":"sales-edit"
+        },
+        {
+            "name":"sales-delete"
         }
     ]
 }

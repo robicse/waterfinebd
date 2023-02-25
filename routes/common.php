@@ -13,6 +13,8 @@ use App\Http\Controllers\Common\ProductController;
 use App\Http\Controllers\Common\PackageController;
 use App\Http\Controllers\Common\PurchaseController;
 use App\Http\Controllers\Common\StockController;
+use App\Http\Controllers\Common\PurchaseReturnController;
+use App\Http\Controllers\Common\SaleController;
 
 Route::post('update-status', [CommonController::class, 'updateStatus'])->name('updateStatus');
 Route::resource('roles', RoleController::class);
@@ -31,4 +33,6 @@ Route::post('get-product-by-search', [PackageController::class, 'FindProductBySe
 Route::get('/category-product-info', [PackageController::class, 'categoryProductInfo'])->name('category.product.info');
 Route::resource('purchases', PurchaseController::class);
 Route::resource('stocks', StockController::class);
+Route::resource('purchase-returns', PurchaseReturnController::class);
+Route::resource('sales', SaleController::class);
 
