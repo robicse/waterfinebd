@@ -219,55 +219,15 @@
 
     <script type="text/javascript">
         document.onkeyup = function keybordshortcut(event) {
-            // var APP_URL = {!! json_encode(url('/')) !!}
             var APP_URL = "{{ URL(Request::segment(1) . '/') }}"
-            // console.log('APP_URL',APP_URL);
-
-            // console.log('event', event);
-            if (event.altKey && event.code === 'KeyW') {
-                // console.log('KeyW');
-                // Open Current Tab
-                window.location.href = APP_URL + '/' + 'sales-warehouses';
-
-                // Open New Tab
-                // window.open(APP_URL + '/' + 'sales-warehouses');
-            } else if (event.altKey && event.code === 'KeyL') {
-                // console.log('KeyL');
-                // Open Current Tab
-                window.location.href = APP_URL + '/' + 'local-sales-vans';
-            } else if (event.altKey && event.code === 'KeyO') {
-                // console.log('KeyO');
-                // Open Current Tab
-                window.location.href = APP_URL + '/' + 'outer-sales-vans';
-            } else if (event.altKey && event.code === 'KeyS') {
-                console.log('KeyS');
-                $("#SUBMIT_BTN").click();
-            } else if (event.altKey && event.code === "KeyC") {
-                console.log('KeyC');
-                location.reload();
-                //$("#CLEAR").click();
-            } else if (event.altKey && event.code === "KeyG") {
-                console.log('KeyG');
-                //$("#GET_GV_AMT").click();
-            } else if (event.altKey && event.code === "KeyI") {
-                console.log('KeyI');
-                //$("#ITEM_LIST").click();
-            } else if (event.altKey && event.code === "KeyP") {
-                console.log('KeyP');
-                //$("#PRINT_BTN").click();
-            } else if (event.altKey && event.code === "KeyM") {
-                console.log('KeyM');
-                //$("#M_PAYMENT").click();
-            } else if (event.altKey && event.code === "KeyX") {
-                console.log('KeyX');
-                //closeModal('HOLD_INV');
-                //closeModal('M_PAY');
-            } else if (event.altKey && event.code === "KeyR") {
-                console.log('KeyR');
-                //$("#FIND_INV").click();
-            } else if (event.altKey && event.code === "KeyH") {
-                console.log('KeyH');
-                //$("#HOLD").click();
+            if (event.altKey && event.code === 'KeyS') {
+                window.location.href = APP_URL + '/' + 'suppliers/create';
+            } else if (event.altKey && event.code === 'KeyC') {
+                window.location.href = APP_URL + '/' + 'customers/create';
+            } else if (event.altKey && event.code === 'KeyP') {
+                window.location.href = APP_URL + '/' + 'purchases/create';
+            } else if (event.altKey && event.code === 'KeyV') {
+                window.location.href = APP_URL + '/' + 'sales/create';
             }
         };
     </script>

@@ -42,6 +42,49 @@
             </div>
         </div>
     </div>
+    <h2 class="text-center bold">Keyboard Shortcut</h2>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-3 col-6">
+                    <a href="#">
+                        <div class="info-box  bg-danger">
+                            <div class="info-box-content">
+                                <span class="info-box-text">Customer Create => Altr+C</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <a href="#">
+                        <div class="info-box  bg-danger">
+                            <div class="info-box-content">
+                                <span class="info-box-text">Supplier Create => Altr+S</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <a href="#">
+                        <div class="info-box  bg-danger">
+                            <div class="info-box-content">
+                                <span class="info-box-text">Purchase Stock => Altr+W</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <a href="#">
+                        <div class="info-box  bg-danger">
+                            <div class="info-box-content">
+                                <span class="info-box-text">Sale/Voucher => Altr+W</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
     <h2 class="text-center bold">Menu Area</h2>
     <section class="content">
         <div class="container-fluid">

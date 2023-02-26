@@ -52,6 +52,9 @@
                                     </ul>
                                 </div>
                             @endif
+                            @php
+                            $supplier = '';
+                            @endphp
                             {!! Form::open(['route' => Request::segment(1) . '.suppliers.store', 'method' => 'POST', 'files' => true]) !!}
                             @include('backend.common.suppliers.form')
                             {!! Form::close() !!}

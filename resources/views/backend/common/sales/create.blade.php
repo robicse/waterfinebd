@@ -70,7 +70,9 @@
                                                 <th>
                                                     Product <span class="required">*</span>
                                                 </th>
+                                                <th>Available Stock <span class="required">*</span></th>
                                                 <th>Quantity <span class="required">*</span></th>
+                                                <th>Unit <span class="required">*</span></th>
                                                 <th>Amount (Unit) <span class="required">*</span></th>
                                                 <th>Action</th>
                                             </tr>
@@ -94,14 +96,30 @@
                                                 <td>
                                                     <select class="form-control product_id select2"
                                                         name="product_id[]" id="product_id_1"
-                                                        required>
+                                                        required onchange="getProductVal(1,this);">
                                                     </select>
+                                                </td>
+                                                <td>
+                                                    <input class="input-sm text-right form-control" type="number"name="available_stock_qty[]" id='available_stock_qty_1'>
                                                 </td>
                                                 <td>
                                                     <input class="input-sm text-right form-control quantity" type="number" onkeyup="quantitySum()"
                                                         name="quantity[]" id='quantity_id_1'
                                                         placeholder="0.00" data-cell="D1" step="any" min="0"
                                                         max="99999999999999" required data-format="0[.]00">
+                                                </td>
+                                                <td>
+                                                    <div>
+                                                        <select class="form-control unit_id select2"
+                                                            name="unit_id[]" required id="unit_id_1">
+                                                            <option value="">Select Unit</option>
+                                                            @if(count($units) > 0)
+                                                                @foreach($units as $unit)
+                                                                <option value="{{ $unit->id }}">{{ $unit->name }}</option>
+                                                                @endforeach
+                                                            @endif
+                                                        </select>
+                                                    </div>
                                                 </td>
                                                 <td>
                                                     <input type="number"  step="any"
@@ -140,7 +158,7 @@
                                                 </td>
                                                 <td>Total Sell Amount: <span class="required">*</span>
                                                     <input type="text" class="form-control input-sm text-right"
-                                                    name="total_sell_amount" id="total_sell_amount" placeholder="0.00" data-cell=""
+                                                    name="total_sale_amount" id="total_sale_amount" placeholder="0.00" data-cell=""
                                                     data-format="0[.]00" data-formula=""
                                                     step="any" min="0" max="99999999999999">
                                                 </td>
@@ -183,6 +201,7 @@
             $('.select2').select2();
             $(document).on('click', '.addProduct', function() {
                 var category = $('.category_id').html();
+                var unit = $('.unit_id').html();
                 var n = ($('#itemlist tr').length - 0) + 1;
                 var tr =
                     '<tr>' +
@@ -190,10 +209,15 @@
                     n + '" onchange="getCategoryVal(' + n + ',this);" required>' + category +
                     '</select></div></td>' +
                     '<td width="12%"><select class="form-control product_id select2"  name="product_id[]" id="product_id_' +
-                    n + '" required></select> </td>' +
+                    n + '" onchange="getProductVal(' + n + ',this);" required></select> </td>' +
+                    '<td width="12%"><input type="number"  class="input-sm text-right form-control" name="available_stock_qty[]" id="available_stock_qty_' +
+                    n + '"></td>' +
                     '<td width="12%"><input type="number"  class="input-sm text-right form-control quantity" onkeyup="quantitySum()" name="quantity[]" id="quantity_id_' +
                     n +
-                    '" required   step="any" min="0" max="99999999999999" placeholder="0.00" data-cell="" data-format="" data-format="0[.]00"></td>' +
+                    '" required   step="any" min="0" max="99999999999999" placeholder="0.00" data-cell="" data-format="" data-format="0[.]00"><span id="available_stock_qty_' + n + '"></span></td>' +
+                    '<td width="12%"><div><select  class="form-control unit_id select2" name="unit_id[]" id="unit_id_' +
+                    n + '" required>' + unit +
+                    '</select></div></td>' +
                     '<td width="12%"><input type="number" class="input-sm text-right form-control amount" onkeyup="amountSum()"  data-format="0[.]00" name="amount[]" id="amount_id_' +
                     n + '" data-cell=""   value="" required  step="any" min="0" max="99999999999999"></td>' +
                     '<td><span class="d-inline-flex"><input type="button"  class="btn btn-success addProduct" value="+"> <input type="button" class="btn btn-danger delete float-left" style="margin-left: 5px" value="x" title="Remove This Product"></span></td>' +
@@ -244,6 +268,51 @@
             })
         }
 
+        function getProductVal(row, sel) {
+            var store_id = $('#store_id').val();
+            if(store_id){
+                var current_row = row;
+                var current_product_id = sel.value;
+                if(current_row > 1){
+                    var previous_row = current_row - 1;
+                    var previous_product_id = $('#product_id_'+previous_row).val();
+                    if(previous_product_id === current_product_id){
+                        $('#product_id_'+current_row).val('');
+                        alert('You selected same product, Please selected another product!');
+                        return false
+                    }
+                }
+
+                // check product services
+                var all_product_ids = [];
+                $(".product_id").each(function(i,e) {
+                    all_product_ids[i] = this.value;
+                });
+
+                $.ajax({
+                    url : "{{URL(Request::segment(1) . '/sale-relation-data')}}",
+                    method : "get",
+                    data : {
+                        store_id : store_id,
+                        current_product_id : current_product_id,
+                        all_product_ids : all_product_ids
+                    },
+                    success : function (res){
+                        console.log(res.data)
+                        $("#unit_id_"+current_row).html(res.data.unitOptions);
+                        $("#available_stock_qty_"+current_row).val(res.data.current_stock);
+                        $("#amount_id_"+current_row).val(res.data.sale_price);
+                    },
+                    error : function (err){
+                        console.log(err)
+                    }
+                })
+            }else{
+                alert('Please select first store!');
+                location.reload();
+            }
+        }
+
         function quantitySum(){
             var t = parseInt(0);
             $('.quantity').each(function(i,e){
@@ -264,14 +333,14 @@
             $('#paid_amount').val(t);
         }
 
-        function sellPriceSum(){
+        function salePriceSum(){
             console.log('ss')
             var t = parseFloat(0);
-            $('.sell_price').each(function(i,e){
+            $('.sale_price').each(function(i,e){
                 var amt = $(this).val();
                 t += parseFloat(amt);
             });
-            $('#total_sell_amount').val(t);
+            $('#total_sale_amount').val(t);
         }
 
         function discountAmount(){

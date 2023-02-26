@@ -72,6 +72,18 @@
                 @endforeach
 
         </li> --}}
+        <li class="nav-item d-none d-sm-inline-block">
+            <span class="nav-link">Supplier => Altr+S</span>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <span class="nav-link">Customer => Altr+C</span>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <span class="nav-link">Purchase => Altr+P</span>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <span class="nav-link">Sale => Altr+V</span>
+        </li>
 
         <!-- Login -->
         <li class="nav-item dropdown">

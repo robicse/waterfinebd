@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Common;
 use App\Helpers\ErrorTryCatch;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Unit;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
@@ -69,7 +70,8 @@ class ProductController extends Controller
     public function create()
     {
         $categories = Category::pluck('name','id');
-        return view('backend.common.products.create', compact('categories'));
+        $units = Unit::pluck('name','id');
+        return view('backend.common.products.create', compact('categories','units'));
     }
 
     public function store(Request $request)
@@ -83,6 +85,7 @@ class ProductController extends Controller
         try {
             $product = new Product();
             $product->category_id = $request->category_id;
+            $product->unit_id = $request->unit_id;
             $product->name = $request->name;
             //$product->status = $request->status;
             $product->created_by_user_id = Auth::User()->id;
@@ -107,7 +110,8 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
         $categories = Category::pluck('name','id');
-        return view('backend.common.products.edit', compact('product','categories'));
+        $units = Unit::pluck('name','id');
+        return view('backend.common.products.edit', compact('product','categories','units'));
     }
 
     public function update(Request $request, $id)
@@ -120,6 +124,7 @@ class ProductController extends Controller
         try {
             $product = Product::findOrFail($id);
             $product->category_id = $request->category_id;
+            $product->unit_id = $request->unit_id;
             $product->name = $request->name;
             $product->status = $request->status;
             $product->updated_by_user_id = Auth::User()->id;

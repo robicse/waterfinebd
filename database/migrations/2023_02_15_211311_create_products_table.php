@@ -17,6 +17,8 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('category_id')->unsigned()->nullable();
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
+            $table->bigInteger('unit_id')->unsigned()->nullable();
+            $table->foreign('unit_id')->references('id')->on('units')->onDelete('cascade');
             $table->string('name');
             $table->tinyInteger('status')->default(1);
             $table->bigInteger('created_by_user_id')->unsigned()->nullable();

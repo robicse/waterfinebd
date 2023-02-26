@@ -103,7 +103,7 @@ class SaleController extends Controller
             $purchase->total_buy_amount = $request->total_buy_amount;
             $purchase->paid_amount = $request->paid_amount;
             $purchase->discount_amount = $request->discount_amount;
-            $purchase->total_sell_amount = $request->total_sell_amount;
+            $purchase->total_sale_amount = $request->total_sale_amount;
             $purchase->status = 1;
             $purchase->created_by_user_id = Auth::User()->id;
             if($purchase->save()){
@@ -115,7 +115,7 @@ class SaleController extends Controller
                     $stock->product_id = $request->product_id[$i];
                     $stock->quantity = $request->quantity[$i];
                     $stock->buy_price = $request->buy_price[$i];
-                    $stock->sell_price = $request->sell_price[$i];
+                    $stock->sale_price = $request->sale_price[$i];
                     $stock->status = 1;
                     $stock->created_by_user_id = Auth::User()->id;
                     $stock->save();

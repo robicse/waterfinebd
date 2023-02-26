@@ -35,4 +35,5 @@ Route::resource('purchases', PurchaseController::class);
 Route::resource('stocks', StockController::class);
 Route::resource('purchase-returns', PurchaseReturnController::class);
 Route::resource('sales', SaleController::class);
+Route::get('sale-relation-data',[CommonController::class, 'SaleRelationData']);
 

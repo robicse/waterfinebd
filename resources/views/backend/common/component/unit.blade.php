@@ -1,9 +1,9 @@
 <div class="form-group col-md-4">
-    <label for="category_id">Category <span class="required">*</span></label>
+    <label for="unit_id">Unit <span class="required">*</span></label>
     {{-- <a type="button" class="test btn btn-primary btn-sm" onclick="modal_category()" data-toggle="modal"><i class="fa fa-plus"></i></a> --}}
-    {!! Form::select('category_id', $categories, null, [
+    {!! Form::select('unit_id', $units, null, [
         'required',
-        'id' => 'category_id',
+        'id' => 'unit_id',
         'class' => 'form-control',
         'placeholder' => 'Select One',
     ]) !!}
