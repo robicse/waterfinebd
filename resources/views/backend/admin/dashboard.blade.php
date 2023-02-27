@@ -1,6 +1,7 @@
 @php
     use Sohibd\Laravelslug\Generate;
     use Spatie\Permission\Models\Permission;
+    $getReportCount = Helper::getReportCount();
 @endphp
 @extends('backend.layouts.master')
 @section('title', 'Dashboard')
@@ -85,7 +86,7 @@
             </div>
         </div>
     </section>
-    <h2 class="text-center bold">Menu Area</h2>
+    <h2 class="text-center bold pt-4">Menu Area</h2>
     <section class="content">
         <div class="container-fluid">
             <div class="row">
@@ -155,53 +156,109 @@
             </div>
         </div>
     </section>
-    {{-- <h2 class="text-center bold">Report Area</h2>
+    <?php
+        $stores = Helper::getStoreList();
+    ?>
+    @if(!empty($stores))
+        @foreach($stores as $store)
+        <?php
+        $getStoreReportCount = Helper::getStoreReportCount($store->id);
+        ?>
+            <h2 class="text-center bold pt-4">STORE: {{ $store->name }}</h2>
+            <section class="content">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-3 col-6">
+                            <div class="small-box bg-info">
+                                <div class="inner">
+                                    <h3>TK.{{ number_format($getStoreReportCount['purchaseAmount'], 2, '.', '') }}</h3>
+                                    <p>Total Purchase Amount</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-bag"></i>
+                                </div>
+                                <a href="{{ route(Request::segment(1) . '.purchases.index') }}" class="small-box-footer">More info
+                                    <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-6">
+                            <div class="small-box bg-danger">
+                                <div class="inner">
+                                    <h3>TK.{{ number_format($getStoreReportCount['saleAmount'], 2, '.', '') }}</h3>
+                                    <p>Total Sales Amount</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-pie-graph"></i>
+                                </div>
+                                <a href="{{ route(Request::segment(1) . '.sales.index') }}" class="small-box-footer">More info <i
+                                        class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-6">
+                            <div class="small-box bg-warning">
+                                <div class="inner">
+                                    <h3>TK.{{ number_format($getStoreReportCount['purchaseReturnAmount'], 2, '.', '') }}</h3>
+                                    <p>Total Purchase Return Amount</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-person-add"></i>
+                                </div>
+                                <a href="{{ route(Request::segment(1) . '.customers.index') }}" class="small-box-footer">More info
+                                    <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-6">
+                            <div class="small-box bg-success">
+                                <div class="inner">
+                                    <h3>TK.{{ number_format($getStoreReportCount['saleReturnAmount'], 2, '.', '') }}</h3>
+                                    <p>Total Sale Return Amount</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-person-add"></i>
+                                </div>
+                                <a href="{{ route(Request::segment(1) . '.suppliers.index') }}" class="small-box-footer">More info
+                                    <i class="fas fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        @endforeach
+    @endif
+    <h2 class="text-center bold pt-4">Report Area</h2>
     <section class="content">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-3 col-6">
-                    <div class="small-box bg-success">
-                        <div class="inner">
-                            <h3>{{ $totalProduct }}</h3>
-                            <p>Total Product</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-android-checkbox-blank"></i>
-                        </div>
-                        <a href="{{ route(Request::segment(1) . '.products.index') }}" class="small-box-footer">More info <i
-                                class="fas fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-6">
                     <div class="small-box bg-info">
                         <div class="inner">
-                            <h3>{{ $default_currency->symbol }} {{ $totalPurchase }}</h3>
-                            <p>Total Purchase</p>
+                            <h3>{{ $getReportCount['productCount'] }}</h3>
+                            <p>Total Product</p>
                         </div>
                         <div class="icon">
                             <i class="ion ion-bag"></i>
                         </div>
-                        <a href="{{ route(Request::segment(1) . '.purchases.index') }}" class="small-box-footer">More info
+                        <a href="{{ route(Request::segment(1) . '.products.index') }}" class="small-box-footer">More info
                             <i class="fas fa-arrow-circle-right"></i></a>
                     </div>
                 </div>
                 <div class="col-lg-3 col-6">
                     <div class="small-box bg-danger">
                         <div class="inner">
-                            <h3>{{ $default_currency->symbol }} {{ $totalSales }}</h3>
-                            <p>Total Sales</p>
+                            <h3>{{ $getReportCount['userCount'] }}</h3>
+                            <p>Total User</p>
                         </div>
                         <div class="icon">
                             <i class="ion ion-pie-graph"></i>
                         </div>
-                        <a href="{{ route(Request::segment(1) . '.sales.index') }}" class="small-box-footer">More info <i
+                        <a href="{{ route(Request::segment(1) . '.users.index') }}" class="small-box-footer">More info <i
                                 class="fas fa-arrow-circle-right"></i></a>
                     </div>
                 </div>
                 <div class="col-lg-3 col-6">
                     <div class="small-box bg-warning">
                         <div class="inner">
-                            <h3>{{ $totalCustomer }}</h3>
+                            <h3>{{ $getReportCount['customerCount'] }}</h3>
                             <p>Total Customer</p>
                         </div>
                         <div class="icon">
@@ -214,7 +271,7 @@
                 <div class="col-lg-3 col-6">
                     <div class="small-box bg-success">
                         <div class="inner">
-                            <h3>{{ $totalSupplier }}</h3>
+                            <h3>{{ $getReportCount['supplierCount'] }}</h3>
                             <p>Total Supplier</p>
                         </div>
                         <div class="icon">
@@ -224,47 +281,9 @@
                             <i class="fas fa-arrow-circle-right"></i></a>
                     </div>
                 </div>
-                <div class="col-lg-3 col-6">
-                    <div class="small-box bg-info">
-                        <div class="inner">
-                            <h3>{{ $totalSalesman }}</h3>
-                            <p>Total Salesman</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-person-add"></i>
-                        </div>
-                        <a href="{{ route(Request::segment(1) . '.salesmans.index') }}" class="small-box-footer">More info
-                            <i class="fas fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-6">
-                    <div class="small-box bg-danger">
-                        <div class="inner">
-                            <h3>{{ $totalVan }}</h3>
-                            <p>Total Van</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-android-playstore"></i>
-                        </div>
-                        <a href="{{ route(Request::segment(1) . '.vans.index') }}" class="small-box-footer">More info <i
-                                class="fas fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-6">
-                    <div class="small-box bg-warning">
-                        <div class="inner">
-                            <h3>{{ $totalDriver }}</h3>
-                            <p>Total Driver</p>
-                        </div>
-                        <div class="icon">
-                            <i class="ion ion-person-add"></i>
-                        </div>
-                        <a href="{{ route(Request::segment(1) . '.drivers.index') }}" class="small-box-footer">More info <i
-                                class="fas fa-arrow-circle-right"></i></a>
-                    </div>
-                </div>
+
             </div>
-            <div class="row">
+            {{-- <div class="row">
                 <div class="col-lg-6">
                     <div class="card">
                         <div class="card-header border-0">
@@ -329,8 +348,8 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
+            </div> --}}
+            {{-- <div class="row">
                 <div class="col-lg-6">
                     <div class="card">
                         <div class="card-header border-0">
@@ -395,12 +414,9 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                {{-- <div id="piechart_3d" style="width: 900px; height: 500px"></div> --}}
-            </div>
+            </div> --}}
         </div>
-    </section> --}}
+    </section>
 @stop
 @push('js')
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>

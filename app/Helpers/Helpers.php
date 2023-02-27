@@ -4,6 +4,14 @@ namespace App\Helpers;
 
 
 use App\Models\Module;
+use App\Models\Store;
+use App\Models\Product;
+use App\Models\User;
+use App\Models\Customer;
+use App\Models\Supplier;
+use App\Models\Purchase;
+use App\Models\Sale;
+use App\Models\PurchaseReturn;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -83,6 +91,35 @@ class Helper
             ->where('module_id', $module_id)
             ->orderBy('serial', 'asc')
             ->get();
+    }
+
+    public static function getStoreList()
+    {
+        return Store::where('status', 1)
+            ->orderBy('id', 'asc')
+            ->get();
+    }
+
+    public static function getReportCount()
+    {
+        $reportCount = [
+            'productCount' => Product::count(),
+            'userCount' => User::count(),
+            'customerCount' => Customer::count(),
+            'supplierCount' => Supplier::count(),
+        ];
+        return $reportCount;
+    }
+
+    public static function getStoreReportCount($store_id)
+    {
+        $storeReportCount = [
+            'purchaseAmount' => Purchase::wherestore_id($store_id)->sum('paid_amount'),
+            'saleAmount' => Sale::wherestore_id($store_id)->sum('total_sell_amount'),
+            'purchaseReturnAmount' => PurchaseReturn::wherestore_id($store_id)->sum('total_buy_amount'),
+            'saleReturnAmount' => 0,
+        ];
+        return $storeReportCount;
     }
 
 
