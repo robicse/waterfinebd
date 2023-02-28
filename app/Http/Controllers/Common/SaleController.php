@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Unit;
 use App\Models\Sale;
+use App\Models\SaleProduct;
+use App\Models\SalePackage;
 use App\Models\Product;
 use App\Models\Package;
 use App\Models\Store;
@@ -57,10 +59,10 @@ class SaleController extends Controller
                             return '<div class="form-check form-switch"><input type="checkbox" id="flexSwitchCheckDefault" checked="" onchange="updateStatus(this,\'sales\')" class="form-check-input"  value=' . $data->id . ' /></div>';
                         }
                     })
-                    ->addColumn('action', function ($purchase)use($User) {
+                    ->addColumn('action', function ($sale)use($User) {
                         $btn='';
                         if($User->can('sales-edit')){
-                        $btn = '<a href=' . route(\Request::segment(1) . '.sales.edit', $purchase->id) . ' class="btn btn-info btn-sm waves-effect"><i class="fa fa-edit"></i></a>';
+                        $btn = '<a href=' . route(\Request::segment(1) . '.sales.edit', $sale->id) . ' class="btn btn-info btn-sm waves-effect"><i class="fa fa-edit"></i></a>';
                         }
                         return $btn;
                     })
@@ -88,37 +90,55 @@ class SaleController extends Controller
 
     public function store(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         $this->validate($request, [
-            // 'name' => 'required|min:1|max:190|unique:sales',
-            'category_id' => 'required',
+            'voucher_date' => 'required',
+            'store_id' => 'required',
+            'customer_id' => 'required',
+            'total_quantity' => 'required',
+            'payable_amount' => 'required',
+            'total_sale_amount' => 'required',
+            'discount_amount' => 'required',
+            'paid_amount' => 'required',
+            'product_category_id.*' => 'required',
+            'product_id.*' => 'required',
+            'quantity.*' => 'required',
+            'amount.*' => 'required'
         ]);
 
         // try {
-            $purchase = new Sale();
-            $purchase->entry_date = $request->entry_date;
-            $purchase->store_id = $request->store_id;
-            $purchase->supplier_id = $request->supplier_id;
-            $purchase->total_quantity = $request->total_quantity;
-            $purchase->total_buy_amount = $request->total_buy_amount;
-            $purchase->paid_amount = $request->paid_amount;
-            $purchase->discount_amount = $request->discount_amount;
-            $purchase->total_sale_amount = $request->total_sale_amount;
-            $purchase->status = 1;
-            $purchase->created_by_user_id = Auth::User()->id;
-            if($purchase->save()){
+            $sale = new Sale();
+            $sale->voucher_date = $request->voucher_date;
+            $sale->store_id = $request->store_id;
+            $sale->customer_id = $request->customer_id;
+            $sale->total_quantity = $request->total_quantity;
+            $sale->payable_amount = $request->payable_amount;
+            $sale->discount_amount = $request->discount_amount;
+            $sale->total_sale_amount = $request->total_sale_amount;
+            $sale->paid_amount = $request->paid_amount;
+            $sale->status = 1;
+            $sale->created_by_user_id = Auth::User()->id;
+            if($sale->save()){
                 for($i=0; $i<count($request->category_id); $i++){
-                    $stock = new Stock();
-                    $stock->purchase_id = $purchase->id;
-                    $stock->store_id = $request->store_id;
-                    $stock->category_id = $request->category_id[$i];
-                    $stock->product_id = $request->product_id[$i];
-                    $stock->quantity = $request->quantity[$i];
-                    $stock->buy_price = $request->buy_price[$i];
-                    $stock->sale_price = $request->sale_price[$i];
-                    $stock->status = 1;
-                    $stock->created_by_user_id = Auth::User()->id;
-                    $stock->save();
+                    $sale_product = new SaleProduct();
+                    $sale_product->sale_id = $sale->id;
+                    $sale_product->store_id = $request->store_id;
+                    $sale_product->category_id = $request->category_id[$i];
+                    $sale_product->unit_id = $request->unit_id[$i];
+                    $sale_product->product_id = $request->product_id[$i];
+                    $sale_product->quantity = $request->quantity[$i];
+                    $sale_product->amount = $request->amount[$i];
+                    $sale_product->created_by_user_id = Auth::User()->id;
+                    $sale_product->save();
+                }
+                if($request->package_id){
+                    $sale_package = new SalePackage();
+                    $sale_package->sale_id = $sale->id;
+                    $sale_package->store_id = $request->store_id;
+                    $sale_package->package_id = $request->package_id;
+                    $sale_package->amount = Package::whereid($request->package_id)->pluck('amount')->first();
+                    $sale_package->created_by_user_id = Auth::User()->id;
+                    $sale_package->save();
                 }
             }
 
@@ -133,43 +153,53 @@ class SaleController extends Controller
 
     public function show($id)
     {
-        $purchase = Sale::findOrFail($id);
-        return view('backend.common.sales.show', compact('purchase'));
+        $sale = Sale::findOrFail($id);
+        return view('backend.common.sales.show', compact('sale'));
     }
 
     public function edit($id)
     {
-        $purchase = Sale::findOrFail($id);
+        $sale = Sale::findOrFail($id);
         $packageProducts = Stock::wherepackage_id($id)->get();
         $categories = Category::wherestatus(1)->get();
         $products = Product::wherestatus(1)->get();
-        return view('backend.common.sales.edit', compact('purchase','packageProducts','categories','products'));
+        return view('backend.common.sales.edit', compact('sale','packageProducts','categories','products'));
     }
 
     public function update(Request $request, $id)
     {
         //dd($request->all());
         $this->validate($request, [
-            'name' => "required|min:1|max:190|unique:sales,name,$id",
-            'category_id' => 'required',
+            'voucher_date' => 'required',
+            'store_id' => 'required',
+            'customer_id' => 'required',
+            'total_quantity' => 'required',
+            'payable_amount' => 'required',
+            'total_sell_amount' => 'required',
+            'discount_amount' => 'required',
+            'paid_amount' => 'required',
+            'product_category_id.*' => 'required',
+            'product_id.*' => 'required',
+            'quantity.*' => 'required',
+            'amount.*' => 'required'
         ]);
 
         try {
-            $purchase = Sale::findOrFail($id);
-            $purchase->name = $request->name;
-            $purchase->amount = $request->amount;
-            // $purchase->status = $request->status;
-            $purchase->updated_by_user_id = Auth::User()->id;
-            if($purchase->save()){
+            $sale = Sale::findOrFail($id);
+            $sale->name = $request->name;
+            $sale->amount = $request->amount;
+            // $sale->status = $request->status;
+            $sale->updated_by_user_id = Auth::User()->id;
+            if($sale->save()){
                 DB::table('package_products')->wherepackage_id($id)->delete();
                 for($i=0; $i<count($request->category_id); $i++){
-                    $stock = new Stock();
-                    $stock->package_id = $id;
-                    $stock->product_id = $request->product_id[$i];
-                    $stock->quantity = $request->quantity[$i];
-                    $stock->created_by_user_id = Auth::User()->id;
-                    $stock->updated_by_user_id = Auth::User()->id;
-                    $stock->save();
+                    $sale_product = new Stock();
+                    $sale_product->package_id = $id;
+                    $sale_product->product_id = $request->product_id[$i];
+                    $sale_product->quantity = $request->quantity[$i];
+                    $sale_product->created_by_user_id = Auth::User()->id;
+                    $sale_product->updated_by_user_id = Auth::User()->id;
+                    $sale_product->save();
                 }
             }
             Toastr::success("Sale Updated Successfully", "Success");

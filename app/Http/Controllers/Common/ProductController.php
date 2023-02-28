@@ -80,6 +80,7 @@ class ProductController extends Controller
         $this->validate($request, [
             'name' => 'required|min:1|max:190|unique:products',
             'category_id' => 'required',
+            'unit_id' => 'required'
         ]);
 
         try {
@@ -87,7 +88,6 @@ class ProductController extends Controller
             $product->category_id = $request->category_id;
             $product->unit_id = $request->unit_id;
             $product->name = $request->name;
-            //$product->status = $request->status;
             $product->created_by_user_id = Auth::User()->id;
             $product->save();
 
@@ -118,7 +118,8 @@ class ProductController extends Controller
     {
         $this->validate($request, [
             'name' => "required|min:1|max:190|unique:products,name,$id",
-            'status' => 'required',
+            'category_id' => 'required',
+            'unit_id' => 'required'
         ]);
 
         try {
@@ -126,7 +127,6 @@ class ProductController extends Controller
             $product->category_id = $request->category_id;
             $product->unit_id = $request->unit_id;
             $product->name = $request->name;
-            $product->status = $request->status;
             $product->updated_by_user_id = Auth::User()->id;
             $product->save();
             Toastr::success("Product Updated Successfully", "Success");

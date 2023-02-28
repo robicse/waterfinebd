@@ -148,7 +148,7 @@
                                                 </td>
                                                 <td>Discount Amount: <span class="required">*</span>
                                                     <input type="text" class="form-control input-sm text-right"  onkeyup="discountAmount()"
-                                                    name="discount_amount" id="discount_amount" placeholder="0.00"
+                                                    name="discount_amount" id="discount_amount" value="0"
                                                     step="any" min="0" max="99999999999999">
                                                 </td>
                                                 <td>Paid Amount: <span class="required">*</span>

@@ -43,7 +43,7 @@
             </div>
         </div>
     </div>
-    <h2 class="text-center bold">Keyboard Shortcut</h2>
+    {{-- <h2 class="text-center bold">Keyboard Shortcut</h2>
     <section class="content">
         <div class="container-fluid">
             <div class="row">
@@ -85,7 +85,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> --}}
     <h2 class="text-center bold pt-4">Menu Area</h2>
     <section class="content">
         <div class="container-fluid">

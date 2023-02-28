@@ -76,7 +76,10 @@ class PackageController extends Controller
     {
         $this->validate($request, [
             'name' => 'required|min:1|max:190|unique:packages',
-            'category_id' => 'required',
+            'amount' => 'required',
+            'product_id.*' => 'required',
+            'category_id.*' => 'required',
+            'quantity.*' => 'required',
         ]);
 
         try {
@@ -122,17 +125,18 @@ class PackageController extends Controller
 
     public function update(Request $request, $id)
     {
-        //dd($request->all());
         $this->validate($request, [
             'name' => "required|min:1|max:190|unique:packages,name,$id",
-            'category_id' => 'required',
+            'amount' => 'required',
+            'product_id.*' => 'required',
+            'category_id.*' => 'required',
+            'quantity.*' => 'required',
         ]);
 
         try {
             $package = Package::findOrFail($id);
             $package->name = $request->name;
             $package->amount = $request->amount;
-            // $package->status = $request->status;
             $package->updated_by_user_id = Auth::User()->id;
             if($package->save()){
                 DB::table('package_products')->wherepackage_id($id)->delete();

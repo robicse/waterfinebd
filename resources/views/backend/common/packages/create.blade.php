@@ -66,7 +66,7 @@
                                     <table class="table table-responsive" id="table1">
                                         <thead>
                                             <tr>
-                                                <th style="width: 4%">Category</th>
+                                                <th style="width: 4%">Category <span class="required">*</span></th>
                                                 <th style="width: 20%">
                                                     Product <span class="required">*</span>
                                                     {{-- <button type="button" class="btn btn-primary btn-sm"
@@ -75,7 +75,7 @@
                                                         <i class="fa fa-plus"></i>
                                                     </button> --}}
                                                 </th>
-                                                <th style="width: 9%">Quantity</th>
+                                                <th style="width: 9%">Quantity <span class="required">*</span></th>
                                                 <th style="width: 10%">Action</th>
                                             </tr>
                                         </thead>

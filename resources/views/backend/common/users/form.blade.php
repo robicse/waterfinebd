@@ -1,3 +1,6 @@
+<?php
+$email_required = 1;
+?>
 <div class="row">
     <div class="form-group col-md-4">
         <label for="name" class="form-control-label">FUll Name * </label>
@@ -13,7 +16,7 @@
             <span class="text-danger alert">{{ $errors->first('username') }}</span>
         @endif
     </div>
-    @include('backend.common.component.email')
+    @include('backend.common.component.email',['required'=>$email_required])
     @include('backend.common.component.phone')
     <div class="form-group col-md-4">
         <label for="role">User Type  <span class="required">*</span></label>

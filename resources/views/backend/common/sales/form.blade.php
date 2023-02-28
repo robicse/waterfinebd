@@ -38,15 +38,14 @@ $status = '1';
             {!! Form::select('package_id', @$packages, null, [
                 'id' => 'package_id',
                 'class' => 'form-control',
-                'placeholder' => 'Select One',
-                'required'
+                'placeholder' => 'Select One'
             ]) !!}
         </div>
     </div>
     <div class="col-md-3">
         <div class="form-group">
             <label for="hc_voucher_number">Hard copy voucher number </label>
-            {!! Form::text('hc_voucher_number', null, ['id' => 'hc_voucher_number', 'class' => 'form-control', 'required', 'tabindex' => 4]) !!}
+            {!! Form::text('hc_voucher_number', null, ['id' => 'hc_voucher_number', 'class' => 'form-control', 'tabindex' => 4]) !!}
         </div>
     </div>
     @include('backend.common.component.comments')

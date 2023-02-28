@@ -67,7 +67,7 @@
                                     <th>Customer</th>
                                     <th>Total Quantity</th>
                                     <th>Payable Amount</th>
-                                    <th>Total Sell Amount</th>
+                                    <th>Total Sale Amount</th>
                                     <th>Paid Amount</th>
                                     <th>Discount Amount</th>
                                     <th>Status</th>
@@ -85,7 +85,7 @@
                                     <th>Customer</th>
                                     <th>Total Quantity</th>
                                     <th>Payable Amount</th>
-                                    <th>Total Sell Amount</th>
+                                    <th>Total Sale Amount</th>
                                     <th>Paid Amount</th>
                                     <th>Discount Amount</th>
                                     <th>Status</th>
@@ -172,7 +172,7 @@
                     {data: 'customer',name: 'customer'},
                     {data: 'total_quantity',name: 'total_quantity'},
                     {data: 'payable_amount',name: 'payable_amount'},
-                    {data: 'total_sell_amount',name: 'total_sell_amount'},
+                    {data: 'total_sale_amount',name: 'total_sale_amount'},
                     {data: 'paid_amount',name: 'paid_amount'},
                     {data: 'discount_amount',name: 'discount_amount'},
                     {data: 'status'},

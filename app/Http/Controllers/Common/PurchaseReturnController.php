@@ -86,8 +86,13 @@ class PurchaseReturnController extends Controller
     {
         // dd($request->all());
         $this->validate($request, [
-            // 'name' => 'required|min:1|max:190|unique:purchase-returns',
-            'category_id' => 'required',
+            'return_date' => 'required',
+            'store_id' => 'required',
+            'supplier_id' => 'required',
+            'total_quantity' => 'required',
+            'product_category_id.*' => 'required',
+            'product_id.*' => 'required',
+            'quantity.*' => 'required'
         ]);
 
         // try {
@@ -141,15 +146,19 @@ class PurchaseReturnController extends Controller
     {
         //dd($request->all());
         $this->validate($request, [
-            'name' => "required|min:1|max:190|unique:purchase-returns,name,$id",
-            'category_id' => 'required',
+            'return_date' => 'required',
+            'store_id' => 'required',
+            'supplier_id' => 'required',
+            'total_quantity' => 'required',
+            'product_category_id.*' => 'required',
+            'product_id.*' => 'required',
+            'quantity.*' => 'required'
         ]);
 
         try {
             $purchase_return = PurchaseReturn::findOrFail($id);
             $purchase_return->name = $request->name;
             $purchase_return->amount = $request->amount;
-            // $purchase_return->status = $request->status;
             $purchase_return->updated_by_user_id = Auth::User()->id;
             if($purchase_return->save()){
                 DB::table('package_products')->wherepackage_id($id)->delete();

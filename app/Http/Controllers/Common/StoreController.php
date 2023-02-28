@@ -96,11 +96,16 @@ class StoreController extends Controller
         $this->validate(
             $request,
             [
-                'name' => 'required|min:1|max:290',
+                'name' => 'required|min:1|max:290|unique:stores',
+                'location' => 'required',
+                'mobile' => 'required',
+                'email' => 'required',
+                'website' => 'required',
+                'address' => 'required',
             ]
         );
 
-        //  try {
+         try {
             DB::beginTransaction();
             $store = new Store();
             $store->created_by_user_id = $this->User->id;
@@ -123,17 +128,17 @@ class StoreController extends Controller
             DB::commit();
             Toastr::success('Store Update Successfully', 'Success');
             return redirect()->route(request()->segment(1) . '.stores.index');
-        // } catch (\Exception $e) {
-        //     DB::rollBack();
-        //     $response = ErrorTryCatch::createResponse(
-        //         false,
-        //         500,
-        //         'Internal Server Error.',
-        //         null
-        //     );
-        //     Toastr::error($response['message'], 'Error');
-        //     return back();
-        // }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $response = ErrorTryCatch::createResponse(
+                false,
+                500,
+                'Internal Server Error.',
+                null
+            );
+            Toastr::error($response['message'], 'Error');
+            return back();
+        }
     }
 
     public function show(Store $store)
@@ -170,7 +175,12 @@ class StoreController extends Controller
         $this->validate(
             $request,
             [
-                'name' => 'required|min:1|max:290',
+                'name' => 'required|min:1|max:290|unique:stores,' . $id,
+                'location' => 'required',
+                'mobile' => 'required',
+                'email' => 'required',
+                'website' => 'required',
+                'address' => 'required',
             ]
         );
 

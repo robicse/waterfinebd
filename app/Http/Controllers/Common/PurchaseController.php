@@ -86,11 +86,22 @@ class PurchaseController extends Controller
     {
         //dd($request->all());
         $this->validate($request, [
-            // 'name' => 'required|min:1|max:190|unique:purchases',
-            'category_id' => 'required',
+            'entry_date' => 'required',
+            'store_id' => 'required',
+            'supplier_id' => 'required',
+            'total_quantity' => 'required',
+            'total_buy_amount' => 'required',
+            'total_sell_amount' => 'required',
+            'discount_amount' => 'required',
+            'paid_amount' => 'required',
+            'product_category_id.*' => 'required',
+            'product_id.*' => 'required',
+            'quantity.*' => 'required',
+            'buy_price.*' => 'required',
+            'sell_price.*' => 'required'
         ]);
 
-        // try {
+        try {
             $purchase = new Purchase();
             $purchase->entry_date = $request->entry_date;
             $purchase->store_id = $request->store_id;
@@ -120,11 +131,11 @@ class PurchaseController extends Controller
 
             Toastr::success("Purchase Created Successfully", "Success");
             return redirect()->route(\Request::segment(1) . '.purchases.index');
-        // } catch (\Exception $e) {
-        //     $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
-        //     Toastr::error($response['message'], "Error");
-        //     return back();
-        // }
+        } catch (\Exception $e) {
+            $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
+            Toastr::error($response['message'], "Error");
+            return back();
+        }
     }
 
     public function show($id)
@@ -144,17 +155,26 @@ class PurchaseController extends Controller
 
     public function update(Request $request, $id)
     {
-        //dd($request->all());
         $this->validate($request, [
-            'name' => "required|min:1|max:190|unique:purchases,name,$id",
-            'category_id' => 'required',
+            'entry_date' => 'required',
+            'store_id' => 'required',
+            'supplier_id' => 'required',
+            'total_quantity' => 'required',
+            'total_buy_amount' => 'required',
+            'total_sell_amount' => 'required',
+            'discount_amount' => 'required',
+            'paid_amount' => 'required',
+            'product_category_id.*' => 'required',
+            'product_id.*' => 'required',
+            'quantity.*' => 'required',
+            'buy_price.*' => 'required',
+            'sell_price.*' => 'required'
         ]);
 
         try {
             $purchase = Purchase::findOrFail($id);
             $purchase->name = $request->name;
             $purchase->amount = $request->amount;
-            // $purchase->status = $request->status;
             $purchase->updated_by_user_id = Auth::User()->id;
             if($purchase->save()){
                 DB::table('package_products')->wherepackage_id($id)->delete();
