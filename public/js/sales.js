@@ -831,7 +831,7 @@ $(document).ready(function(e) {
     });
 
     /* ------------------------------
-     * Sell Gift Card modal
+     * Sale Gift Card modal
      ------------------------------- */
     $(document).on('click', '#sellGiftCard', function(e) {
         if (count == 1) {

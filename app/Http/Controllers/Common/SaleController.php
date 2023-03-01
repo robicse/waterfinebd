@@ -90,7 +90,7 @@ class SaleController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all());
+        dd($request->all());
         $this->validate($request, [
             'voucher_date' => 'required',
             'store_id' => 'required',
@@ -175,7 +175,7 @@ class SaleController extends Controller
             'customer_id' => 'required',
             'total_quantity' => 'required',
             'payable_amount' => 'required',
-            'total_sell_amount' => 'required',
+            'total_sale_amount' => 'required',
             'discount_amount' => 'required',
             'paid_amount' => 'required',
             'product_category_id.*' => 'required',

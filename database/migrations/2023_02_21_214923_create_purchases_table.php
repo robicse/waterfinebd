@@ -24,7 +24,7 @@ return new class extends Migration
             $table->float('total_buy_amount',16,2)->default(0);
             $table->float('paid_amount',16,2)->default(0);
             $table->float('discount_amount',16,2)->default(0);
-            $table->float('total_sell_amount',16,2)->default(0);
+            $table->float('total_sale_amount',16,2)->default(0);
             $table->tinyInteger('status')->default(1);
             $table->bigInteger('created_by_user_id')->unsigned()->nullable();
             $table->foreign('created_by_user_id')->references('id')->on('users')->onDelete('cascade');

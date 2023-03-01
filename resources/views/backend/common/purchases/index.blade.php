@@ -67,11 +67,11 @@
                                     <th>Supplier</th>
                                     <th>Total Quantity</th>
                                     <th>Total Buy Amount</th>
-                                    <th>Total Sell Amount</th>
+                                    <th>Total Sale Amount</th>
                                     <th>Paid Amount</th>
                                     <th>Discount Amount</th>
                                     <th>Status</th>
-                                    <th>Action</th>
+                                    {{-- <th>Action</th> --}}
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -85,11 +85,11 @@
                                     <th>Supplier</th>
                                     <th>Total Quantity</th>
                                     <th>Total Buy Amount</th>
-                                    <th>Total Sell Amount</th>
+                                    <th>Total Sale Amount</th>
                                     <th>Paid Amount</th>
                                     <th>Discount Amount</th>
                                     <th>Status</th>
-                                    <th>Action</th>
+                                    {{-- <th>Action</th> --}}
                                 </tr>
                                 </tfoot>
                             </table>
@@ -172,11 +172,11 @@
                     {data: 'supplier',name: 'supplier'},
                     {data: 'total_quantity',name: 'total_quantity'},
                     {data: 'total_buy_amount',name: 'total_buy_amount'},
-                    {data: 'total_sell_amount',name: 'total_sell_amount'},
+                    {data: 'total_sale_amount',name: 'total_sale_amount'},
                     {data: 'paid_amount',name: 'paid_amount'},
                     {data: 'discount_amount',name: 'discount_amount'},
                     {data: 'status'},
-                    {data: 'action', name: 'action', orderable: false, searchable: false},
+                    // {data: 'action', name: 'action', orderable: false, searchable: false},
                 ]
             });
         });

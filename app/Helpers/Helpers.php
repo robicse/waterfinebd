@@ -115,7 +115,7 @@ class Helper
     {
         $storeReportCount = [
             'purchaseAmount' => Purchase::wherestore_id($store_id)->sum('paid_amount'),
-            'saleAmount' => Sale::wherestore_id($store_id)->sum('total_sell_amount'),
+            'saleAmount' => Sale::wherestore_id($store_id)->sum('total_sale_amount'),
             'purchaseReturnAmount' => PurchaseReturn::wherestore_id($store_id)->sum('total_buy_amount'),
             'saleReturnAmount' => 0,
         ];

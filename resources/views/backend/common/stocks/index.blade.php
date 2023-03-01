@@ -67,7 +67,7 @@
                                     <th>Product</th>
                                     <th>Quantity</th>
                                     <th>Buy Amount</th>
-                                    <th>Sell Amount</th>
+                                    <th>Sale Amount</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -81,7 +81,7 @@
                                     <th>Product</th>
                                     <th>Quantity</th>
                                     <th>Buy Amount</th>
-                                    <th>Sell Amount</th>
+                                    <th>Sale Amount</th>
                                 </tr>
                                 </tfoot>
                             </table>

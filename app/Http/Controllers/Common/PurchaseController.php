@@ -91,7 +91,7 @@ class PurchaseController extends Controller
             'supplier_id' => 'required',
             'total_quantity' => 'required',
             'total_buy_amount' => 'required',
-            'total_sell_amount' => 'required',
+            'total_sale_amount' => 'required',
             'discount_amount' => 'required',
             'paid_amount' => 'required',
             'product_category_id.*' => 'required',
@@ -110,7 +110,7 @@ class PurchaseController extends Controller
             $purchase->total_buy_amount = $request->total_buy_amount;
             $purchase->paid_amount = $request->paid_amount;
             $purchase->discount_amount = $request->discount_amount;
-            $purchase->total_sell_amount = $request->total_sell_amount;
+            $purchase->total_sale_amount = $request->total_sale_amount;
             $purchase->status = 1;
             $purchase->created_by_user_id = Auth::User()->id;
             if($purchase->save()){
@@ -161,7 +161,7 @@ class PurchaseController extends Controller
             'supplier_id' => 'required',
             'total_quantity' => 'required',
             'total_buy_amount' => 'required',
-            'total_sell_amount' => 'required',
+            'total_sale_amount' => 'required',
             'discount_amount' => 'required',
             'paid_amount' => 'required',
             'product_category_id.*' => 'required',

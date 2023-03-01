@@ -1,5 +1,5 @@
 @extends('backend.layouts.master')
-@section("title","Sales Lists")
+@section("title","Sale Returns Lists")
 @push('css')
     <!-- DataTables -->
     <link rel="stylesheet" href="{{asset('backend/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
@@ -12,13 +12,13 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Sales</h1>
+                    <h1>Sale Returns</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item active"><a
                                 href="{{route(Request::segment(1).'.dashboard')}}">Home</a></li>
-                        <li class="breadcrumb-item active">sales</li>
+                        <li class="breadcrumb-item active">sale-returns</li>
                     </ol>
                 </div>
             </div>
@@ -34,17 +34,17 @@
                         <div class="card-header">
                             <h3 class="card-title">Sale Lists</h3>
                             <div class="float-right">
-                                @can('sales-create')
+                                {{-- @can('sale-returns-create') --}}
                                 {{-- <a href="{{ @url('/backend/demo_xlsx/sale.xlsx') }}"> <button class="btn btn-info">
                                         Download Demo <i class="fa fa-download"></i>
                                     </button></a> --}}
-                                <a href="{{route(Request::segment(1).'.sales.create')}}">
+                                <a href="{{route(Request::segment(1).'.sale-returns.create')}}">
                                     <button class="btn btn-success">
                                         <i class="fa fa-plus-circle"></i>
                                         Add
                                     </button>
                                 </a>
-                                @endcan
+                                {{-- @endcan --}}
                             </div>
                         </div>
                         <!-- /.card-header -->
@@ -62,14 +62,10 @@
                                 <thead>
                                 <tr>
                                     <th>Sl</th>
-                                    <th>Voucher Date</th>
+                                    <th>Return Date</th>
                                     <th>Store</th>
                                     <th>Customer</th>
                                     <th>Total Quantity</th>
-                                    <th>Payable Amount</th>
-                                    <th>Total Sale Amount</th>
-                                    <th>Paid Amount</th>
-                                    <th>Discount Amount</th>
                                     <th>Status</th>
                                     {{-- <th>Action</th> --}}
                                 </tr>
@@ -80,14 +76,10 @@
                                 <tfoot>
                                 <tr>
                                     <th>Sl</th>
-                                    <th>Voucher Date</th>
+                                    <th>Return Date</th>
                                     <th>Store</th>
                                     <th>Customer</th>
                                     <th>Total Quantity</th>
-                                    <th>Payable Amount</th>
-                                    <th>Total Sale Amount</th>
-                                    <th>Paid Amount</th>
-                                    <th>Discount Amount</th>
                                     <th>Status</th>
                                     {{-- <th>Action</th> --}}
                                 </tr>
@@ -164,17 +156,13 @@
                     'colvis'
 
                 ],
-                ajax: "{{ route(Request::segment(1).'.sales.index') }}",
+                ajax: "{{ route(Request::segment(1).'.sale-returns.index') }}",
                 columns: [
                     {data: 'id', name: 'id'},
-                    {data: 'voucher_date',name: 'voucher_date'},
+                    {data: 'return_date',name: 'return_date'},
                     {data: 'store',name: 'store'},
                     {data: 'customer',name: 'customer'},
                     {data: 'total_quantity',name: 'total_quantity'},
-                    {data: 'payable_amount',name: 'payable_amount'},
-                    {data: 'total_sale_amount',name: 'total_sale_amount'},
-                    {data: 'paid_amount',name: 'paid_amount'},
-                    {data: 'discount_amount',name: 'discount_amount'},
                     {data: 'status'},
                     // {data: 'action', name: 'action', orderable: false, searchable: false},
                 ]

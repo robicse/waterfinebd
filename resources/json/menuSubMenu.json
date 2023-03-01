@@ -145,6 +145,14 @@
                     "icon": "nav-icon fas fa-boxes",
                     "serial": 17,
                     "status": 1
+                },
+                {
+                    "parent_menu":"Sale Information",
+                    "name": "Sale Return",
+                    "slug": "sale-returns",
+                    "icon": "nav-icon fas fa-boxes",
+                    "serial": 17,
+                    "status": 1
                 }
             ]
         }
@@ -284,6 +292,18 @@
         },
         {
             "name":"sales-delete"
+        },
+        {
+            "name":"sales-return-list"
+        },
+        {
+            "name":"sales-return-create"
+        },
+        {
+            "name":"sales-return-edit"
+        },
+        {
+            "name":"sales-return-delete"
         }
     ]
 }

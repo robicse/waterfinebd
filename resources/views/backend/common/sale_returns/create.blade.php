@@ -1,5 +1,5 @@
 @extends('backend.layouts.master')
-@section('title', 'Sale Create')
+@section('title', 'Sale Return Create')
 @push('css')
     <link rel="stylesheet" href="{{ asset('backend/css/custom.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.min.css" rel="stylesheet">
@@ -13,13 +13,13 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Sale</h1>
+                    <h1>Sale Return</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{{ route(Request::segment(1) . '.dashboard') }}">Home</a>
                         </li>
-                        <li class="breadcrumb-item active">Sale</li>
+                        <li class="breadcrumb-item active">Sale Return</li>
                     </ol>
                 </div>
             </div>
@@ -33,10 +33,10 @@
                 <div class="col-12">
                     <div class="card card-info card-outline">
                         <div class="card-header">
-                            @can('sales-create')
-                            <h3 class="card-title">Sale Create</h3>
+                            @can('sale-returns-create')
+                            <h3 class="card-title">Sale Return Create</h3>
                             <div class="float-right">
-                                <a href="{{ route(Request::segment(1) . '.sales.index') }}">
+                                <a href="{{ route(Request::segment(1) . '.sale-returns.index') }}">
                                     <button class="btn btn-success">
                                         <i class="fa fa-plus-circle"></i>
                                         Back
@@ -59,8 +59,8 @@
                             @php
                             $sale = '';
                             @endphp
-                            {!! Form::open(['route' => Request::segment(1) . '.sales.store', 'method' => 'POST', 'files' => true]) !!}
-                            @include('backend.common.sales.form')
+                            {!! Form::open(['route' => Request::segment(1) . '.sale-returns.store', 'method' => 'POST', 'files' => true]) !!}
+                            @include('backend.common.sale_returns.form')
                             <div class="col-lg-12 col-md-12 ">
                                 <div id="dynamic" class="row card-info  card border  customcontent" >
                                     <table class="table table-responsive" id="table1">
@@ -70,10 +70,9 @@
                                                 <th>
                                                     Product <span class="required">*</span>
                                                 </th>
-                                                <th>Available Stock <span class="required">*</span></th>
                                                 <th>Quantity <span class="required">*</span></th>
-                                                <th>Unit <span class="required">*</span></th>
-                                                <th>Amount (Unit) <span class="required">*</span></th>
+                                                {{-- <th>Buy Price (Unit) <span class="required">*</span></th>
+                                                <th>Min Sell Price (Unit) <span class="required">*</span></th> --}}
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -94,13 +93,12 @@
                                                     </div>
                                                 </td>
                                                 <td>
+                                                    <div>
                                                     <select class="form-control product_id select2"
                                                         name="product_id[]" id="product_id_1"
-                                                        required onchange="getProductVal(1,this);">
+                                                        required>
                                                     </select>
-                                                </td>
-                                                <td>
-                                                    <input class="input-sm text-right form-control" type="number"name="available_stock_qty[]" id='available_stock_qty_1'>
+                                                    </div>
                                                 </td>
                                                 <td>
                                                     <input class="input-sm text-right form-control quantity" type="number" onkeyup="quantitySum()"
@@ -108,28 +106,21 @@
                                                         placeholder="0.00" data-cell="D1" step="any" min="0"
                                                         max="99999999999999" required data-format="0[.]00">
                                                 </td>
-                                                <td>
-                                                    <div>
-                                                        <select class="form-control unit_id select2"
-                                                            name="unit_id[]" required id="unit_id_1">
-                                                            <option value="">Select Unit</option>
-                                                            @if(count($units) > 0)
-                                                                @foreach($units as $unit)
-                                                                <option value="{{ $unit->id }}">{{ $unit->name }}</option>
-                                                                @endforeach
-                                                            @endif
-                                                        </select>
-                                                    </div>
-                                                </td>
-                                                <td>
+                                                {{-- <td>
                                                     <input type="number"  step="any"
-                                                        class="input-sm text-right amount
+                                                        class="input-sm text-right buy_price
                                                     form-control"
-                                                        placeholder="0.00" name="amount[]" onkeyup="amountSum()"
-                                                        id='amount_id_1' required data-format="0[.]00"
+                                                        placeholder="0.0000" name="buy_price[]" onkeyup="buyPriceSum()"
+                                                        id='buy_price_id_1' required data-format="0[.]00"
                                                         data-cell="C1" step="any" min="0"
                                                         max="99999999999999">
                                                 </td>
+                                                <td>
+                                                    <input type="text" class="form-control input-sm text-right sell_price" onkeyup="sellPriceSum()"
+                                                        name="sell_price[]" placeholder="0.00" data-cell="F1"
+                                                        data-format="0[.]00" data-formula=""
+                                                        step="any" min="0" max="99999999999999">
+                                                </td> --}}
                                                 <td>
                                                     <input type="button" class="btn btn-success addProduct"
                                                         value="+">
@@ -145,28 +136,28 @@
                                                         placeholder="0.00" data-cell="" step="any" min="0"
                                                         max="99999999999999" required data-format="0[.]00" readonly>
                                                 </td>
-                                                <td>Payable Amount: <span class="required">*</span>
+                                                {{-- <td>Total Buy Amount: <span class="required">*</span>
                                                     <input type="text" class="form-control input-sm text-right"
-                                                    name="payable_amount" id="payable_amount" placeholder="0.00" data-cell=""
+                                                    name="total_buy_amount" id="total_buy_amount" placeholder="0.00" data-cell=""
                                                     data-format="0[.]00" data-formula=""
-                                                    step="any" min="0" max="99999999999999" readonly>
+                                                    step="any" min="0" max="99999999999999">
+                                                </td>
+                                                <td>Total Sell Amount: <span class="required">*</span>
+                                                    <input type="text" class="form-control input-sm text-right"
+                                                    name="total_sale_amount" id="total_sale_amount" placeholder="0.00" data-cell=""
+                                                    data-format="0[.]00" data-formula=""
+                                                    step="any" min="0" max="99999999999999">
                                                 </td>
                                                 <td>Discount Amount: <span class="required">*</span>
                                                     <input type="text" class="form-control input-sm text-right"  onkeyup="discountAmount()"
                                                     name="discount_amount" id="discount_amount" placeholder="0.00"
                                                     step="any" min="0" max="99999999999999">
                                                 </td>
-                                                <td>Total Sale Amount: <span class="required">*</span>
-                                                    <input type="text" class="form-control input-sm text-right"
-                                                    name="total_sale_amount" id="total_sale_amount" placeholder="0.00" data-cell=""
-                                                    data-format="0[.]00" data-formula=""
-                                                    step="any" min="0" max="99999999999999" readonly>
-                                                </td>
                                                 <td>Paid Amount: <span class="required">*</span>
                                                     <input type="text" class="form-control input-sm text-right"
                                                     name="paid_amount" id="paid_amount" placeholder="0.00"
-                                                    step="any" min="0" max="99999999999999" readonly>
-                                                </td>
+                                                    step="any" min="0" max="99999999999999">
+                                                </td> --}}
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -201,7 +192,6 @@
             $('.select2').select2();
             $(document).on('click', '.addProduct', function() {
                 var category = $('.category_id').html();
-                var unit = $('.unit_id').html();
                 var n = ($('#itemlist tr').length - 0) + 1;
                 var tr =
                     '<tr>' +
@@ -209,17 +199,10 @@
                     n + '" onchange="getCategoryVal(' + n + ',this);" required>' + category +
                     '</select></div></td>' +
                     '<td width="12%"><select class="form-control product_id select2"  name="product_id[]" id="product_id_' +
-                    n + '" onchange="getProductVal(' + n + ',this);" required></select> </td>' +
-                    '<td width="12%"><input type="number"  class="input-sm text-right form-control" name="available_stock_qty[]" id="available_stock_qty_' +
-                    n + '"></td>' +
+                    n + '" required></select> </td>' +
                     '<td width="12%"><input type="number"  class="input-sm text-right form-control quantity" onkeyup="quantitySum()" name="quantity[]" id="quantity_id_' +
                     n +
-                    '" required   step="any" min="0" max="99999999999999" placeholder="0.00" data-cell="" data-format="" data-format="0[.]00"><span id="available_stock_qty_' + n + '"></span></td>' +
-                    '<td width="12%"><div><select  class="form-control unit_id select2" name="unit_id[]" id="unit_id_' +
-                    n + '" required>' + unit +
-                    '</select></div></td>' +
-                    '<td width="12%"><input type="number" class="input-sm text-right form-control amount" onkeyup="amountSum()"  data-format="0[.]00" name="amount[]" id="amount_id_' +
-                    n + '" data-cell=""   value="" required  step="any" min="0" max="99999999999999"></td>' +
+                    '" required   step="any" min="0" max="99999999999999" placeholder="0.00" data-cell="" data-format="" data-format="0[.]00"></td>' +
                     '<td><span class="d-inline-flex"><input type="button"  class="btn btn-success addProduct" value="+"> <input type="button" class="btn btn-danger delete float-left" style="margin-left: 5px" value="x" title="Remove This Product"></span></td>' +
                     '</tr>';
                 $('#itemlist').append(tr);
@@ -234,10 +217,10 @@
         });
 
         function getCategoryVal(row, sel) {
-            console.log('getCategoryVal')
+            console.log('111')
             var current_row = row;
             var current_category_id = sel.value;
-            // console.log('current_category_id',current_category_id)
+            console.log('current_category_id',current_category_id)
 
             if (current_row > 1) {
                 for (let index = 1; index < current_row; index++) {
@@ -259,7 +242,7 @@
                     current_category_id: current_category_id
                 },
                 success: function(res) {
-                    // console.log('res', res)
+                    console.log('res', res)
                     $(("#product_id_" + current_row)).html(res.data.productOptions);
                 },
                 error: function(err) {
@@ -268,79 +251,30 @@
             })
         }
 
-        function getProductVal(row, sel) {
-            var store_id = $('#store_id').val();
-            if(store_id){
-                var current_row = row;
-                var current_product_id = sel.value;
-                if(current_row > 1){
-                    var previous_row = current_row - 1;
-                    var previous_product_id = $('#product_id_'+previous_row).val();
-                    if(previous_product_id === current_product_id){
-                        $('#product_id_'+current_row).val('');
-                        alert('You selected same product, Please selected another product!');
-                        return false
-                    }
-                }
-
-                // check product services
-                var all_product_ids = [];
-                $(".product_id").each(function(i,e) {
-                    all_product_ids[i] = this.value;
-                });
-
-                $.ajax({
-                    url : "{{URL(Request::segment(1) . '/sale-relation-data')}}",
-                    method : "get",
-                    data : {
-                        store_id : store_id,
-                        current_product_id : current_product_id,
-                        all_product_ids : all_product_ids
-                    },
-                    success : function (res){
-                        // console.log(res.data)
-                        $("#unit_id_"+current_row).html(res.data.unitOptions);
-                        $("#available_stock_qty_"+current_row).val(res.data.current_stock);
-                        $("#amount_id_"+current_row).val(res.data.sale_price);
-                    },
-                    error : function (err){
-                        console.log(err)
-                    }
-                })
-            }else{
-                alert('Please select first store!');
-                location.reload();
-            }
-        }
-
         function quantitySum(){
-            console.log('quantitySum')
             var t = parseInt(0);
             $('.quantity').each(function(i,e){
                 var amt = $(this).val();
                 t += parseInt(amt);
             });
             $('#total_quantity').val(t);
-            amountSum();
         }
 
-        function amountSum(){
-            console.log('amountSum')
+        function buyPriceSum(){
+            console.log('ss')
             var t = parseFloat(0);
-            $('.amount').each(function(i,e){
+            $('.buy_price').each(function(i,e){
                 var amt = $(this).val();
                 t += parseFloat(amt);
             });
-            $('#payable_amount').val(t);
+            $('#total_buy_amount').val(t);
             $('#paid_amount').val(t);
-            $('#total_sale_amount').val(t);
-            $('#discount_amount').val(0);
         }
 
-        function salePriceSum(){
-            console.log('salePriceSum')
+        function sellPriceSum(){
+            console.log('ss')
             var t = parseFloat(0);
-            $('.sale_price').each(function(i,e){
+            $('.sell_price').each(function(i,e){
                 var amt = $(this).val();
                 t += parseFloat(amt);
             });
@@ -348,8 +282,7 @@
         }
 
         function discountAmount(){
-            console.log('discountAmount')
-            var total = $('#payable_amount').val();
+            var total = $('#total_buy_amount').val();
             var paid_amount = parseFloat(total) - parseFloat($('#discount_amount').val());
             $('#paid_amount').val(paid_amount);
         }

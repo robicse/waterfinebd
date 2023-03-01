@@ -14,7 +14,7 @@ $status = '1';
             <label>Store <span class="required">*</span></label>
             {!! Form::select('store_id', @$stores, null, [
                 'id' => 'store_id',
-                'class' => 'form-control',
+                'class' => 'form-control select2',
                 'placeholder' => 'Select One',
                 'required',
                 'autofocus'
@@ -26,7 +26,7 @@ $status = '1';
             <label>Supplier <span class="required">*</span></label>
             {!! Form::select('supplier_id', @$suppliers, null, [
                 'id' => 'supplier_id',
-                'class' => 'form-control',
+                'class' => 'form-control select2',
                 'placeholder' => 'Select One',
                 'required'
             ]) !!}

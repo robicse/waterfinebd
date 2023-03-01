@@ -26,7 +26,9 @@ return new class extends Migration
             $table->bigInteger('unit_id')->unsigned()->nullable();
             $table->foreign('unit_id')->references('id')->on('units')->onDelete('cascade');
             $table->integer('quantity')->default(0);
+            $table->integer('already_return_quantity')->default(0);
             $table->float('amount',16,2)->default(0);
+            $table->float('profit',16,2)->default(0);
             $table->bigInteger('created_by_user_id')->unsigned()->nullable();
             $table->foreign('created_by_user_id')->references('id')->on('users')->onDelete('cascade');
             $table->bigInteger('updated_by_user_id')->unsigned()->nullable();

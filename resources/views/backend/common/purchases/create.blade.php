@@ -72,7 +72,7 @@
                                                 </th>
                                                 <th>Quantity <span class="required">*</span></th>
                                                 <th>Buy Price (Unit) <span class="required">*</span></th>
-                                                <th>Min Sell Price (Unit) <span class="required">*</span></th>
+                                                <th>Min Sale Price (Unit) <span class="required">*</span></th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -132,19 +132,19 @@
                                                     <input class="input-sm text-right form-control" type="number"
                                                         name="total_quantity" id='total_quantity'
                                                         placeholder="0.00" data-cell="" step="any" min="0"
-                                                        max="99999999999999" required data-format="0[.]00">
+                                                        max="99999999999999" required data-format="0[.]00" readonly>
                                                 </td>
                                                 <td>Total Buy Amount: <span class="required">*</span>
                                                     <input type="text" class="form-control input-sm text-right"
                                                     name="total_buy_amount" id="total_buy_amount" placeholder="0.00" data-cell=""
                                                     data-format="0[.]00" data-formula=""
-                                                    step="any" min="0" max="99999999999999">
+                                                    step="any" min="0" max="99999999999999" readonly>
                                                 </td>
-                                                <td>Total Sell Amount: <span class="required">*</span>
+                                                <td>Total Sale Amount: <span class="required">*</span>
                                                     <input type="text" class="form-control input-sm text-right"
-                                                    name="total_sell_amount" id="total_sell_amount" placeholder="0.00" data-cell=""
+                                                    name="total_sale_amount" id="total_sale_amount" placeholder="0.00" data-cell=""
                                                     data-format="0[.]00" data-formula=""
-                                                    step="any" min="0" max="99999999999999">
+                                                    step="any" min="0" max="99999999999999" readonly>
                                                 </td>
                                                 <td>Discount Amount: <span class="required">*</span>
                                                     <input type="text" class="form-control input-sm text-right"  onkeyup="discountAmount()"
@@ -154,7 +154,7 @@
                                                 <td>Paid Amount: <span class="required">*</span>
                                                     <input type="text" class="form-control input-sm text-right"
                                                     name="paid_amount" id="paid_amount" placeholder="0.00"
-                                                    step="any" min="0" max="99999999999999">
+                                                    step="any" min="0" max="99999999999999" readonly>
                                                 </td>
                                             </tr>
                                         </tfoot>
@@ -279,7 +279,7 @@
                 var amt = $(this).val();
                 t += parseFloat(amt);
             });
-            $('#total_sell_amount').val(t);
+            $('#total_sale_amount').val(t);
         }
 
         function discountAmount(){

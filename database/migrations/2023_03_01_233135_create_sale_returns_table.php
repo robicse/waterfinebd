@@ -13,20 +13,19 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('sales', function (Blueprint $table) {
+        Schema::create('sale_returns', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('voucher_date',100)->nullable();
+            $table->string('return_date',100)->nullable();
             $table->bigInteger('store_id')->unsigned()->nullable();
             $table->foreign('store_id')->references('id')->on('stores')->onDelete('cascade');
+            $table->bigInteger('sale_id')->unsigned()->nullable();
+            $table->foreign('sale_id')->references('id')->on('sales')->onDelete('cascade');
             $table->bigInteger('customer_id')->unsigned()->nullable();
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
             $table->float('total_quantity',16,2)->default(0);
-            $table->float('payable_amount',16,2)->default(0);
-            $table->float('discount_amount',16,2)->default(0);
-            $table->float('total_sale_amount',16,2)->default(0);
-            $table->float('paid_amount',16,2)->default(0);
-            $table->float('profit_amount',16,2)->default(0);
-            $table->string('hc_voucher_number',50)->nullable();
+            $table->float('receivable_amount',16,2)->default(0);
+            $table->float('receive_amount',16,2)->default(0);
+            $table->float('profit_minus_amount',16,2)->default(0);
             $table->text('comments',255)->nullable();
             $table->tinyInteger('status')->default(1);
             $table->bigInteger('created_by_user_id')->unsigned()->nullable();
@@ -45,6 +44,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sales');
+        Schema::dropIfExists('sale_returns');
     }
 };

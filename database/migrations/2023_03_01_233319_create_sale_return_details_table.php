@@ -13,22 +13,21 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('sales', function (Blueprint $table) {
+        Schema::create('sale_return_details', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('voucher_date',100)->nullable();
+            $table->bigInteger('sale_return_id')->unsigned()->nullable();
+            $table->foreign('sale_return_id')->references('id')->on('sale_returns')->onDelete('cascade');
             $table->bigInteger('store_id')->unsigned()->nullable();
             $table->foreign('store_id')->references('id')->on('stores')->onDelete('cascade');
-            $table->bigInteger('customer_id')->unsigned()->nullable();
-            $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
-            $table->float('total_quantity',16,2)->default(0);
-            $table->float('payable_amount',16,2)->default(0);
-            $table->float('discount_amount',16,2)->default(0);
-            $table->float('total_sale_amount',16,2)->default(0);
-            $table->float('paid_amount',16,2)->default(0);
-            $table->float('profit_amount',16,2)->default(0);
-            $table->string('hc_voucher_number',50)->nullable();
-            $table->text('comments',255)->nullable();
-            $table->tinyInteger('status')->default(1);
+            $table->bigInteger('category_id')->unsigned()->nullable();
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
+            $table->bigInteger('product_id')->unsigned()->nullable();
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+            $table->bigInteger('unit_id')->unsigned()->nullable();
+            $table->foreign('unit_id')->references('id')->on('units')->onDelete('cascade');
+            $table->integer('quantity')->default(0);
+            $table->float('amount',16,2)->default(0);
+            $table->float('profit_minus',16,2)->default(0);
             $table->bigInteger('created_by_user_id')->unsigned()->nullable();
             $table->foreign('created_by_user_id')->references('id')->on('users')->onDelete('cascade');
             $table->bigInteger('updated_by_user_id')->unsigned()->nullable();
@@ -45,6 +44,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sales');
+        Schema::dropIfExists('sale_return_details');
     }
 };

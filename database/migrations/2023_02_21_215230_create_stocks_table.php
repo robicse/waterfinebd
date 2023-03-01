@@ -24,6 +24,7 @@ return new class extends Migration
             $table->bigInteger('product_id')->unsigned()->nullable();
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->integer('quantity')->default(0);
+            $table->integer('already_return_quantity')->default(0);
             $table->float('buy_price',16,2)->default(0);
             $table->float('sell_price',16,2)->default(0);
             $table->tinyInteger('status')->default(1);

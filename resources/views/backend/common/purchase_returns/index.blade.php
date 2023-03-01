@@ -67,7 +67,7 @@
                                     <th>Supplier</th>
                                     <th>Total Quantity</th>
                                     <th>Status</th>
-                                    <th>Action</th>
+                                    {{-- <th>Action</th> --}}
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -81,7 +81,7 @@
                                     <th>Supplier</th>
                                     <th>Total Quantity</th>
                                     <th>Status</th>
-                                    <th>Action</th>
+                                    {{-- <th>Action</th> --}}
                                 </tr>
                                 </tfoot>
                             </table>
@@ -164,7 +164,7 @@
                     {data: 'supplier',name: 'supplier'},
                     {data: 'total_quantity',name: 'total_quantity'},
                     {data: 'status'},
-                    {data: 'action', name: 'action', orderable: false, searchable: false},
+                    // {data: 'action', name: 'action', orderable: false, searchable: false},
                 ]
             });
         });

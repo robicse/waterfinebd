@@ -15,6 +15,7 @@ use App\Http\Controllers\Common\PurchaseController;
 use App\Http\Controllers\Common\StockController;
 use App\Http\Controllers\Common\PurchaseReturnController;
 use App\Http\Controllers\Common\SaleController;
+use App\Http\Controllers\Common\SaleReturnController;
 
 Route::post('update-status', [CommonController::class, 'updateStatus'])->name('updateStatus');
 Route::resource('roles', RoleController::class);
@@ -36,4 +37,5 @@ Route::resource('stocks', StockController::class);
 Route::resource('purchase-returns', PurchaseReturnController::class);
 Route::resource('sales', SaleController::class);
 Route::get('sale-relation-data',[CommonController::class, 'SaleRelationData']);
+Route::resource('sale-returns', SaleReturnController::class);
 
