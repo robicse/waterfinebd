@@ -13,16 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('products', function (Blueprint $table) {
+        Schema::create('payment_types', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('category_id')->unsigned()->nullable();
-            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
-            $table->bigInteger('unit_id')->unsigned()->nullable();
-            $table->foreign('unit_id')->references('id')->on('units')->onDelete('cascade');
-            $table->bigInteger('vat_id')->unsigned()->nullable();
-            $table->foreign('vat_id')->references('id')->on('vats')->onDelete('cascade');
-            $table->string('name');
-            $table->string('barcode')->nullable();
+            $table->string('name',100)->nullable();
             $table->tinyInteger('status')->default(1);
             $table->bigInteger('created_by_user_id')->unsigned()->nullable();
             $table->foreign('created_by_user_id')->references('id')->on('users')->onDelete('cascade');
@@ -40,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('products');
+        Schema::dropIfExists('payment_types');
     }
 };

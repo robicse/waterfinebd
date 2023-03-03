@@ -66,10 +66,10 @@
                                     <th>Store</th>
                                     <th>Customer</th>
                                     <th>Total Quantity</th>
-                                    <th>Payable Amount</th>
-                                    <th>Total Sale Amount</th>
+                                    <th>Sub Total</th>
+                                    <th>Grand Total</th>
                                     <th>Paid Amount</th>
-                                    <th>Discount Amount</th>
+                                    <th>Due Amount</th>
                                     <th>Status</th>
                                     {{-- <th>Action</th> --}}
                                 </tr>
@@ -84,10 +84,10 @@
                                     <th>Store</th>
                                     <th>Customer</th>
                                     <th>Total Quantity</th>
-                                    <th>Payable Amount</th>
-                                    <th>Total Sale Amount</th>
+                                    <th>Sub Total</th>
+                                    <th>Grand Total</th>
                                     <th>Paid Amount</th>
-                                    <th>Discount Amount</th>
+                                    <th>Due Amount</th>
                                     <th>Status</th>
                                     {{-- <th>Action</th> --}}
                                 </tr>
@@ -171,10 +171,10 @@
                     {data: 'store',name: 'store'},
                     {data: 'customer',name: 'customer'},
                     {data: 'total_quantity',name: 'total_quantity'},
-                    {data: 'payable_amount',name: 'payable_amount'},
-                    {data: 'total_sale_amount',name: 'total_sale_amount'},
+                    {data: 'sub_total',name: 'sub_total'},
+                    {data: 'grand_total',name: 'grand_total'},
                     {data: 'paid_amount',name: 'paid_amount'},
-                    {data: 'discount_amount',name: 'discount_amount'},
+                    {data: 'due_amount',name: 'due_amount'},
                     {data: 'status'},
                     // {data: 'action', name: 'action', orderable: false, searchable: false},
                 ]

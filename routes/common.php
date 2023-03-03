@@ -37,5 +37,6 @@ Route::resource('stocks', StockController::class);
 Route::resource('purchase-returns', PurchaseReturnController::class);
 Route::resource('sales', SaleController::class);
 Route::get('sale-relation-data',[CommonController::class, 'SaleRelationData']);
+Route::post('find-product-info', [CommonController::class, 'FindProductInfo']);
 Route::resource('sale-returns', SaleReturnController::class);
 

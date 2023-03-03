@@ -21,10 +21,15 @@ return new class extends Migration
             $table->bigInteger('customer_id')->unsigned()->nullable();
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
             $table->float('total_quantity',16,2)->default(0);
-            $table->float('payable_amount',16,2)->default(0);
-            $table->float('discount_amount',16,2)->default(0);
-            $table->float('total_sale_amount',16,2)->default(0);
+            $table->float('sub_total', 16, 2)->default(0);
+            $table->enum('discount_type', ['Flat', 'Percentage'])->nullable();
+            $table->float('discount_percent', 16, 2)->nullable();
+            $table->float('discount_amount',16,2)->nullable();
+            $table->float('after_discount', 16, 2)->nullable();
+            $table->float('total_vat', 16, 2)->nullable();
+            $table->float('grand_total',16,2)->default(0);
             $table->float('paid_amount',16,2)->default(0);
+            $table->float('due_amount',16,2)->default(0);
             $table->float('profit_amount',16,2)->default(0);
             $table->string('hc_voucher_number',50)->nullable();
             $table->text('comments',255)->nullable();

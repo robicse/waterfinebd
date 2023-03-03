@@ -75,4 +75,26 @@ class CommonController extends Controller
 
         return response()->json(['success'=>true,'data'=>$options]);
     }
+
+    public function FindProductInfo(Request $request)
+    {
+        if ($request->has('q')) {
+            $data = DB::table('products')
+                ->join('stocks', 'stocks.product_id', '=', 'products.id')
+                ->where(function ($query) use ($request) {
+                    $query->where('products.name', 'like', '%' . $request->q . '%');
+                })
+                ->where('products.status', '=', 1)
+                ->where('stocks.store_id', '=', $request->store_id)
+                //->where('van_route_current_stocks.current_stock_qty', '>=', 1)
+                ->select('products.name', 'products.barcode', 'products.id',  'products.status', 'products.unit_id', 'products.vat_id')
+                ->get();
+
+            if ($data) {
+                return response()->json($data);
+            } else {
+                return response()->json(['success' => false, 'customer' => 'Error!!']);
+            }
+        }
+    }
 }

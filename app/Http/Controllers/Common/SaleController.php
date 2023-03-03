@@ -6,6 +6,8 @@ use DB;
 use App\Helpers\ErrorTryCatch;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\PaymentReceipt;
+use App\Models\PaymentType;
 use App\Models\Category;
 use App\Models\Unit;
 use App\Models\Sale;
@@ -80,65 +82,111 @@ class SaleController extends Controller
 
     public function create()
     {
+        $payment_types = PaymentType::whereIn('name', ['Cash', 'Credit'])->get();
         $stores = Store::wherestatus(1)->pluck('name','id');
         $customers = Customer::wherestatus(1)->pluck('name','id');
         $categories = Category::wherestatus(1)->get();
         $units = Unit::wherestatus(1)->get();
         $packages = Package::wherestatus(1)->pluck('name','id');
-        return view('backend.common.sales.create', compact('stores','customers','categories','units','packages'));
+        return view('backend.common.sales.create', compact('stores','customers','categories','units','packages','payment_types'));
     }
 
     public function store(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         $this->validate($request, [
             'voucher_date' => 'required',
             'store_id' => 'required',
             'customer_id' => 'required',
             'total_quantity' => 'required',
-            'payable_amount' => 'required',
-            'total_sale_amount' => 'required',
-            'discount_amount' => 'required',
-            'paid_amount' => 'required',
-            'product_category_id.*' => 'required',
+            'sub_total' => 'required',
+            'grand_total' => 'required',
+            //'discount' => 'required',
+            'paid' => 'required',
+            'due' => 'required',
             'product_id.*' => 'required',
-            'quantity.*' => 'required',
-            'amount.*' => 'required'
+            'qty.*' => 'required',
+            'sale_price.*' => 'required'
         ]);
 
         // try {
+            $voucher_date = $request->voucher_date;
+            $store_id = $request->store_id;
+            $customer_id = $request->customer_id;
+            $total_quantity = $request->total_quantity;
+            $sub_total = $request->sub_total;
+            $discount_amount = $request->discount;
+            $grand_total = $request->grand_total;
+            $paid_amount = $request->paid;
+            $due_amount = $request->due;
+
             $sale = new Sale();
-            $sale->voucher_date = $request->voucher_date;
-            $sale->store_id = $request->store_id;
-            $sale->customer_id = $request->customer_id;
-            $sale->total_quantity = $request->total_quantity;
-            $sale->payable_amount = $request->payable_amount;
-            $sale->discount_amount = $request->discount_amount;
-            $sale->total_sale_amount = $request->total_sale_amount;
-            $sale->paid_amount = $request->paid_amount;
+            $sale->voucher_date = $voucher_date;
+            $sale->store_id = $store_id;
+            $sale->customer_id = $customer_id;
+            $sale->total_quantity = $total_quantity;
+            $sale->sub_total = $sub_total;
+            $sale->discount_amount = $discount_amount;
+            $sale->grand_total = $grand_total;
+            $sale->paid_amount = $paid_amount;
+            $sale->due_amount = $due_amount;
+            $product_id = $request->product_id;
+            $qty = $request->qty;
+            $sale_price = $request->sale_price;
+            $package_id = $request->package_id;
+
             $sale->status = 1;
             $sale->created_by_user_id = Auth::User()->id;
             if($sale->save()){
-                for($i=0; $i<count($request->category_id); $i++){
+                for($i=0; $i<count($product_id); $i++){
+                    $product = Product::whereid($product_id[$i])->first();
                     $sale_product = new SaleProduct();
                     $sale_product->sale_id = $sale->id;
-                    $sale_product->store_id = $request->store_id;
-                    $sale_product->category_id = $request->category_id[$i];
-                    $sale_product->unit_id = $request->unit_id[$i];
-                    $sale_product->product_id = $request->product_id[$i];
-                    $sale_product->quantity = $request->quantity[$i];
-                    $sale_product->amount = $request->amount[$i];
+                    $sale_product->store_id = $store_id;
+                    $sale_product->category_id =$product->category_id;
+                    $sale_product->unit_id = $product->unit_id;
+                    $sale_product->product_id = $product_id[$i];
+                    $sale_product->qty = $qty[$i];
+                    $sale_product->sale_price = $sale_price[$i];
                     $sale_product->created_by_user_id = Auth::User()->id;
                     $sale_product->save();
                 }
-                if($request->package_id){
+                if($package_id){
                     $sale_package = new SalePackage();
                     $sale_package->sale_id = $sale->id;
-                    $sale_package->store_id = $request->store_id;
-                    $sale_package->package_id = $request->package_id;
-                    $sale_package->amount = Package::whereid($request->package_id)->pluck('amount')->first();
+                    $sale_package->store_id = $store_id;
+                    $sale_package->package_id = $package_id;
+                    $sale_package->amount = Package::whereid($package_id)->pluck('amount')->first();
                     $sale_package->created_by_user_id = Auth::User()->id;
                     $sale_package->save();
+                }
+
+                // for due amount > 0
+                if($due_amount > 0){
+                    $payment_receipt = new PaymentReceipt();
+                    $payment_receipt->date = date('Y-m-d');
+                    $payment_receipt->store_id = $store_id;
+                    $payment_receipt->order_type = 'Sale';
+                    $payment_receipt->order_id = $sale->id;
+                    $payment_receipt->customer_id = $customer_id;
+                    $payment_receipt->order_type_id = 2;
+                    $payment_receipt->amount = $due_amount;
+                    $payment_receipt->created_by_user_id = Auth::User()->id;
+                    $payment_receipt->save();
+                }
+                // for paid amount > 0
+                if($paid_amount > 0){
+                    $payment_receipt = new PaymentReceipt();
+                    $payment_receipt->date = date('Y-m-d');
+                    $payment_receipt->store_id = $store_id;
+                    $payment_receipt->order_type = 'Sale';
+                    $payment_receipt->order_id = $sale->id;
+                    $payment_receipt->customer_id = $customer_id;
+                    $payment_receipt->order_type_id = 1;
+                    $payment_receipt->payment_type_id = 1;
+                    $payment_receipt->amount = $paid_amount;
+                    $payment_receipt->created_by_user_id = Auth::User()->id;
+                    $payment_receipt->save();
                 }
             }
 

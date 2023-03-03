@@ -3,9 +3,6 @@
 @push('css')
     <link rel="stylesheet" href="{{ asset('backend/css/custom.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css"
-        integrity="sha512-aOG0c6nPNzGk+5zjwyJaoRUgCdOrfSDhmMID2u4+OIslr0GjpLKo7Xm0Ao3xmpM4T8AmIouRkqwj1nrdVsLKEQ=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
 @endpush
 @section('content')
     <!-- Content Header (Page header) -->
@@ -13,7 +10,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Sale</h1>
+                    <h1>Sale Create </h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -33,8 +30,7 @@
                 <div class="col-12">
                     <div class="card card-info card-outline">
                         <div class="card-header">
-                            @can('sales-create')
-                            <h3 class="card-title">Sale Create</h3>
+                            <h3 class="card-title">Sale </h3>
                             <div class="float-right">
                                 <a href="{{ route(Request::segment(1) . '.sales.index') }}">
                                     <button class="btn btn-success">
@@ -43,7 +39,6 @@
                                     </button>
                                 </a>
                             </div>
-                            @endcan
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
@@ -56,261 +51,602 @@
                                     </ul>
                                 </div>
                             @endif
-                            @php
-                            $sale = '';
-                            @endphp
                             {!! Form::open(['route' => Request::segment(1) . '.sales.store', 'method' => 'POST', 'files' => true]) !!}
-                            @include('backend.common.sales.form')
-                            <div class="col-lg-12 col-md-12 ">
-                                <div id="dynamic" class="row card-info  card border  customcontent" >
-                                    <table class="table table-responsive" id="table1">
-                                        <thead>
-                                            <tr>
-                                                <th>Category <span class="required">*</span></th>
-                                                <th>
-                                                    Product <span class="required">*</span>
-                                                </th>
-                                                <th>Available Stock <span class="required">*</span></th>
-                                                <th>Quantity <span class="required">*</span></th>
-                                                <th>Unit <span class="required">*</span></th>
-                                                <th>Amount (Unit) <span class="required">*</span></th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="itemlist">
-                                            <tr>
-                                                <td>
-                                                    <div>
-                                                        <select class="form-control category_id select2"
-                                                            name="category_id[]" required id="category_id_1"
-                                                            onchange="getCategoryVal(1,this);">
-                                                            <option value="">Select Category</option>
-                                                            @if(count($categories) > 0)
-                                                                @foreach($categories as $category)
-                                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                                                @endforeach
-                                                            @endif
-                                                        </select>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <select class="form-control product_id select2"
-                                                        name="product_id[]" id="product_id_1"
-                                                        required onchange="getProductVal(1,this);">
-                                                    </select>
-                                                </td>
-                                                <td>
-                                                    <input class="input-sm text-right form-control" type="number"name="available_stock_qty[]" id='available_stock_qty_1'>
-                                                </td>
-                                                <td>
-                                                    <input class="input-sm text-right form-control quantity" type="number" onkeyup="quantitySum()"
-                                                        name="quantity[]" id='quantity_id_1'
-                                                        placeholder="0.00" data-cell="D1" step="any" min="0"
-                                                        max="99999999999999" required data-format="0[.]00">
-                                                </td>
-                                                <td>
-                                                    <div>
-                                                        <select class="form-control unit_id select2"
-                                                            name="unit_id[]" required id="unit_id_1">
-                                                            <option value="">Select Unit</option>
-                                                            @if(count($units) > 0)
-                                                                @foreach($units as $unit)
-                                                                <option value="{{ $unit->id }}">{{ $unit->name }}</option>
-                                                                @endforeach
-                                                            @endif
-                                                        </select>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <input type="number"  step="any"
-                                                        class="input-sm text-right amount
-                                                    form-control"
-                                                        placeholder="0.00" name="amount[]" onkeyup="amountSum()"
-                                                        id='amount_id_1' required data-format="0[.]00"
-                                                        data-cell="C1" step="any" min="0"
-                                                        max="99999999999999">
-                                                </td>
-                                                <td>
-                                                    <input type="button" class="btn btn-success addProduct"
-                                                        value="+">
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                        <tfoot>
-                                            <tr>
-                                                <td>
-                                                    Total Quantity: <span class="required">*</span>
-                                                    <input class="input-sm text-right form-control" type="number"
-                                                        name="total_quantity" id='total_quantity'
-                                                        placeholder="0.00" data-cell="" step="any" min="0"
-                                                        max="99999999999999" required data-format="0[.]00" readonly>
-                                                </td>
-                                                <td>Payable Amount: <span class="required">*</span>
-                                                    <input type="text" class="form-control input-sm text-right"
-                                                    name="payable_amount" id="payable_amount" placeholder="0.00" data-cell=""
-                                                    data-format="0[.]00" data-formula=""
-                                                    step="any" min="0" max="99999999999999" readonly>
-                                                </td>
-                                                <td>Discount Amount: <span class="required">*</span>
-                                                    <input type="text" class="form-control input-sm text-right"  onkeyup="discountAmount()"
-                                                    name="discount_amount" id="discount_amount" placeholder="0.00"
-                                                    step="any" min="0" max="99999999999999">
-                                                </td>
-                                                <td>Total Sale Amount: <span class="required">*</span>
-                                                    <input type="text" class="form-control input-sm text-right"
-                                                    name="total_sale_amount" id="total_sale_amount" placeholder="0.00" data-cell=""
-                                                    data-format="0[.]00" data-formula=""
-                                                    step="any" min="0" max="99999999999999" readonly>
-                                                </td>
-                                                <td>Paid Amount: <span class="required">*</span>
-                                                    <input type="text" class="form-control input-sm text-right"
-                                                    name="paid_amount" id="paid_amount" placeholder="0.00"
-                                                    step="any" min="0" max="99999999999999" readonly>
-                                                </td>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
+                            <div class="row">
+                                {{-- <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Select Van <span class="required">*</span></label>
+                                        {!! Form::select('van_id', $vans, null, [
+                                            'id' => 'van_id',
+                                            'class' => 'form-control',
+                                            'placeholder' => 'Select One',
+                                            'autofocus',
+                                            'tabindex' => 1,
+                                        ]) !!}
+                                    </div>
+                                </div> --}}
+                                {{-- <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="name" class="form-label">Route</label>
+                                        <select name="route_id" id="route_id" tabindex="2" class="form-control" required>
+                                        </select>
+                                    </div>
                                 </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="name" class="form-label">Salesman</label>
+                                        <select name="salesman_user_id" tabindex="3" id="salesman_user_id"
+                                            class="form-control" required>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Select Customer <span class="required">*</span></label>
+                                        <button type="button" class="btn btn-primary btn-sm" onclick="showCustomerForm()">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                        <select class="select2 form-control" required name="customer_user_id" id="name"
+                                            tabindex="4"></select>
+                                        <span>Due : <strong id="customerDue">0</strong>
+                                            ({{ @$default_currency->symbol }})</span>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Select Date <span class="required">*</span></label>
+                                        {!! Form::date('date', date('Y-m-d'), ['id' => 'date', 'class' => 'form-control', 'tabindex' => 5]) !!}
+                                    </div>
+                                </div> --}}
+                                @include('backend.common.sales.form')
+
+                                <div class="row">&nbsp;</div>
+                                <div class="col-lg-12 col-md-12">
+                                    <div id="dynamic" class="row bg-light">
+                                        <table class="table table-responsive">
+                                            <thead>
+                                                <tr>
+                                                    {{-- <th style="width: 12%">Barcode </th> --}}
+                                                    {{-- <th style="width: 12%">Category <span class="required">*</span></th> --}}
+                                                    <th style="width: 24%">
+                                                        Product <span class="required">*</span>
+                                                        {{-- <button type="button" class="btn btn-primary btn-sm"
+                                                            title="Add New Product And Find Product By Type Product Name"
+                                                            onclick="showProductForm()">
+                                                            <i class="fa fa-plus"></i>
+                                                        </button> --}}
+                                                    </th>
+                                                    <th style="width: 8%">Unit</th>
+                                                    <th style="width: 10%">Qty</th>
+                                                    <th style="width: 15%">Sale Price</th>
+                                                    <th style="width: 10%">Vat(%)</th>
+                                                    <th style="width: 10%">Vat Amount</th>
+                                                    <th style="width: 15%">Sub Total</th>
+                                                    <th style="width: 15%">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="itemlist">
+                                                <tr>
+                                                    {{-- <td>
+                                                        <div>
+                                                            <select class="form-control category_id select2"
+                                                                name="category_id[]" required id="category_id_1"
+                                                                onchange="getCategoryVal(1,this);">
+                                                                <option value="">Select Category</option>
+                                                                @if(count($categories) > 0)
+                                                                    @foreach($categories as $category)
+                                                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                                                    @endforeach
+                                                                @endif
+                                                            </select>
+                                                        </div>
+                                                    </td> --}}
+                                                    <td width="24%">
+                                                        <select class="form-control product_id select2" name="product_id[]"
+                                                            id="product_id_1" onchange="getval(1,this);" required>
+                                                        </select>
+                                                    </td>
+                                                    <td width="12%">
+                                                        <div>
+                                                            <select class="form-control unit_id select2" name="unit_id[]"
+                                                                required id="unit_id_1" onchange="getUnitVal(1,this);">
+                                                                <option value="">Select Unit</option>
+                                                            </select>
+                                                        </div>
+                                                    </td>
+                                                    <td width="10%">
+                                                        <input class="input-sm text-right form-control quantity" type="number"
+                                                            name="qty[]" onblur="getQty(1,this);" id='qty_id_1'
+                                                            placeholder="0.00" data-cell="D1" step="any"
+                                                            min="0" max="9999999999999999" required
+                                                            data-format="0[.]00">
+                                                        <span id="show_stock_qty_1"></span>
+                                                    </td>
+                                                    <td width="15%">
+                                                        <input type="number" onblur="CheckPrice(1,this);"
+                                                            class="input-sm text-right form-control sale_price" placeholder="0.00"
+                                                            name="sale_price[]" id='sale_price_id_1' step="any"
+                                                            min="0" max="9999999999999999" required
+                                                            data-format="0[.]00" data-cell="C1">MSP <span
+                                                            id="show_min_sale_price_1"></span>
+                                                    </td>
+                                                    <td width="10%">
+                                                        <input type="number" class="form-control input-sm text-right"
+                                                            placeholder="0.00" name="product_vat[]" data-cell="V1"
+                                                            id='product_vat_id_1' data-format="0[.]00" readonly>
+                                                    </td>
+                                                    <td width="10%">
+                                                        <input class="form-control input-sm text-right" type="number"
+                                                            placeholder="0.00" name="product_vat_amount[]" readonly
+                                                            data-cell="K1" data-formula="(C1/100*V1)*D1"
+                                                            id='product_vat_amount_id_1' data-format="0[.]00">
+                                                    </td>
+                                                    <td width="15%">
+                                                        <input type="text"
+                                                            class="amount form-control input-sm text-right" name="total[]"
+                                                            placeholder="0.00" data-cell="F1" data-format="0[.]00"
+                                                            data-formula="(C1*D1)" readonly step="any" min="0"
+                                                            max="999999999999999">
+                                                    </td>
+                                                    <td width="15%">
+                                                        <input type="button" class="btn btn-success addProduct"
+                                                            value="+">
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                            </tfoot>
+                                        </table>
+                                        <div class="row">&nbsp;</div>
+                                        <div class="col-lg-12 col-md-12">
+                                            <div class="row">
+                                                <!-- accepted payments column -->
+                                                <div class="col-lg-8 col-md-8">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <p class="lead">Payment Type:</p>
+                                                            <p class="text-muted well well-sm shadow-none"
+                                                                style="margin-top: 10px;">
+                                                                <select class="form-control select2"
+                                                                    name="payment_type_id" id="payment_type_id" readonly
+                                                                    required>
+                                                                    @if (count($payment_types) > 0)
+                                                                        @foreach ($payment_types as $payment_type)
+                                                                            <option value="{{ $payment_type->id }}">
+                                                                                {{ $payment_type->name }}</option>
+                                                                        @endforeach
+                                                                    @endif
+                                                                </select>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-4 col-md-4">
+                                                    <p class="lead">Amount Section</p>
+                                                    <div class="table-responsive">
+                                                        <table class="table">
+                                                            <tr>
+                                                                <th style="width:50%">Subtotal:</th>
+                                                                <td>
+                                                                    <input type="number" name="sub_total" id="amount"
+                                                                        readonly data-cell="G1" data-format="0.00"
+                                                                        data-formula="SUM(F1:F5000)" class="form-control"
+                                                                        step="any" min="0" max="999999999999">
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th>Discount Type</th>
+                                                                <td>
+                                                                    <select class="form-control" name="discount_type"
+                                                                        id="discount_type">
+                                                                        <option value="Flat">Flat</option>
+                                                                        <option value="Percent">Percent</option>
+                                                                    </select>
+                                                                </td>
+                                                            </tr>
+                                                            <tr id="discount_percent_div">
+                                                                <th>Discount Percent:</th>
+                                                                <td>
+                                                                    <input type="text" name="discount_percent"
+                                                                        id="discount_percent" class="form-control"
+                                                                        onkeyup="priceCalculation('')">
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th>Total Vat:</th>
+                                                                <td>
+                                                                    <input type="number" name="total_vat" id="total_vat"
+                                                                        readonly data-cell="T1" data-format="0.00"
+                                                                        data-formula="SUM(K1:K5000)" class="form-control"
+                                                                        step="any" min="0"
+                                                                        max="9999999999999999">
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <table class="table table-sticky-bg table-responsive"
+                                    style="position: sticky;
+                                bottom: 0; z-index: 999;">
+                                    <tr>
+                                        <th>Total Qty</th>
+                                        <td>
+                                            <input class="input-sm text-right form-control" type="number"
+                                                name="total_quantity" id='total_quantity'
+                                                placeholder="0.00" data-cell="" step="any" min="0"
+                                                max="99999999999999" required data-format="0[.]00" readonly>
+                                        </td>
+                                        <th>Grand Total:</th>
+                                        <td>
+                                            <input type="number" name="grand_total" id="grand_total"
+                                                class="form-control" readonly step="any" min="0"
+                                                max="9999999999999999" />
+                                        </td>
+                                        <th>Discount:</th>
+                                        <td>
+                                            <input type="number" name="discount" id="discount_amount"
+                                                class="form-control" onkeyup="priceCalculation('')" step="any"
+                                                min="0" max="9999999999999999">
+                                        </td>
+                                        <th>Paid:</th>
+                                        <td id="PaidAmount">
+                                            {!! Form::number('paid', null, ['id' => 'paid', 'class' => 'form-control', 'step' => 'any']) !!}
+                                        </td>
+                                        <th>Due:</th>
+                                        <td>
+                                            {!! Form::number('due', null, [
+                                                'id' => 'due',
+                                                'class' => 'form-control',
+                                                'step' => 'any',
+                                                'readonly',
+                                                'min' => '0',
+                                                'max' => '9999999999999999',
+                                            ]) !!}
+                                        </td>
+                                        <td>
+                                            <button type="submit" class="btn btn-success"
+                                                id="submitbtn SUBMIT_BTN">Submit</button>
+
+                                        </td>
+                                    </tr>
+                                </table>
+
+                                </form>
                             </div>
-                            <div class="card-footer">
-                                <button type="submit" class="btn btn-primary">Submit</button>
-                            </div>
-                            {!! Form::close() !!}
+                            <!-- /.card-body -->
                         </div>
-                        <!-- /.card-body -->
+                        <!-- /.card -->
                     </div>
-                    <!-- /.card -->
+                    <!-- /.col -->
                 </div>
-                <!-- /.col -->
+                <!-- /.row -->
             </div>
-            <!-- /.row -->
-        </div>
-        <!-- /.container-fluid -->
+            <!-- /.container-fluid -->
     </section>
     <!-- /.content -->
-@stop
 
+@stop
 @section('calx')
     <script src="{{ asset('backend/jquery-calx-sample-2.2.8.min.js') }}"></script>
 @endsection
+
 @push('js')
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
+        function showCustomerForm() {
+
+            var page = "{{ url(Request::segment(1) . '/customers/create') }}";
+            var myWindow = window.open(page, "_blank", "scrollbars=yes,width=700,height=1000,top=30");
+            // focus on the popup //
+            myWindow.focus();
+        }
+
+
+
         $(document).ready(function() {
+
+            $('#discount_percent').prop("readonly", true);
+            $('#discount_amount').prop("readonly", false);
+
+            //$('.lc_div').hide();
             $('.select2').select2();
-            $(document).on('click', '.addProduct', function() {
-                var category = $('.category_id').html();
-                var unit = $('.unit_id').html();
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+
+            //product fetch for sale
+            $('#product_id_1').select2({
+                placeholder: 'Type Product Name',
+                minimumInputLength: 1,
+                ajax: {
+                    type: "POST",
+                    url: "{{ url(Request::segment(1) . '/find-product-info') }}",
+                    dataType: "JSON",
+                    delay: 250,
+                    data: function(params) {
+                        console.log('params', params)
+                        return {
+                            q: params.term,
+                            store_id: $('#store_id').val(),
+                        };
+                    },
+                    //mark:select
+                    processResults: function(data) {
+                        console.log(data)
+                        return {
+                            results: $.map(data, function(item) {
+                                // console.log('item', item)
+                                return {
+                                    text: item.name,
+                                    id: item.id
+                                }
+                            })
+                        };
+
+                    },
+                    cache: true
+                }
+            });
+
+
+            $(document).on('click', '.addProduct', function(event) {
+                // $('.addProduct').on('click', function(event) {
+                var product = $('.product_id').html();
                 var n = ($('#itemlist tr').length - 0) + 1;
                 var tr =
                     '<tr>' +
-                        '<td width="12%"><div><select  class="form-control category_id select2" name="category_id[]" id="category_id_' +
-                    n + '" onchange="getCategoryVal(' + n + ',this);" required>' + category +
+                    // '<td width="12%"><div><select  class="form-control category_id select2" name="category_id[]" id="category_id_' +
+                    // n + '" onchange="getCategoryVal(' + n + ',this);" required>' + category +
+                    // '</select></div></td>' +
+                    '<td><select class="form-control product_id select2" name="product_id[]" id="product_id_' +
+                    n + '" onchange="getval(' + n +
+                    ',this);" required ></select></td>' +
+
+                    '<td width="12%"><div><select class="form-control unit_id select2" name="unit_id[]" id="unit_id_' +
+                    n + '" onchange="getUnitVal(' + n +
+                    ',this);" required > required' +
                     '</select></div></td>' +
-                    '<td width="12%"><select class="form-control product_id select2"  name="product_id[]" id="product_id_' +
-                    n + '" onchange="getProductVal(' + n + ',this);" required></select> </td>' +
-                    '<td width="12%"><input type="number"  class="input-sm text-right form-control" name="available_stock_qty[]" id="available_stock_qty_' +
-                    n + '"></td>' +
-                    '<td width="12%"><input type="number"  class="input-sm text-right form-control quantity" onkeyup="quantitySum()" name="quantity[]" id="quantity_id_' +
-                    n +
-                    '" required   step="any" min="0" max="99999999999999" placeholder="0.00" data-cell="" data-format="" data-format="0[.]00"><span id="available_stock_qty_' + n + '"></span></td>' +
-                    '<td width="12%"><div><select  class="form-control unit_id select2" name="unit_id[]" id="unit_id_' +
-                    n + '" required>' + unit +
-                    '</select></div></td>' +
-                    '<td width="12%"><input type="number" class="input-sm text-right form-control amount" onkeyup="amountSum()"  data-format="0[.]00" name="amount[]" id="amount_id_' +
-                    n + '" data-cell=""   value="" required  step="any" min="0" max="99999999999999"></td>' +
-                    '<td><span class="d-inline-flex"><input type="button"  class="btn btn-success addProduct" value="+"> <input type="button" class="btn btn-danger delete float-left" style="margin-left: 5px" value="x" title="Remove This Product"></span></td>' +
+
+                    '<td width="12%"><input type="number" class="input-sm text-right form-control quantity" name="qty[]" id="qty_id_' +
+                    n + '" required  step="any" placeholder="0.00" data-cell="D' + n +
+                    '" step="any" min="0" max="9999999999999999" data-format="0[.]00" onblur="getQty(' +
+                    n + ',this);"><span id="show_stock_qty_' + n + '"></span></td>' +
+
+                    '<td width="12%"><input type="number"  onblur="CheckPrice(' + n +
+                    ',this);" step="any" min="0" max="9999999999999999" class="input-sm text-right form-control sale_price"  data-format="0[.]00" name="sale_price[]" id="sale_price_id_' +
+                    n + '" data-cell="c' + n + '"   value="" required>MSP <span id="show_min_sale_price_' +
+                    n + '"></span></td>' +
+
+                    '<td width="12%"><input type="number" class="form-control input-sm text-right" placeholder="0.00" data-format="0[.]00" name="product_vat[]" id="product_vat_id_' +
+                    n + '"  data-cell="V' + n + '" required readonly></td>' +
+
+                    '<td><input type="number" class="form-control input-sm text-right" placeholder="0.00" name="product_vat_amount[]" id="product_vat_amount_id_' +
+                    n + '" readonly data-cell="K' + n + '" data-formula="(C' + n + '/100*V' + n + ')*D' +
+                    n + ' " data-format="0[.]00" required></td>' +
+                    '<td style="widht:12px"><input class="form-control input-sm text-right" placeholder="0.00" readonly name="total[]"  data-cell="F' +
+                    n + '" data-format="0[.]00" data-formula="(C' + n + '*D' + n + ') "></td>' +
+                    '<td><span class="d-inline-flex"><input type="button" class="btn btn-success addProduct" value="+" title="Add New"> <input type="button" class="btn btn-danger delete float-left" style="margin-left: 5px" value="x" title="Remove This Product"></span></td>' +
                     '</tr>';
+
                 $('#itemlist').append(tr);
-                $('.select2').select2();
-                $('#category_id_' + n).select2('open').trigger('select2:open');
+                $form = $('#dynamic').calx();
+                $form.calx('update');
+                $form.calx('getCell', 'G1').setFormula('SUM(F1:F' + 5000 + ')');
+                $form.calx('getCell', 'G1').calculate();
+
+                // search product start
+                $('#product_id_' + n).select2({
+                    placeholder: 'Type Product Name',
+                    minimumInputLength: 1,
+                    ajax: {
+                        type: "POST",
+                        url: "{{ url(Request::segment(1) . '/find-product-info') }}",
+                        dataType: "JSON",
+                        delay: 250,
+                        data: function(params) {
+                            // console.log('params', params)
+                            return {
+                                q: params.term,
+                                van_id: $('#van_id').val()
+                            };
+                        },
+                        processResults: function(data) {
+                            //console.log('data2', data)
+                            return {
+                                results: $.map(data, function(item) {
+                                    return {
+                                        text: item.name,
+                                        id: item.id
+                                    }
+                                })
+                            };
+
+                        },
+                        cache: true
+                    }
+                });
+                $('#product_id_' + n).select2('open').trigger('select2:open');
+                // search product end
             });
+
+            $(document).on('keydown', '#itemlist tr:last .sale_price', function(e) {
+                if (e.keyCode == 9) {
+                    var product = $('.product_id').html();
+                    var n = ($('#itemlist tr').length - 0) + 1;
+                    var tr =
+                        '<tr><td><select class="form-control product_id select2" name="product_id[]" id="product_id_' +
+                        n + '" onchange="getval(' + n +
+                        ',this);" required ></select></td>' +
+
+                        '<td width="12%"><div><select class="form-control unit_id select2" name="unit_id[]" id="unit_id_' +
+                        n + '" onchange="getUnitVal(' + n +
+                        ',this);" required > required' +
+                        '</select></div></td>' +
+
+                        '<td width="12%"><input type="number" class="input-sm text-right form-control quantity" name="qty[]" id="qty_id_' +
+                        n + '" required  step="any" placeholder="0.00" data-cell="D' + n +
+                        '" step="any" min="0" max="9999999999999999" data-format="0[.]00" onblur="getQty(' +
+                        n + ',this);"><span id="show_stock_qty_' + n + '"></span></td>' +
+
+                        '<td width="12%"><input type="number"  onblur="CheckPrice(' + n +
+                        ',this);" step="any" min="0" max="9999999999999999" class="input-sm text-right form-control sale_price"  data-format="0[.]00" name="sale_price[]" id="sale_price_id_' +
+                        n + '" data-cell="c' + n +
+                        '"   value="" required>MSP <span id="show_min_sale_price_' +
+                        n + '"></span></td>' +
+
+                        '<td width="12%"><input type="number" class="form-control input-sm text-right" placeholder="0.00" data-format="0[.]00" name="product_vat[]" id="product_vat_id_' +
+                        n + '"  data-cell="V' + n + '" required readonly></td>' +
+
+                        '<td><input type="number" class="form-control input-sm text-right" placeholder="0.00" name="product_vat_amount[]" id="product_vat_amount_id_' +
+                        n + '" readonly data-cell="K' + n + '" data-formula="(C' + n + '/100*V' + n +
+                        ')*D' +
+                        n + ' " data-format="0[.]00" required></td>' +
+                        '<td style="widht:12px"><input class="form-control input-sm text-right" placeholder="0.00" readonly name="total[]"  data-cell="F' +
+                        n + '" data-format="0[.]00" data-formula="(C' + n + '*D' + n + ') "></td>' +
+                        '<td><span class="d-inline-flex"><input type="button" class="btn btn-success addProduct" value="+" title="Add New"> <input type="button" class="btn btn-danger delete float-left" style="margin-left: 5px" value="x" title="Remove This Product"></span></td>' +
+                        '</tr>';
+
+                    $('#itemlist').append(tr);
+                    $form = $('#dynamic').calx();
+                    $form.calx('update');
+                    $form.calx('getCell', 'G1').setFormula('SUM(F1:F' + 5000 + ')');
+                    $form.calx('getCell', 'G1').calculate();
+
+                    // search product start
+                    $('#product_id_' + n).select2({
+                        placeholder: 'Type Product Name',
+                        minimumInputLength: 1,
+                        ajax: {
+                            type: "POST",
+                            url: "{{ url(Request::segment(1) . '/findproductforvansale') }}",
+                            dataType: "JSON",
+                            delay: 250,
+                            data: function(params) {
+                                // console.log('params', params)
+                                return {
+                                    q: params.term,
+                                    van_id: $('#van_id').val()
+                                };
+                            },
+                            processResults: function(data) {
+                                //console.log('data2', data)
+                                return {
+                                    results: $.map(data, function(item) {
+                                        return {
+                                            text: item.name,
+                                            id: item.id
+                                        }
+                                    })
+                                };
+
+                            },
+                            cache: true
+                        }
+                    });
+
+                    $('#product_id_' + n).select2('open').trigger('select2:open');
+                }
+            });
+
 
             //new item
             $('#itemlist').delegate('.delete', 'click', function() {
                 $(this).parent().parent().parent().remove();
+                $form = $('#dynamic').calx();
+                $form.calx('update');
+                $form.calx('getCell', 'G1').setFormula('SUM(F1:F' + 5000 + ')');
+                $form.calx('getCell', 'G1').calculate();
+                $form.calx('getCell', 'T1').setFormula('SUM(K1:K' + 5000 + ')');
+                $form.calx('getCell', 'T1').calculate();
+
+                var total_vat = $("#total_vat").val();
+                var sub_total = $("#amount").val();
+                var grand_total = parseFloat(sub_total) + parseFloat(total_vat);
+                $('#grand_total').val(grand_total);
             });
+
+            $('#name,#date').on("change", function() {
+                if ($('#name').val() !== null) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ url(Request::segment(1) . '/check-customer-limit') }}",
+                        data: {
+                            customer_user_id: $('#name').val(),
+                            date: $('#date').val(),
+                        },
+                        success: function(data) {
+                            $('#customerDue').html(data.dueInfo);
+                            if (data.status == 'credit_off') {
+                                $('#submitbtn').prop("disabled", true);
+                                Swal.fire({
+                                    position: 'center',
+                                    icon: 'info',
+                                    title: data.message,
+                                    showConfirmButton: false,
+                                    showCloseButton: true
+                                })
+
+                            } else {
+                                $('#submitbtn').prop("disabled", false);
+                            }
+
+                        }
+                    });
+                }
+
+            });
+
         });
 
-        function getCategoryVal(row, sel) {
-            console.log('getCategoryVal')
+        function getval(row, sel) {
+            // alert(sel.value);
             var current_row = row;
-            var current_category_id = sel.value;
-            // console.log('current_category_id',current_category_id)
+            var store_id = $('#store_id').val();
+            var current_product_id = sel.value;
+
 
             if (current_row > 1) {
                 for (let index = 1; index < current_row; index++) {
-                    var previous_category_id = $(('#category_id_' + index)).val();
-                    console.log('previous_category_id',previous_category_id)
-                    var current_category_id = $('#category_id_' + current_row).val();
-                    if (previous_category_id === current_category_id) {
-                        $('#category_id_' + current_row).val('');
-                        alert('You selected same category, Please selected another category!');
+                    var previous_product_id = $(('#product_id_' + index)).val();
+                    var current_product_id = $('#product_id_' + current_row).val();
+                    if (previous_product_id === current_product_id) {
+                        $('#product_id_' + current_row).val('');
+                        alert('You selected same product, Please selected another product!');
                         return false;
                     }
                 }
             }
 
             $.ajax({
-                url: "{{ URL(Request::segment(1) . '/category-product-info') }}",
+                url: "{{ URL(Request::segment(1) . '/sale-relation-data') }}",
                 method: "get",
                 data: {
-                    current_category_id: current_category_id
+                    current_product_id: current_product_id,
+                    store_id: store_id
                 },
+
                 success: function(res) {
-                    // console.log('res', res)
-                    $(("#product_id_" + current_row)).html(res.data.productOptions);
+                    console.log('res',res)
+                    $(("#unit_id_" + current_row)).html(res.data.unitOptions);
+                    $(("#sale_price_id_" + current_row)).val(res.data.sale_price);
+                    $('#show_stock_qty_' + current_row).html(res.data.current_stock);
                 },
                 error: function(err) {
                     console.log(err)
                 }
             })
-        }
 
-        function getProductVal(row, sel) {
-            var store_id = $('#store_id').val();
-            if(store_id){
-                var current_row = row;
-                var current_product_id = sel.value;
-                if(current_row > 1){
-                    var previous_row = current_row - 1;
-                    var previous_product_id = $('#product_id_'+previous_row).val();
-                    if(previous_product_id === current_product_id){
-                        $('#product_id_'+current_row).val('');
-                        alert('You selected same product, Please selected another product!');
-                        return false
-                    }
-                }
-
-                // check product services
-                var all_product_ids = [];
-                $(".product_id").each(function(i,e) {
-                    all_product_ids[i] = this.value;
-                });
-
-                $.ajax({
-                    url : "{{URL(Request::segment(1) . '/sale-relation-data')}}",
-                    method : "get",
-                    data : {
-                        store_id : store_id,
-                        current_product_id : current_product_id,
-                        all_product_ids : all_product_ids
-                    },
-                    success : function (res){
-                        // console.log(res.data)
-                        $("#unit_id_"+current_row).html(res.data.unitOptions);
-                        $("#available_stock_qty_"+current_row).val(res.data.current_stock);
-                        $("#amount_id_"+current_row).val(res.data.sale_price);
-                    },
-                    error : function (err){
-                        console.log(err)
-                    }
-                })
-            }else{
-                alert('Please select first store!');
-                location.reload();
-            }
+            //focus
         }
 
         function quantitySum(){
@@ -321,40 +657,179 @@
                 t += parseInt(amt);
             });
             $('#total_quantity').val(t);
-            amountSum();
         }
 
-        function amountSum(){
-            console.log('amountSum')
-            var t = parseFloat(0);
-            $('.amount').each(function(i,e){
-                var amt = $(this).val();
-                t += parseFloat(amt);
-            });
-            $('#payable_amount').val(t);
-            $('#paid_amount').val(t);
-            $('#total_sale_amount').val(t);
-            $('#discount_amount').val(0);
+        //onkeyup
+        function getQty(row, sel) {
+
+            var inputValue = parseFloat(sel.value);
+            var stock_qty = parseFloat($('#show_stock_qty_' + row).html());
+            if (inputValue > stock_qty) {
+                $('#qty_id_' + row).val('');
+                Swal.fire('Out Of Stock', 'Try Again');
+
+                $form = $('#dynamic').calx();
+                $form.calx('update');
+                $form.calx('getCell', 'G1').setFormula('SUM(F1:F' + 5000 + ')');
+                $form.calx('getCell', 'G1').calculate();
+                $form.calx('getCell', 'T1').setFormula('SUM(K1:K' + 5000 + ')');
+                $form.calx('getCell', 'T1').calculate();
+                var sub_total = $("#amount").val();
+                var total_vat = $("#total_vat").val();
+                var grand_total = parseFloat(sub_total) + parseFloat(total_vat);
+                $('#grand_total').val(grand_total);
+                return false
+            }
+
+            $form = $('#dynamic').calx();
+            $form.calx('update');
+            $form.calx('getCell', 'G1').setFormula('SUM(F1:F' + 5000 + ')');
+            $form.calx('getCell', 'G1').calculate();
+            $form.calx('getCell', 'T1').setFormula('SUM(K1:K' + 5000 + ')');
+            $form.calx('getCell', 'T1').calculate();
+            var sub_total = $("#amount").val();
+            var total_vat = $("#total_vat").val();
+            var grand_total = parseFloat(sub_total) + parseFloat(total_vat);
+            $('#grand_total').val(grand_total);
+
+            quantitySum();
         }
 
-        function salePriceSum(){
-            console.log('salePriceSum')
-            var t = parseFloat(0);
-            $('.sale_price').each(function(i,e){
-                var amt = $(this).val();
-                t += parseFloat(amt);
-            });
-            $('#total_sale_amount').val(t);
+        $('#discount_type').on('change', function(event) {
+            //event.preventDefault();
+            var discount_type = $('#discount_type').val();
+            var total_vat = $("#total_vat").val();
+            var sub_total = $("#amount").val();
+
+            if (discount_type === 'Flat') {
+                // $('#discount_percent_div').hide();
+                $('#discount_percent').prop("readonly", true); // Element(s) are now enabled.
+                $('#discount_amount').prop("readonly", false);
+                $('#discount_percent').val('');
+                $('#discount_amount').val('');
+                $('#grand_total').val(grand_total);
+            } else {
+                // $('#discount_percent_div').show();
+                $('#discount_percent').prop("readonly", false); // Element(s) are now enabled.
+                $('#discount_amount').prop("readonly", true);
+                $('#discount_amount').val('');
+                $('#grand_total').val(grand_total);
+            }
+
+            var discount_amount = parseFloat($('#discount_amount').val());
+            var grand_total = parseFloat(sub_total) + parseFloat(total_vat);
+            if (sub_total > discount_amount) {
+                alert('You Can Not Discount More than Subtotal Price !');
+                return false;
+            }
+        })
+
+        function CheckPrice(row, sel) {
+            var inputValue = parseFloat(sel.value);
+            var minimum_sale_price = parseFloat($('#show_min_sale_price_' + row).html());
+            if (inputValue < minimum_sale_price) {
+                $('#sale_price_id_' + row).val(minimum_sale_price);
+                Swal.fire('Out Of Minimum Sale price', 'Sorry');
+
+                $form = $('#dynamic').calx();
+                $form.calx('update');
+                $form.calx('getCell', 'G1').setFormula('SUM(F1:F' + 5000 + ')');
+                $form.calx('getCell', 'G1').calculate();
+                $form.calx('getCell', 'T1').setFormula('SUM(K1:K' + 5000 + ')');
+                $form.calx('getCell', 'T1').calculate();
+
+                var sub_total = $("#amount").val();
+                var total_vat = $("#total_vat").val();
+                var grand_total = parseFloat(sub_total) + parseFloat(total_vat);
+                $('#grand_total').val(grand_total);
+                return false
+            }
+
+            $form = $('#dynamic').calx();
+            $form.calx('update');
+            $form.calx('getCell', 'G1').setFormula('SUM(F1:F' + 5000 + ')');
+            $form.calx('getCell', 'G1').calculate();
+            $form.calx('getCell', 'T1').setFormula('SUM(K1:K' + 5000 + ')');
+            $form.calx('getCell', 'T1').calculate();
+
+            var sub_total = $("#amount").val();
+            var total_vat = $("#total_vat").val();
+            var grand_total = parseFloat(sub_total) + parseFloat(total_vat);
+            $('#grand_total').val(grand_total);
         }
 
-        function discountAmount(){
-            console.log('discountAmount')
-            var total = $('#payable_amount').val();
-            var paid_amount = parseFloat(total) - parseFloat($('#discount_amount').val());
-            $('#paid_amount').val(paid_amount);
+
+        $(window).keydown(function(e) {
+            priceCalculation();
+        });
+        $(window).click(function(e) {
+            priceCalculation();
+        });
+
+        function priceCalculation() {
+            var discount_type = $('#discount_type').val();
+
+            var sub_total = $("#amount").val();
+            var total_vat = $("#total_vat").val();
+            var grand_total = parseFloat(sub_total) + parseFloat(total_vat);
+            //grand_total = parseFloat(grand_total);
+
+            if (discount_type == 'Flat') {
+                var discount_amount = $('#discount_amount').val();
+                if (discount_amount !== '') {
+                    discount_amount = parseFloat(discount_amount);
+                    var discount = grand_total - discount_amount;
+                    var final_amount = discount;
+                } else {
+                    var final_amount = grand_total;
+                }
+                $('#discount_percent').val('');
+            } else {
+                var discount_percent = $('#discount_percent').val();
+                if (discount_percent !== '') {
+                    discount_percent = parseFloat(discount_percent);
+                    var discount = (grand_total * discount_percent) / 100;
+                    var final_amount = grand_total - discount;
+                } else {
+                    var final_amount = grand_total;
+                }
+                $('#discount_amount').val(discount);
+            }
+
+            $('#total_amount').val(grand_total);
+            $('#grand_total').val(final_amount);
+            if (sub_total < discount_amount) {
+                alert('You Can Not Discount More than Subtotal Price !');
+                $('#discount_amount').val(sub_total);
+                priceCalculation();
+            }
+            var payment_type_id = $('#payment_type_id').val();
+            if (payment_type_id === '2') {
+                var paid = $("#paid").val(0);
+                $('#due').val(final_amount);
+                $('#paid').prop("readonly", true);
+            } else {
+                var paid = $("#paid").val(final_amount);
+                $('#due').val(0);
+            }
         }
 
+        $('#payment_type_id').change(function() {
+            priceCalculation();
+        });
 
+        //automatically call after two seconds/
+        //tab index changing
+        $('#date').on("keydown", function() {
+            $('#product_id_1').select2('open').trigger('select2:open');
+        });
+
+
+        function showProductForm() {
+            var page = "{{ url(Request::segment(1) . '/stock-transfer-warehouse-to-van') }}";
+            var myWindow = window.open(page, "_blank", "scrollbars=yes,width=700,height=1000,top=30");
+            // focus on the popup //
+            myWindow.focus();
+        }
     </script>
 @endpush
-

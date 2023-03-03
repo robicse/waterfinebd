@@ -12,6 +12,7 @@ use App\Models\Product;
 use App\Models\Store;
 use App\Models\Supplier;
 use App\Models\Stock;
+use App\Models\PaymentReceipt;
 use Illuminate\Support\Facades\Auth;
 use Brian2694\Toastr\Facades\Toastr;
 use DataTables;
@@ -102,30 +103,74 @@ class PurchaseController extends Controller
         ]);
 
         try {
+            $entry_date = $request->entry_date;
+            $store_id = $request->store_id;
+            $supplier_id = $request->supplier_id;
+            $total_quantity = $request->total_quantity;
+            $total_buy_amount = $request->total_buy_amount;
+            $discount_amount = $request->discount_amount;
+            $total_sale_amount = $request->total_sale_amount;
+            $paid_amount = $request->paid_amount;
+            $due_amount = $request->due_amount;
+            $category_id = $request->category_id;
+            $product_id = $request->product_id;
+            $quantity = $request->quantity;
+            $buy_price = $request->buy_price;
+            $sell_price = $request->sell_price;
+
             $purchase = new Purchase();
-            $purchase->entry_date = $request->entry_date;
-            $purchase->store_id = $request->store_id;
-            $purchase->supplier_id = $request->supplier_id;
-            $purchase->total_quantity = $request->total_quantity;
-            $purchase->total_buy_amount = $request->total_buy_amount;
-            $purchase->paid_amount = $request->paid_amount;
-            $purchase->discount_amount = $request->discount_amount;
-            $purchase->total_sale_amount = $request->total_sale_amount;
+            $purchase->entry_date = $entry_date;
+            $purchase->store_id = $store_id;
+            $purchase->supplier_id = $supplier_id;
+            $purchase->total_quantity = $total_quantity;
+            $purchase->total_buy_amount = $total_buy_amount;
+            $purchase->discount_amount = $discount_amount;
+            $purchase->total_sale_amount = $total_sale_amount;
+            $purchase->paid_amount = $paid_amount;
+            $purchase->due_amount = $due_amount;
             $purchase->status = 1;
             $purchase->created_by_user_id = Auth::User()->id;
             if($purchase->save()){
-                for($i=0; $i<count($request->category_id); $i++){
+                for($i=0; $i<count($category_id); $i++){
                     $stock = new Stock();
                     $stock->purchase_id = $purchase->id;
-                    $stock->store_id = $request->store_id;
-                    $stock->category_id = $request->category_id[$i];
-                    $stock->product_id = $request->product_id[$i];
-                    $stock->quantity = $request->quantity[$i];
-                    $stock->buy_price = $request->buy_price[$i];
-                    $stock->sell_price = $request->sell_price[$i];
+                    $stock->store_id = $store_id;
+                    $stock->category_id = $category_id[$i];
+                    $stock->product_id = $product_id[$i];
+                    $stock->quantity = $quantity[$i];
+                    $stock->buy_price = $buy_price[$i];
+                    $stock->sell_price = $sell_price[$i];
                     $stock->status = 1;
                     $stock->created_by_user_id = Auth::User()->id;
                     $stock->save();
+                }
+
+                // for due amount > 0
+                if($due_amount > 0){
+                    $payment_receipt = new PaymentReceipt();
+                    $payment_receipt->date = date('Y-m-d');
+                    $payment_receipt->store_id = $store_id;
+                    $payment_receipt->order_type = 'Purchase';
+                    $payment_receipt->order_id = $purchase->id;
+                    $payment_receipt->supplier_id = $supplier_id;
+                    $payment_receipt->order_type_id = 2;
+                    $payment_receipt->amount = $due_amount;
+                    $payment_receipt->created_by_user_id = Auth::User()->id;
+                    $payment_receipt->save();
+                }
+                // for paid amount > 0
+                if($paid_amount > 0){
+                    $payment_receipt = new PaymentReceipt();
+                    $payment_receipt->date = date('Y-m-d');
+                    $payment_receipt->store_id = $store_id;
+                    $payment_receipt->order_type = 'Purchase';
+                    $payment_receipt->order_id = $purchase->id;
+                    $payment_receipt->supplier_id = $supplier_id;
+                    $payment_receipt->order_type_id = 1;
+                    $payment_receipt->payment_type_id = 1;
+                    $payment_receipt->amount = $paid_amount;
+                    $payment_receipt->created_by_user_id = Auth::User()->id;
+                    $payment_receipt->save();
                 }
             }
 
