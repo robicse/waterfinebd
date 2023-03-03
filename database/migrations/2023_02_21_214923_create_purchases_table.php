@@ -23,7 +23,7 @@ return new class extends Migration
             $table->float('total_quantity',16,2)->default(0);
             $table->float('total_buy_amount',16,2)->default(0);
             $table->float('discount_amount',16,2)->default(0);
-            $table->float('total_sale_amount',16,2)->default(0);
+            $table->float('grand_total',16,2)->default(0);
             $table->float('paid_amount',16,2)->default(0);
             $table->float('due_amount',16,2)->default(0);
             $table->tinyInteger('status')->default(1);

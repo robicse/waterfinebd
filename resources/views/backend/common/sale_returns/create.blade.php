@@ -144,7 +144,7 @@
                                                 </td>
                                                 <td>Total Sell Amount: <span class="required">*</span>
                                                     <input type="text" class="form-control input-sm text-right"
-                                                    name="total_sale_amount" id="total_sale_amount" placeholder="0.00" data-cell=""
+                                                    name="grand_total" id="grand_total" placeholder="0.00" data-cell=""
                                                     data-format="0[.]00" data-formula=""
                                                     step="any" min="0" max="99999999999999">
                                                 </td>
@@ -278,7 +278,7 @@
                 var amt = $(this).val();
                 t += parseFloat(amt);
             });
-            $('#total_sale_amount').val(t);
+            $('#grand_total').val(t);
         }
 
         function discountAmount(){

@@ -6,7 +6,10 @@ use DB;
 use App\Helpers\ErrorTryCatch;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Http\Traits\CurrencyTrait;
 use App\Models\PaymentReceipt;
+use App\Models\OrderType;
 use App\Models\PaymentType;
 use App\Models\Category;
 use App\Models\Unit;
@@ -24,6 +27,7 @@ use DataTables;
 
 class SaleController extends Controller
 {
+    use CurrencyTrait;
     function __construct()
     {
         $this->middleware(function ($request, $next) {
@@ -63,9 +67,14 @@ class SaleController extends Controller
                     })
                     ->addColumn('action', function ($sale)use($User) {
                         $btn='';
-                        if($User->can('sales-edit')){
-                        $btn = '<a href=' . route(\Request::segment(1) . '.sales.edit', $sale->id) . ' class="btn btn-info btn-sm waves-effect"><i class="fa fa-edit"></i></a>';
-                        }
+                        // if($User->can('sales-edit')){
+                        // $btn = '<a href=' . route(\Request::segment(1) . '.sales.edit', $sale->id) . ' class="btn btn-info btn-sm waves-effect"><i class="fa fa-edit"></i></a>';
+                        // }
+                        // $btn = '<span  class="d-inline-flex"><a href=' . route(\Request::segment(1) . '.sales.show', $sale->id) . ' class="btn btn-warning btn-sm waves-effect"><i class="fa fa-eye"></i></a>';
+                        $btn .= '<a href=' . url(\Request::segment(1) . '/sales-prints/' . $sale->id . '/a4') . ' class="btn btn-info  btn-sm float-left" style="margin-left: 5px"><i class="fa fa-print"></i>A4</a>';
+                        // $btn .= '<a href=' . url(\Request::segment(1) . "/sales-prints/" . $sale->id . '/80mm') . ' class="btn btn-info  btn-sm float-left" style="margin-left: 5px"><i class="fa fa-print"></i>80MM</a>';
+                        $btn .= '<a target="_blank" href=' . url(\Request::segment(1) . "/sales-invoice-pdf/" . $sale->id) . ' class="btn btn-info  btn-sm float-left" style="margin-left: 5px"><i class="fas fa-file-pdf"></i>PDF</a>';
+
                         return $btn;
                     })
                     ->rawColumns(['category','action', 'status'])
@@ -82,13 +91,14 @@ class SaleController extends Controller
 
     public function create()
     {
-        $payment_types = PaymentType::whereIn('name', ['Cash', 'Credit'])->get();
+        $order_types = OrderType::whereIn('name', ['Cash', 'Credit'])->get();
+        $payment_types = PaymentType::whereIn('name', ['Cash', 'Card', 'Cheque', 'Condition'])->get();
         $stores = Store::wherestatus(1)->pluck('name','id');
         $customers = Customer::wherestatus(1)->pluck('name','id');
         $categories = Category::wherestatus(1)->get();
         $units = Unit::wherestatus(1)->get();
         $packages = Package::wherestatus(1)->pluck('name','id');
-        return view('backend.common.sales.create', compact('stores','customers','categories','units','packages','payment_types'));
+        return view('backend.common.sales.create', compact('stores','customers','categories','units','packages','payment_types','order_types'));
     }
 
     public function store(Request $request)
@@ -115,10 +125,23 @@ class SaleController extends Controller
             $customer_id = $request->customer_id;
             $total_quantity = $request->total_quantity;
             $sub_total = $request->sub_total;
-            $discount_amount = $request->discount;
+            $discount_type = $request->discount_type;
+            $discount_percent = $request->discount_percent;
+            $discount_amount = $request->discount ? $request->discount : 0;
+            $total_vat = $request->total_vat;
             $grand_total = $request->grand_total;
+            $after_discount_amount = $grand_total - $discount_amount;
             $paid_amount = $request->paid;
             $due_amount = $request->due;
+
+            $product_id = $request->product_id;
+            $unit_id = $request->unit_id;
+            $qty = $request->qty;
+            $product_vat = $request->product_vat;
+            $product_vat_amount = $request->product_vat_amount;
+            $sale_price = $request->sale_price;
+            $total = $request->total;
+            $package_id = $request->package_id;
 
             $sale = new Sale();
             $sale->voucher_date = $voucher_date;
@@ -126,20 +149,41 @@ class SaleController extends Controller
             $sale->customer_id = $customer_id;
             $sale->total_quantity = $total_quantity;
             $sale->sub_total = $sub_total;
+            $sale->discount_type = $discount_type;
+            $sale->discount_percent = $discount_percent;
             $sale->discount_amount = $discount_amount;
+            $sale->total_vat = $total_vat;
             $sale->grand_total = $grand_total;
             $sale->paid_amount = $paid_amount;
             $sale->due_amount = $due_amount;
-            $product_id = $request->product_id;
-            $qty = $request->qty;
-            $sale_price = $request->sale_price;
-            $package_id = $request->package_id;
-
             $sale->status = 1;
             $sale->created_by_user_id = Auth::User()->id;
             if($sale->save()){
                 for($i=0; $i<count($product_id); $i++){
                     $product = Product::whereid($product_id[$i])->first();
+
+
+                    $sub_total = ($qty[$i] * $sale_price[$i]);
+                    // dd($sub_total);
+                    $unit_id = $unit_id[$i];
+                    $product_vat = $product_vat[$i] != NULL ? $request->product_vat : 0;
+                    $product_vat_amount = $product_vat_amount[$i];
+                    $producttotal = $total[$i];
+                    $final_discount_amount = 0;
+                    $extra_discount_amount = NULL;
+                    if ($discount_type != NULL) {
+                        //$discount_amount = $request->discount;
+
+                        // including vat
+                        $cal_discount = $discount_amount;
+                        $cal_product_total_amount = $product_vat_amount + $producttotal;
+                        $cal_grand_total = $sub_total + $total_vat;
+
+                        $cal_discount_amount =  (round((float)$cal_discount, 2) * round((float)$cal_product_total_amount, 2)) / round((float)$cal_grand_total, 2);
+                        $final_discount_amount = round((float)$cal_discount_amount, 2);
+                        $per_product_discount =  $final_discount_amount / $qty[$i];
+                    }
+
                     $sale_product = new SaleProduct();
                     $sale_product->sale_id = $sale->id;
                     $sale_product->store_id = $store_id;
@@ -148,6 +192,17 @@ class SaleController extends Controller
                     $sale_product->product_id = $product_id[$i];
                     $sale_product->qty = $qty[$i];
                     $sale_product->sale_price = $sale_price[$i];
+                    $sale_product->total = $sub_total;
+                    //$sale_detail->date = $date;
+                    $sale_product->product_vat = $product_vat;
+                    $sale_product->product_vat_amount = $product_vat_amount;
+                    $sale_product->product_discount_type = $discount_type;
+                    $sale_product->per_product_discount = $per_product_discount;
+                    $sale_product->product_discount_percent = $discount_percent;
+                    $sale_product->product_discount = $final_discount_amount;
+                    $sale_product->after_product_discount = ($sub_total + $product_vat_amount) - $final_discount_amount;
+                    $sale_product->product_total = ($sub_total + $product_vat_amount) - $final_discount_amount;
+                    $sale_product->total_profit = 0;
                     $sale_product->created_by_user_id = Auth::User()->id;
                     $sale_product->save();
                 }
@@ -223,7 +278,7 @@ class SaleController extends Controller
             'customer_id' => 'required',
             'total_quantity' => 'required',
             'payable_amount' => 'required',
-            'total_sale_amount' => 'required',
+            'grand_total' => 'required',
             'discount_amount' => 'required',
             'paid_amount' => 'required',
             'product_category_id.*' => 'required',
@@ -295,5 +350,23 @@ class SaleController extends Controller
         }
 
         return response()->json(['success' => true, 'data' => $options]);
+    }
+
+    public function salePrintWithPageSize($id, $pagesize)
+    {
+        $default_currency = $this->getCurrencyInfoByDefaultCurrency();
+        $sale = Sale::findOrFail($id);
+        $saleProducts = SaleProduct::where('sale_id', $id)->get();
+        $previousDue= Sale::where('id','!=',$id)->wherecustomer_id($sale->customer_id)->sum('due_amount');
+        return view('backend.common.sales.print_with_size', compact('sale', 'saleProducts', 'pagesize','previousDue','default_currency'));
+    }
+
+    public function saleInvoicePdfDownload($id)
+    {
+        $sale = Sale::findOrFail($id);
+        $saleProducts = SaleProduct::where('sale_id', $id)->get();
+        $previousDue= Sale::where('id','!=',$id)->wherecustomer_id($sale->customer_id)->sum('due_amount');
+        $pdf = Pdf::loadView('backend.common.sales.invoice_pdf', compact('sale', 'saleProducts','previousDue'));
+        return $pdf->download('saleinvoice_' . now() . '.pdf');
     }
 }

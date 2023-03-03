@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('sale_products', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->date('date')->nullable();
             $table->bigInteger('sale_id')->unsigned()->nullable();
             $table->foreign('sale_id')->references('id')->on('sales')->onDelete('cascade');
             $table->bigInteger('store_id')->unsigned()->nullable();
@@ -28,7 +29,16 @@ return new class extends Migration
             $table->integer('qty')->default(0);
             $table->integer('already_return_qty')->default(0);
             $table->float('sale_price',16,2)->default(0);
-            $table->float('profit',16,2)->default(0);
+            $table->float('total',16,2)->default(0);
+            $table->float('product_vat',16,2)->default(0);
+            $table->float('product_vat_amount',16,2)->default(0);
+            $table->enum('product_discount_type', ['Flat', 'Percent'])->nullable();
+            $table->float('product_discount_percent', 16, 2)->nullable()->default(0);
+            $table->float('product_discount', 16, 2)->default(0);
+            $table->float('per_product_discount', 16, 2)->default(0);
+            $table->float('after_product_discount', 16, 2)->default(0);
+            $table->float('product_total', 16, 2)->default(0);
+            $table->float('total_profit', 16, 2)->nullable(0);
             $table->bigInteger('created_by_user_id')->unsigned()->nullable();
             $table->foreign('created_by_user_id')->references('id')->on('users')->onDelete('cascade');
             $table->bigInteger('updated_by_user_id')->unsigned()->nullable();

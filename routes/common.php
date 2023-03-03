@@ -38,5 +38,7 @@ Route::resource('purchase-returns', PurchaseReturnController::class);
 Route::resource('sales', SaleController::class);
 Route::get('sale-relation-data',[CommonController::class, 'SaleRelationData']);
 Route::post('find-product-info', [CommonController::class, 'FindProductInfo']);
+Route::get('sales-prints/{id}/{pagesize}', [SaleController::class, 'salePrintWithPageSize']);
+Route::get('/sales-invoice-pdf/{id}', [SaleController::class, 'saleInvoicePdfDownload']);
 Route::resource('sale-returns', SaleReturnController::class);
 

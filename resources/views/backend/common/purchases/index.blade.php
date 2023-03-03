@@ -172,7 +172,7 @@
                     {data: 'supplier',name: 'supplier'},
                     {data: 'total_quantity',name: 'total_quantity'},
                     {data: 'total_buy_amount',name: 'total_buy_amount'},
-                    {data: 'total_sale_amount',name: 'total_sale_amount'},
+                    {data: 'grand_total',name: 'grand_total'},
                     {data: 'paid_amount',name: 'paid_amount'},
                     {data: 'discount_amount',name: 'discount_amount'},
                     {data: 'status'},

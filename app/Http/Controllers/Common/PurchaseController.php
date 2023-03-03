@@ -92,7 +92,7 @@ class PurchaseController extends Controller
             'supplier_id' => 'required',
             'total_quantity' => 'required',
             'total_buy_amount' => 'required',
-            'total_sale_amount' => 'required',
+            'grand_total' => 'required',
             'discount_amount' => 'required',
             'paid_amount' => 'required',
             'product_category_id.*' => 'required',
@@ -109,7 +109,7 @@ class PurchaseController extends Controller
             $total_quantity = $request->total_quantity;
             $total_buy_amount = $request->total_buy_amount;
             $discount_amount = $request->discount_amount;
-            $total_sale_amount = $request->total_sale_amount;
+            $grand_total = $request->grand_total;
             $paid_amount = $request->paid_amount;
             $due_amount = $request->due_amount;
             $category_id = $request->category_id;
@@ -125,7 +125,7 @@ class PurchaseController extends Controller
             $purchase->total_quantity = $total_quantity;
             $purchase->total_buy_amount = $total_buy_amount;
             $purchase->discount_amount = $discount_amount;
-            $purchase->total_sale_amount = $total_sale_amount;
+            $purchase->grand_total = $grand_total;
             $purchase->paid_amount = $paid_amount;
             $purchase->due_amount = $due_amount;
             $purchase->status = 1;
@@ -206,7 +206,7 @@ class PurchaseController extends Controller
             'supplier_id' => 'required',
             'total_quantity' => 'required',
             'total_buy_amount' => 'required',
-            'total_sale_amount' => 'required',
+            'grand_total' => 'required',
             'discount_amount' => 'required',
             'paid_amount' => 'required',
             'product_category_id.*' => 'required',

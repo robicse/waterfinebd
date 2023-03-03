@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class SaleProduct extends Model
 {
     use HasFactory;
+    public function product(){
+        return $this->belongsTo(Product::Class);
+    }
+
+    public function unit(){
+        return $this->belongsTo(Unit::Class);
+    }
 }

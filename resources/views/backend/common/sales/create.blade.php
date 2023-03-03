@@ -204,16 +204,33 @@
                                                 <!-- accepted payments column -->
                                                 <div class="col-lg-8 col-md-8">
                                                     <div class="row">
-                                                        <div class="col-md-12">
+                                                        <div class="col-md-6">
+                                                            <p class="lead">Sale Type:</p>
+                                                            <p class="text-muted well well-sm shadow-none"
+                                                                style="margin-top: 10px;">
+                                                                <select class="form-control select2"
+                                                                    name="sale_type_id" id="sale_type_id" readonly
+                                                                    required>
+                                                                    @if (count($order_types) > 0)
+                                                                        @foreach ($order_types as $order_type)
+                                                                            <option value="{{ $order_type->id }}">
+                                                                                {{ $order_type->name }}</option>
+                                                                        @endforeach
+                                                                    @endif
+                                                                </select>
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-md-6">
                                                             <p class="lead">Payment Type:</p>
                                                             <p class="text-muted well well-sm shadow-none"
                                                                 style="margin-top: 10px;">
                                                                 <select class="form-control select2"
                                                                     name="payment_type_id" id="payment_type_id" readonly
                                                                     required>
+                                                                    {{-- <option value="">Select</option> --}}
                                                                     @if (count($payment_types) > 0)
                                                                         @foreach ($payment_types as $payment_type)
-                                                                            <option value="{{ $payment_type->id }}">
+                                                                            <option value="{{ $payment_type->id }}" {{ $payment_type->id == '1' ? 'selected':''}}>
                                                                                 {{ $payment_type->name }}</option>
                                                                         @endforeach
                                                                     @endif
@@ -282,17 +299,18 @@
                                                 placeholder="0.00" data-cell="" step="any" min="0"
                                                 max="99999999999999" required data-format="0[.]00" readonly>
                                         </td>
-                                        <th>Grand Total:</th>
-                                        <td>
-                                            <input type="number" name="grand_total" id="grand_total"
-                                                class="form-control" readonly step="any" min="0"
-                                                max="9999999999999999" />
-                                        </td>
+
                                         <th>Discount:</th>
                                         <td>
                                             <input type="number" name="discount" id="discount_amount"
                                                 class="form-control" onkeyup="priceCalculation('')" step="any"
                                                 min="0" max="9999999999999999">
+                                        </td>
+                                        <th>Grand Total:</th>
+                                        <td>
+                                            <input type="number" name="grand_total" id="grand_total"
+                                                class="form-control" readonly step="any" min="0"
+                                                max="9999999999999999" />
                                         </td>
                                         <th>Paid:</th>
                                         <td id="PaidAmount">
@@ -803,16 +821,35 @@
                 $('#discount_amount').val(sub_total);
                 priceCalculation();
             }
-            var payment_type_id = $('#payment_type_id').val();
-            if (payment_type_id === '2') {
+
+            var sale_type_id = $('#sale_type_id').val();
+            if (sale_type_id === '2') {
+                console.log(2)
                 var paid = $("#paid").val(0);
                 $('#due').val(final_amount);
                 $('#paid').prop("readonly", true);
+                $("#payment_type_id").html('<option value="">NULL</option>');
+                $('#payment_type_id').prop("readonly", true);
             } else {
+                console.log(1)
                 var paid = $("#paid").val(final_amount);
                 $('#due').val(0);
             }
+
+            // var payment_type_id = $('#payment_type_id').val();
+            // if (payment_type_id === '2') {
+            //     var paid = $("#paid").val(0);
+            //     $('#due').val(final_amount);
+            //     $('#paid').prop("readonly", true);
+            // } else {
+            //     var paid = $("#paid").val(final_amount);
+            //     $('#due').val(0);
+            // }
         }
+
+        $('#sale_type_id').change(function() {
+            priceCalculation();
+        });
 
         $('#payment_type_id').change(function() {
             priceCalculation();

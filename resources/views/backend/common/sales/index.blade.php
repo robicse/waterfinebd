@@ -71,7 +71,7 @@
                                     <th>Paid Amount</th>
                                     <th>Due Amount</th>
                                     <th>Status</th>
-                                    {{-- <th>Action</th> --}}
+                                    <th>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -89,7 +89,7 @@
                                     <th>Paid Amount</th>
                                     <th>Due Amount</th>
                                     <th>Status</th>
-                                    {{-- <th>Action</th> --}}
+                                    <th>Action</th>
                                 </tr>
                                 </tfoot>
                             </table>
@@ -176,7 +176,7 @@
                     {data: 'paid_amount',name: 'paid_amount'},
                     {data: 'due_amount',name: 'due_amount'},
                     {data: 'status'},
-                    // {data: 'action', name: 'action', orderable: false, searchable: false},
+                    {data: 'action', name: 'action', orderable: false, searchable: false},
                 ]
             });
         });

@@ -22,7 +22,7 @@ return new class extends Migration
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
             $table->float('total_quantity',16,2)->default(0);
             $table->float('sub_total', 16, 2)->default(0);
-            $table->enum('discount_type', ['Flat', 'Percentage'])->nullable();
+            $table->enum('discount_type', ['Flat', 'Percent'])->nullable();
             $table->float('discount_percent', 16, 2)->nullable();
             $table->float('discount_amount',16,2)->nullable();
             $table->float('after_discount', 16, 2)->nullable();

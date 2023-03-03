@@ -12,6 +12,7 @@ use App\Models\Supplier;
 use App\Models\Purchase;
 use App\Models\Sale;
 use App\Models\PurchaseReturn;
+use App\Models\Unit;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -115,12 +116,30 @@ class Helper
     {
         $storeReportCount = [
             'purchaseAmount' => Purchase::wherestore_id($store_id)->sum('paid_amount'),
-            'saleAmount' => Sale::wherestore_id($store_id)->sum('total_sale_amount'),
+            'saleAmount' => Sale::wherestore_id($store_id)->sum('grand_total'),
             'purchaseReturnAmount' => PurchaseReturn::wherestore_id($store_id)->sum('total_buy_amount'),
             'saleReturnAmount' => 0,
         ];
         return $storeReportCount;
     }
+
+
+    public static function getUnitName($id)
+    {
+        return Unit::where('id', $id)
+            ->pluck('name')
+            ->first();
+    }
+
+
+
+    public static function getStoreName($id)
+    {
+        return Store::where('id', $id)
+            ->pluck('name')
+            ->first();
+    }
+
 
 
 }
