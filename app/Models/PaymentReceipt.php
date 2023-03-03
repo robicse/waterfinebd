@@ -8,4 +8,20 @@ use Illuminate\Database\Eloquent\Model;
 class PaymentReceipt extends Model
 {
     use HasFactory;
+
+    public function store(){
+        return $this->belongsTo(Store::class);
+    }
+
+    public function customer(){
+        return $this->belongsTo(Customer::class);
+    }
+
+    public function payment_type(){
+        return $this->belongsTo(PaymentType::class);
+    }
+
+    public function created_by_user(){
+        return $this->belongsTo(User::class,'created_by_user_id');
+    }
 }

@@ -155,6 +155,48 @@
                     "status": 1
                 }
             ]
+        },
+        {
+            "parent_menu":"Collapse",
+            "name": "Payment Receipt",
+            "slug": "javascript:void(0)",
+            "icon": "nav-icon fas fa-barcode",
+            "serial": 18,
+            "status": 1,
+            "submenu": [
+                {
+                    "parent_menu":"Payment Receipt",
+                    "name": "Customer Receipt",
+                    "slug": "customer-receipts",
+                    "icon": "nav-icon fas fa-boxes",
+                    "serial": 19,
+                    "status": 1
+                },
+                {
+                    "parent_menu":"Payment Receipt",
+                    "name": "Supplier Payment",
+                    "slug": "supplier-payments",
+                    "icon": "nav-icon fas fa-boxes",
+                    "serial": 20,
+                    "status": 1
+                },
+                {
+                    "parent_menu":"Payment Receipt",
+                    "name": "Customer Due",
+                    "slug": "customer-dues",
+                    "icon": "nav-icon fas fa-coins",
+                    "serial": 21,
+                    "status": 1
+                },
+                {
+                    "parent_menu":"Payment Receipt",
+                    "name": "Supplier Due",
+                    "slug": "supplier-dues",
+                    "icon": "nav-icon fab fa-stack-exchange",
+                    "serial": 22,
+                    "status": 1
+                }
+            ]
         }
     ],
     "permission": [
@@ -304,6 +346,54 @@
         },
         {
             "name":"sales-return-delete"
+        },
+        {
+            "name":"supplier-payments-list"
+        },
+        {
+            "name":"supplier-payments-create"
+        },
+        {
+            "name":"supplier-payments-edit"
+        },
+        {
+            "name":"supplier-payments-delete"
+        },
+         {
+            "name":"customer-receives-list"
+        },
+        {
+            "name":"customer-receives-create"
+        },
+        {
+            "name":"customer-receives-edit"
+        },
+        {
+            "name":"customer-receives-delete"
+        },
+        {
+            "name":"supplier-dues-list"
+        },
+        {
+            "name":"supplier-dues-create"
+        },
+        {
+            "name":"supplier-dues-edit"
+        },
+        {
+            "name":"supplier-dues-delete"
+        },
+        {
+            "name":"customer-dues-list"
+        },
+        {
+            "name":"customer-dues-create"
+        },
+        {
+            "name":"customer-dues-edit"
+        },
+        {
+            "name":"customer-dues-delete"
         }
     ]
 }

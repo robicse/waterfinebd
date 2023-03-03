@@ -143,6 +143,17 @@ class SaleController extends Controller
             $total = $request->total;
             $package_id = $request->package_id;
 
+            $profit_amount = 0;
+            for($x=0; $x<count($product_id); $x++){
+                $p_id = $product_id[$x];
+                $p_qty = $qty[$x];
+                $stock_info = Stock::wherestore_id($store_id)->whereproduct_id($p_id)->select('buy_price','sale_price')->orderBy('id', 'DESC')->first();
+                if($stock_info){
+                    $per_qty_profit_amount = $stock_info->sale_price - $stock_info->buy_price;
+                    $profit_amount += $per_qty_profit_amount * $p_qty;
+                }
+            }
+
             $sale = new Sale();
             $sale->voucher_date = $voucher_date;
             $sale->store_id = $store_id;
@@ -156,15 +167,22 @@ class SaleController extends Controller
             $sale->grand_total = $grand_total;
             $sale->paid_amount = $paid_amount;
             $sale->due_amount = $due_amount;
+            $sale->profit_amount = $profit_amount;
             $sale->status = 1;
             $sale->created_by_user_id = Auth::User()->id;
             if($sale->save()){
                 for($i=0; $i<count($product_id); $i++){
                     $product = Product::whereid($product_id[$i])->first();
-
+                    $p_id = $product_id[$i];
+                    $p_qty = $qty[$i];
+                    $total_amount = 0;
+                    $stock_info = Stock::wherestore_id($store_id)->whereproduct_id($p_id)->select('buy_price','sale_price')->orderBy('id', 'DESC')->first();
+                    if($stock_info){
+                        $per_qty_profit_amount = $stock_info->sale_price - $stock_info->buy_price;
+                        $total_amount += $per_qty_profit_amount * $p_qty;
+                    }
 
                     $sub_total = ($qty[$i] * $sale_price[$i]);
-                    // dd($sub_total);
                     $unit_id = $unit_id[$i];
                     $product_vat = $product_vat[$i] != NULL ? $request->product_vat : 0;
                     $product_vat_amount = $product_vat_amount[$i];
@@ -202,7 +220,7 @@ class SaleController extends Controller
                     $sale_product->product_discount = $final_discount_amount;
                     $sale_product->after_product_discount = ($sub_total + $product_vat_amount) - $final_discount_amount;
                     $sale_product->product_total = ($sub_total + $product_vat_amount) - $final_discount_amount;
-                    $sale_product->total_profit = 0;
+                    $sale_product->total_profit = $total_amount;
                     $sale_product->created_by_user_id = Auth::User()->id;
                     $sale_product->save();
                 }

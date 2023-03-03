@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Common;
 
 use Illuminate\Http\Request;
 use App\Helpers\ErrorTryCatch;
+use App\Models\Customer;
 use App\Models\Stock;
 use App\Models\Product;
 use App\Models\Unit;
@@ -96,5 +97,10 @@ class CommonController extends Controller
                 return response()->json(['success' => false, 'customer' => 'Error!!']);
             }
         }
+    }
+
+    public function FindCustomerInfo(Request $request)
+    {
+        return Customer::select('id', 'name')->get();
     }
 }
