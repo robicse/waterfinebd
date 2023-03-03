@@ -20,7 +20,13 @@ use App\Http\Controllers\Common\CustomerReceiptController;
 use App\Http\Controllers\Common\CustomerDueController;
 use App\Http\Controllers\Common\SupplierPaymentController;
 
+// common controller
 Route::post('update-status', [CommonController::class, 'updateStatus'])->name('updateStatus');
+Route::get('purchase-relation-data',[CommonController::class, 'PurchaseRelationData']);
+Route::get('sale-relation-data',[CommonController::class, 'SaleRelationData']);
+Route::post('find-product-info', [CommonController::class, 'FindProductInfo']);
+Route::post('get-store-customer', [CommonController::class, 'FindCustomerInfo']);
+
 Route::resource('roles', RoleController::class);
 Route::resource('users', UserController::class);
 Route::resource('stores', StoreController::class);
@@ -39,13 +45,10 @@ Route::resource('purchases', PurchaseController::class);
 Route::resource('stocks', StockController::class);
 Route::resource('purchase-returns', PurchaseReturnController::class);
 Route::resource('sales', SaleController::class);
-Route::get('sale-relation-data',[CommonController::class, 'SaleRelationData']);
-Route::post('find-product-info', [CommonController::class, 'FindProductInfo']);
 Route::get('sales-prints/{id}/{pagesize}', [SaleController::class, 'salePrintWithPageSize']);
 Route::get('/sales-invoice-pdf/{id}', [SaleController::class, 'saleInvoicePdfDownload']);
 Route::resource('sale-returns', SaleReturnController::class);
 Route::resource('customer-receipts', CustomerReceiptController::class);
-Route::post('get-store-customer', [CommonController::class, 'FindCustomerInfo']);
 Route::get('customer-due-balance-info/{id}', [CustomerReceiptController::class, 'customerDueBalanceInfo']);
 Route::resource('customer-dues', CustomerDueController::class);
 Route::resource('supplier-payments', SupplierPaymentController::class);

@@ -53,52 +53,6 @@
                             @endif
                             {!! Form::open(['route' => Request::segment(1) . '.sales.store', 'method' => 'POST', 'files' => true]) !!}
                             <div class="row">
-                                {{-- <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>Select Van <span class="required">*</span></label>
-                                        {!! Form::select('van_id', $vans, null, [
-                                            'id' => 'van_id',
-                                            'class' => 'form-control',
-                                            'placeholder' => 'Select One',
-                                            'autofocus',
-                                            'tabindex' => 1,
-                                        ]) !!}
-                                    </div>
-                                </div> --}}
-                                {{-- <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="name" class="form-label">Route</label>
-                                        <select name="route_id" id="route_id" tabindex="2" class="form-control" required>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label for="name" class="form-label">Salesman</label>
-                                        <select name="salesman_user_id" tabindex="3" id="salesman_user_id"
-                                            class="form-control" required>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>Select Customer <span class="required">*</span></label>
-                                        <button type="button" class="btn btn-primary btn-sm" onclick="showCustomerForm()">
-                                            <i class="fa fa-plus"></i>
-                                        </button>
-                                        <select class="select2 form-control" required name="customer_user_id" id="name"
-                                            tabindex="4"></select>
-                                        <span>Due : <strong id="customerDue">0</strong>
-                                            ({{ @$default_currency->symbol }})</span>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>Select Date <span class="required">*</span></label>
-                                        {!! Form::date('date', date('Y-m-d'), ['id' => 'date', 'class' => 'form-control', 'tabindex' => 5]) !!}
-                                    </div>
-                                </div> --}}
                                 @include('backend.common.sales.form')
 
                                 <div class="row">&nbsp;</div>
@@ -474,8 +428,7 @@
                         data: function(params) {
                             // console.log('params', params)
                             return {
-                                q: params.term,
-                                van_id: $('#van_id').val()
+                                q: params.term
                             };
                         },
                         processResults: function(data) {
@@ -546,14 +499,13 @@
                         minimumInputLength: 1,
                         ajax: {
                             type: "POST",
-                            url: "{{ url(Request::segment(1) . '/findproductforvansale') }}",
+                            url: "{{ url(Request::segment(1) . '/find-product-info') }}",
                             dataType: "JSON",
                             delay: 250,
                             data: function(params) {
                                 // console.log('params', params)
                                 return {
-                                    q: params.term,
-                                    van_id: $('#van_id').val()
+                                    q: params.term
                                 };
                             },
                             processResults: function(data) {

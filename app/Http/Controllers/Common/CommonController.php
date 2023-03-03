@@ -26,6 +26,29 @@ class CommonController extends Controller
         return 0;
     }
 
+    public function PurchaseRelationData(Request $request)
+    {
+        $product_id = $request->current_product_id;
+
+        $unit_id = Product::where('id',$product_id)->pluck('unit_id')->first();
+        if($unit_id){
+            $units = Unit::where('id',$unit_id)->get();
+            if(count($units) > 0){
+                $options['unitOptions'] = "<select class='form-control' name='unit_id[]' readonly>";
+                foreach($units as $unit){
+                    $options['unitOptions'] .= "<option value='$unit->id'>$unit->name</option>";
+                }
+                $options['unitOptions'] .= "</select>";
+            }
+        }else{
+            $options['unitOptions'] = "<select class='form-control' name='unit_id[]' readonly>";
+            $options['unitOptions'] .= "<option value=''>No Data Found!</option>";
+            $options['unitOptions'] .= "</select>";
+        }
+
+        return response()->json(['success'=>true,'data'=>$options]);
+    }
+
     public function SaleRelationData(Request $request)
     {
         $store_id = $request->store_id;
@@ -86,8 +109,6 @@ class CommonController extends Controller
                     $query->where('products.name', 'like', '%' . $request->q . '%');
                 })
                 ->where('products.status', '=', 1)
-                ->where('stocks.store_id', '=', $request->store_id)
-                //->where('van_route_current_stocks.current_stock_qty', '>=', 1)
                 ->select('products.name', 'products.barcode', 'products.id',  'products.status', 'products.unit_id', 'products.vat_id')
                 ->get();
 

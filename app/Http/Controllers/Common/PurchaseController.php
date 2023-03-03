@@ -6,7 +6,10 @@ use DB;
 use App\Helpers\ErrorTryCatch;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\OrderType;
+use App\Models\PaymentType;
 use App\Models\Category;
+use App\Models\Unit;
 use App\Models\Purchase;
 use App\Models\Product;
 use App\Models\Store;
@@ -77,15 +80,18 @@ class PurchaseController extends Controller
 
     public function create()
     {
+        $order_types = OrderType::whereIn('name', ['Cash', 'Credit'])->get();
+        $payment_types = PaymentType::whereIn('name', ['Cash', 'Card', 'Cheque', 'Condition'])->get();
         $stores = Store::wherestatus(1)->pluck('name','id');
         $suppliers = Supplier::wherestatus(1)->pluck('name','id');
         $categories = Category::wherestatus(1)->get();
-        return view('backend.common.purchases.create', compact('stores','suppliers','categories'));
+        $units = Unit::wherestatus(1)->get();
+        return view('backend.common.purchases.create', compact('stores','suppliers','categories','order_types','payment_types','units'));
     }
 
     public function store(Request $request)
     {
-        //dd($request->all());
+        dd($request->all());
         $this->validate($request, [
             'entry_date' => 'required',
             'store_id' => 'required',
