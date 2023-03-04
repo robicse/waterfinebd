@@ -20,6 +20,9 @@ use App\Http\Controllers\Common\CustomerReceiptController;
 use App\Http\Controllers\Common\CustomerDueController;
 use App\Http\Controllers\Common\SupplierPaymentController;
 use App\Http\Controllers\Common\SupplierDueController;
+use App\Http\Controllers\Common\ReportController;
+use App\Http\Controllers\Common\SupplierLedgerController;
+use App\Http\Controllers\Common\CustomerLedgerController;
 
 // common controller
 Route::post('update-status', [CommonController::class, 'updateStatus'])->name('updateStatus');
@@ -55,4 +58,13 @@ Route::resource('customer-dues', CustomerDueController::class);
 Route::resource('supplier-payments', SupplierPaymentController::class);
 Route::resource('supplier-dues', SupplierDueController::class);
 Route::get('supplier-due-balance-info/{id}', [SupplierPaymentController::class, 'supplierDueBalanceInfo']);
+
+Route::get('purchase-store-wise-report', [ReportController::class, 'purchaseStoreWiseIndex'])->name('purchase-store-wise-report.index');
+Route::post('purchase-store-wise-report', [ReportController::class, 'purchaseStoreWiseShow']);
+Route::get('sale-store-wise-report', [ReportController::class, 'saleStoreWiseIndex'])->name('sale-store-wise-report.index');
+Route::post('sale-store-wise-report', [ReportController::class, 'saleStoreWiseShow']);
+Route::get('multiple-store-current-stock-report', [ReportController::class, 'MultipleStoreCurrentStockIndex'])->name('multiple-store-current-stock-report.index');
+Route::post('multiple-store-current-stock-report', [ReportController::class, 'MultipleStoreCurrentStockShow']);
+Route::resource('supplier-ledgers', SupplierLedgerController::class);
+Route::resource('customer-ledgers', CustomerLedgerController::class);
 

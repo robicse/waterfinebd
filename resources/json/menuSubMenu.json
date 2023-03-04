@@ -197,6 +197,58 @@
                     "status": 1
                 }
             ]
+        },
+        {
+            "parent_menu":"Collapse",
+            "name": "All Report",
+            "slug": "javascript:void(0)",
+            "icon": "nav-icon fas fa-barcode",
+            "serial": 23,
+            "status": 1,
+            "submenu": [
+                {
+                    "parent_menu":"All Report",
+                    "name": "Purchase Store Wise",
+                    "slug": "purchase-store-wise-report",
+                    "icon": "nav-icon fas fa-university",
+                    "serial": 24,
+                    "status": 1
+                },
+                {
+                    "parent_menu":"All Report",
+                    "name": "Sale Store Wise",
+                    "slug": "sale-store-wise-report",
+                    "icon": "nav-icon fas fa-university",
+                    "serial": 25,
+                    "status": 1
+                },
+                {
+                    "parent_menu":"All Report",
+                    "name": "Multiple Store Current Stock",
+                    "slug": "multiple-store-current-stock-report",
+                    "icon": "nav-icon fas fa-university",
+                    "serial": 26,
+                    "status": 1
+                },
+                {
+                    "parent_menu":"All Report",
+                    "name": "Suppler Ledger",
+                    "slug": "supplier-ledgers",
+                    "icon": "nav-icon fas fa-university",
+                    "serial":27,
+                    "status": 1,
+                    "submenu": []
+                },
+                {
+                    "parent_menu":"All Report",
+                    "name": "Customer Ledger",
+                    "slug": "customer-ledgers",
+                    "icon": "nav-icon fas fa-university",
+                    "serial":28,
+                    "status": 1,
+                    "submenu": []
+                }
+            ]
         }
     ],
     "permission": [
@@ -394,6 +446,21 @@
         },
         {
             "name":"customer-dues-delete"
+        },
+        {
+            "name":"purchase-store-wise-report-list"
+        },
+        {
+            "name":"sale-store-wise-report-list"
+        },
+        {
+            "name":"multiple-store-current-stock-report-list"
+        },
+        {
+            "name":"supplier-ledgers-list"
+        },
+        {
+            "name":"customer-ledgers-list"
         }
     ]
 }
