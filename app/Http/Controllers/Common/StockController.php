@@ -41,13 +41,13 @@ class StockController extends Controller
                     ->addColumn('store', function ($data) {
                         return $data->store->name;
                     })
-                    ->addColumn('category', function ($data) {
-                        return $data->category->name;
-                    })
+                    // ->addColumn('category', function ($data) {
+                    //     return $data->category->name;
+                    // })
                     ->addColumn('product', function ($data) {
                         return $data->product->name;
                     })
-                    ->rawColumns(['category','action', 'status'])
+                    ->rawColumns(['action', 'status'])
                     ->make(true);
             }
 

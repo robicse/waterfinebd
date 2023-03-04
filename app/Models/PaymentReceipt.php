@@ -13,6 +13,10 @@ class PaymentReceipt extends Model
         return $this->belongsTo(Store::class);
     }
 
+    public function supplier(){
+        return $this->belongsTo(Supplier::class);
+    }
+
     public function customer(){
         return $this->belongsTo(Customer::class);
     }

@@ -19,6 +19,7 @@ use App\Http\Controllers\Common\SaleReturnController;
 use App\Http\Controllers\Common\CustomerReceiptController;
 use App\Http\Controllers\Common\CustomerDueController;
 use App\Http\Controllers\Common\SupplierPaymentController;
+use App\Http\Controllers\Common\SupplierDueController;
 
 // common controller
 Route::post('update-status', [CommonController::class, 'updateStatus'])->name('updateStatus');
@@ -53,4 +54,5 @@ Route::get('customer-due-balance-info/{id}', [CustomerReceiptController::class, 
 Route::resource('customer-dues', CustomerDueController::class);
 Route::resource('supplier-payments', SupplierPaymentController::class);
 Route::resource('supplier-dues', SupplierDueController::class);
+Route::get('supplier-due-balance-info/{id}', [SupplierPaymentController::class, 'supplierDueBalanceInfo']);
 

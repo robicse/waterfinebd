@@ -63,11 +63,11 @@
                                 <tr>
                                     <th>Sl</th>
                                     <th>Store</th>
-                                    <th>Category</th>
+                                    {{-- <th>Category</th> --}}
                                     <th>Product</th>
                                     <th>Quantity</th>
-                                    <th>Buy Amount</th>
-                                    <th>Sale Amount</th>
+                                    <th>Purchase Price</th>
+                                    <th>Sale Price</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -77,11 +77,11 @@
                                 <tr>
                                     <th>Sl</th>
                                     <th>Store</th>
-                                    <th>Category</th>
+                                    {{-- <th>Category</th> --}}
                                     <th>Product</th>
                                     <th>Quantity</th>
-                                    <th>Buy Amount</th>
-                                    <th>Sale Amount</th>
+                                    <th>Purchase Price</th>
+                                    <th>Sale Price</th>
                                 </tr>
                                 </tfoot>
                             </table>
@@ -160,11 +160,11 @@
                 columns: [
                     {data: 'id', name: 'id'},
                     {data: 'store',name: 'store'},
-                    {data: 'category',name: 'category'},
+                    // {data: 'category',name: 'category'},
                     {data: 'product',name: 'product'},
-                    {data: 'quantity',name: 'quantity'},
-                    {data: 'buy_price',name: 'buy_price'},
-                    {data: 'sell_price',name: 'sell_price'},
+                    {data: 'qty',name: 'qty'},
+                    {data: 'purchase_price',name: 'purchase_price'},
+                    {data: 'sale_price',name: 'sale_price'},
                 ]
             });
         });
