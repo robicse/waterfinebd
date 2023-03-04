@@ -91,62 +91,96 @@ class PurchaseController extends Controller
 
     public function store(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         $this->validate($request, [
             'entry_date' => 'required',
             'store_id' => 'required',
             'supplier_id' => 'required',
-            'total_quantity' => 'required',
-            'total_buy_amount' => 'required',
+            'total_qty' => 'required',
+            'sub_total' => 'required',
             'grand_total' => 'required',
-            'discount_amount' => 'required',
-            'paid_amount' => 'required',
+            'total_sale_price' => 'required',
+            //'discount_amount' => 'required',
+            'paid' => 'required',
             'product_category_id.*' => 'required',
             'product_id.*' => 'required',
-            'quantity.*' => 'required',
-            'buy_price.*' => 'required',
-            'sell_price.*' => 'required'
+            'qty.*' => 'required',
+            'purchase_price.*' => 'required',
+            'sale_price.*' => 'required'
         ]);
 
-        try {
+        // try {
             $entry_date = $request->entry_date;
             $store_id = $request->store_id;
             $supplier_id = $request->supplier_id;
-            $total_quantity = $request->total_quantity;
-            $total_buy_amount = $request->total_buy_amount;
-            $discount_amount = $request->discount_amount;
+            $total_qty = $request->total_qty;
+            $sub_total = $request->sub_total;
+            $discount_amount = $request->discount ? $request->discount : 0;
             $grand_total = $request->grand_total;
-            $paid_amount = $request->paid_amount;
-            $due_amount = $request->due_amount;
-            $category_id = $request->category_id;
+            $total_sale_price = $request->total_sale_price;
+            $payment_type_id = $request->payment_type_id;
+            $paid_amount = $request->paid;
+            $due_amount = $request->due;
+            $discount_type = 'Flat';
+            $discount_percent = NULL;
+            $discount = 0;
+            $total_vat = $request->total_vat;
+            //$category_id = $request->category_id;
+            $unit_id = $request->unit_id;
             $product_id = $request->product_id;
-            $quantity = $request->quantity;
-            $buy_price = $request->buy_price;
-            $sell_price = $request->sell_price;
+            $qty = $request->qty;
+            $purchase_price = $request->purchase_price;
+            $sale_price = $request->sale_price;
 
             $purchase = new Purchase();
             $purchase->entry_date = $entry_date;
             $purchase->store_id = $store_id;
             $purchase->supplier_id = $supplier_id;
-            $purchase->total_quantity = $total_quantity;
-            $purchase->total_buy_amount = $total_buy_amount;
+            $purchase->total_qty = $total_qty;
+            $purchase->sub_total = $sub_total;
             $purchase->discount_amount = $discount_amount;
+            $purchase->total_vat = $total_vat;
+            $purchase->discount_type = $discount_type;
+            $purchase->discount_percent = $discount_percent;
+            $purchase->after_discount = $grand_total;
             $purchase->grand_total = $grand_total;
+            $purchase->payment_type_id = $payment_type_id;
             $purchase->paid_amount = $paid_amount;
             $purchase->due_amount = $due_amount;
+            $purchase->total_sale_price = $total_sale_price;
             $purchase->status = 1;
             $purchase->created_by_user_id = Auth::User()->id;
             if($purchase->save()){
-                for($i=0; $i<count($category_id); $i++){
+                for($i=0; $i<count($product_id); $i++){
+                    $product = Product::whereid($product_id[$i])->first();
+                    $p_id = $product_id[$i];
+                    $price = $purchase_price[$i];
+                    $qty = $qty[$i];
+                    $total = ($qty * $price);
+                    //change  to unit id
+                    $unit_id = $request->unit_id[$i];
+                    $product_vat = $request->product_vat[$i];
+                    $product_vat_amount = $request->product_vat_amount[$i];
+                    $average_purchase_price = 0;
+                    //discount calculation
+                    $final_discount_amount = 0;
+
                     $stock = new Stock();
                     $stock->purchase_id = $purchase->id;
                     $stock->store_id = $store_id;
-                    $stock->category_id = $category_id[$i];
-                    $stock->product_id = $product_id[$i];
-                    $stock->quantity = $quantity[$i];
-                    $stock->buy_price = $buy_price[$i];
-                    $stock->sell_price = $sell_price[$i];
-                    $stock->status = 1;
+                    //$stock->category_id = $product->category_id;
+                    $stock->qty = $qty;
+                    $stock->product_id = $p_id;
+                    $stock->already_return_qty = 0;
+                    $stock->purchase_price = $price;
+                    $stock->product_total = $total;
+                    $stock->product_vat = $product_vat;
+                    $stock->product_vat_amount = $product_vat_amount;
+                    $stock->product_total = $total - $final_discount_amount + $product_vat_amount;
+                    $stock->product_discount_type = $discount_type;
+                    $stock->product_discount_percent = $discount_percent;
+                    $stock->product_discount = $final_discount_amount;
+                    $stock->after_product_discount = $total - $final_discount_amount + $product_vat_amount;
                     $stock->created_by_user_id = Auth::User()->id;
                     $stock->save();
                 }
@@ -182,11 +216,11 @@ class PurchaseController extends Controller
 
             Toastr::success("Purchase Created Successfully", "Success");
             return redirect()->route(\Request::segment(1) . '.purchases.index');
-        } catch (\Exception $e) {
-            $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
-            Toastr::error($response['message'], "Error");
-            return back();
-        }
+        // } catch (\Exception $e) {
+        //     $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
+        //     Toastr::error($response['message'], "Error");
+        //     return back();
+        // }
     }
 
     public function show($id)
@@ -210,16 +244,16 @@ class PurchaseController extends Controller
             'entry_date' => 'required',
             'store_id' => 'required',
             'supplier_id' => 'required',
-            'total_quantity' => 'required',
-            'total_buy_amount' => 'required',
+            'total_qty' => 'required',
+            'total_sale_price' => 'required',
             'grand_total' => 'required',
             'discount_amount' => 'required',
             'paid_amount' => 'required',
             'product_category_id.*' => 'required',
             'product_id.*' => 'required',
             'quantity.*' => 'required',
-            'buy_price.*' => 'required',
-            'sell_price.*' => 'required'
+            'purchase_price.*' => 'required',
+            'sale_price.*' => 'required'
         ]);
 
         try {

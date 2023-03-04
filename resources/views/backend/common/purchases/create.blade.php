@@ -119,8 +119,8 @@
                                                     </td>
                                                     <td width="15%">
                                                         <input type="number" onblur="CheckBuyPrice(1,this);"
-                                                            class="input-sm text-right form-control buy_price" placeholder="0.00"
-                                                            name="buy_price[]" id='buy_price_id_1' step="any"
+                                                            class="input-sm text-right form-control purchase_price" placeholder="0.00"
+                                                            name="purchase_price[]" id='buy_price_id_1' step="any"
                                                             min="0" max="9999999999999999" required
                                                             data-format="0[.]00" data-cell="E1">
                                                     </td>
@@ -255,7 +255,7 @@
                                         <th>Total Qty</th>
                                         <td>
                                             <input class="input-sm text-right form-control" type="number"
-                                                name="total_quantity" id='total_quantity'
+                                                name="total_qty" id='total_qty'
                                                 placeholder="0.00" data-cell="" step="any" min="0"
                                                 max="99999999999999" required data-format="0[.]00" readonly>
                                         </td>
@@ -268,13 +268,13 @@
                                         </td>
                                         <th>Total Buy Total:</th>
                                         <td>
-                                            <input type="number" name="total_buy_amount" id="total_buy_amount"
+                                            <input type="number" name="grand_total" id="grand_total"
                                                 class="form-control" readonly step="any" min="0"
                                                 max="9999999999999999" />
                                         </td>
                                         <th>Total Sale Total:</th>
                                         <td>
-                                            <input type="number" name="grand_total" id="grand_total"
+                                            <input type="number" name="total_sale_price" id="total_sale_price"
                                                 class="form-control" readonly step="any" min="0"
                                                 max="9999999999999999" />
                                         </td>
@@ -407,7 +407,7 @@
                     n + ',this);"></td>' +
 
                     '<td width="12%"><input type="number"  onblur="CheckBuyPrice(' + n +
-                    ',this);" step="any" min="0" max="9999999999999999" class="input-sm text-right form-control buy_price"  data-format="0[.]00" name="buy_price[]" id="buy_price_id_' +
+                    ',this);" step="any" min="0" max="9999999999999999" class="input-sm text-right form-control purchase_price"  data-format="0[.]00" name="purchase_price[]" id="buy_price_id_' +
                     n + '" data-cell="e' + n + '"   value="" required></td>' +
 
                     '<td width="12%"><input type="number"  onblur="CheckPrice(' + n +
@@ -556,8 +556,8 @@
 
                 var total_vat = $("#total_vat").val();
                 var sub_total = $("#amount").val();
-                var grand_total = parseFloat(sub_total) + parseFloat(total_vat);
-                $('#grand_total').val(grand_total);
+                var total_sale_price = parseFloat(sub_total) + parseFloat(total_vat);
+                $('#total_sale_price').val(total_sale_price);
             });
 
             $('#name,#date').on("change", function() {
@@ -638,20 +638,20 @@
                 var amt = $(this).val();
                 t += parseInt(amt);
             });
-            $('#total_quantity').val(t);
+            $('#total_qty').val(t);
         }
 
         function buyPriceSum(){
             console.log('buyPriceSum')
             var t = parseFloat(0);
-            $('.buy_price').each(function(i,e){
+            $('.purchase_price').each(function(i,e){
                 console.log('i',i)
                 index = i + 1;
                 var amt = $(this).val();
                 t += parseFloat(amt) * parseFloat($('#qty_id_' + index).val());
             });
             console.log('t',t)
-            $('#total_buy_amount').val(t);
+            $('#grand_total').val(t);
             $('#paid_amount').val(t);
             $('#due_amount').val(0);
         }
@@ -673,8 +673,8 @@
                 $form.calx('getCell', 'T1').calculate();
                 var sub_total = $("#amount").val();
                 var total_vat = $("#total_vat").val();
-                var grand_total = parseFloat(sub_total) + parseFloat(total_vat);
-                $('#grand_total').val(grand_total);
+                var total_sale_price = parseFloat(sub_total) + parseFloat(total_vat);
+                $('#total_sale_price').val(total_sale_price);
                 return false
             }
 
@@ -686,8 +686,8 @@
             $form.calx('getCell', 'T1').calculate();
             var sub_total = $("#amount").val();
             var total_vat = $("#total_vat").val();
-            var grand_total = parseFloat(sub_total) + parseFloat(total_vat);
-            $('#grand_total').val(grand_total);
+            var total_sale_price = parseFloat(sub_total) + parseFloat(total_vat);
+            $('#total_sale_price').val(total_sale_price);
 
             quantitySum();
         }
@@ -704,17 +704,17 @@
                 $('#discount_amount').prop("readonly", false);
                 $('#discount_percent').val('');
                 $('#discount_amount').val('');
-                $('#grand_total').val(grand_total);
+                $('#total_sale_price').val(total_sale_price);
             } else {
                 // $('#discount_percent_div').show();
                 $('#discount_percent').prop("readonly", false); // Element(s) are now enabled.
                 $('#discount_amount').prop("readonly", true);
                 $('#discount_amount').val('');
-                $('#grand_total').val(grand_total);
+                $('#total_sale_price').val(total_sale_price);
             }
 
             var discount_amount = parseFloat($('#discount_amount').val());
-            var grand_total = parseFloat(sub_total) + parseFloat(total_vat);
+            var total_sale_price = parseFloat(sub_total) + parseFloat(total_vat);
             if (sub_total > discount_amount) {
                 alert('You Can Not Discount More than Subtotal Price !');
                 return false;
@@ -738,8 +738,8 @@
 
             var sub_total = $("#amount").val();
             var total_vat = $("#total_vat").val();
-            var grand_total = parseFloat(sub_total) + parseFloat(total_vat);
-            $('#grand_total').val(grand_total);
+            var total_sale_price = parseFloat(sub_total) + parseFloat(total_vat);
+            $('#total_sale_price').val(total_sale_price);
         }
 
 
@@ -755,33 +755,33 @@
 
             var sub_total = $("#amount").val();
             var total_vat = $("#total_vat").val();
-            var grand_total = parseFloat(sub_total) + parseFloat(total_vat);
-            //grand_total = parseFloat(grand_total);
+            var total_sale_price = parseFloat(sub_total) + parseFloat(total_vat);
+            //total_sale_price = parseFloat(total_sale_price);
 
             if (discount_type == 'Flat') {
                 var discount_amount = $('#discount_amount').val();
                 if (discount_amount !== '') {
                     discount_amount = parseFloat(discount_amount);
-                    var discount = grand_total - discount_amount;
+                    var discount = total_sale_price - discount_amount;
                     var final_amount = discount;
                 } else {
-                    var final_amount = grand_total;
+                    var final_amount = total_sale_price;
                 }
                 $('#discount_percent').val('');
             } else {
                 var discount_percent = $('#discount_percent').val();
                 if (discount_percent !== '') {
                     discount_percent = parseFloat(discount_percent);
-                    var discount = (grand_total * discount_percent) / 100;
-                    var final_amount = grand_total - discount;
+                    var discount = (total_sale_price * discount_percent) / 100;
+                    var final_amount = total_sale_price - discount;
                 } else {
-                    var final_amount = grand_total;
+                    var final_amount = total_sale_price;
                 }
                 $('#discount_amount').val(discount);
             }
 
-            $('#total_amount').val(grand_total);
-            $('#grand_total').val(final_amount);
+            $('#total_amount').val(total_sale_price);
+            $('#total_sale_price').val(final_amount);
             if (sub_total < discount_amount) {
                 alert('You Can Not Discount More than Subtotal Price !');
                 $('#discount_amount').val(sub_total);

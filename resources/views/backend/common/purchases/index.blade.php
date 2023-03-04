@@ -66,10 +66,12 @@
                                     <th>Store</th>
                                     <th>Supplier</th>
                                     <th>Total Quantity</th>
-                                    <th>Total Buy Amount</th>
-                                    <th>Total Sale Amount</th>
-                                    <th>Paid Amount</th>
+                                    <th>Sub Total</th>
                                     <th>Discount Amount</th>
+                                    <th>Grand Total</th>
+                                    <th>Paid Amount</th>
+                                    <th>Due Amount</th>
+                                    <th>Total Sale Amount</th>
                                     <th>Status</th>
                                     {{-- <th>Action</th> --}}
                                 </tr>
@@ -84,10 +86,12 @@
                                     <th>Store</th>
                                     <th>Supplier</th>
                                     <th>Total Quantity</th>
-                                    <th>Total Buy Amount</th>
-                                    <th>Total Sale Amount</th>
-                                    <th>Paid Amount</th>
+                                    <th>Sub Total</th>
                                     <th>Discount Amount</th>
+                                    <th>Grand Total</th>
+                                    <th>Paid Amount</th>
+                                    <th>Due Amount</th>
+                                    <th>Total Sale Amount</th>
                                     <th>Status</th>
                                     {{-- <th>Action</th> --}}
                                 </tr>
@@ -170,11 +174,13 @@
                     {data: 'entry_date',name: 'entry_date'},
                     {data: 'store',name: 'store'},
                     {data: 'supplier',name: 'supplier'},
-                    {data: 'total_quantity',name: 'total_quantity'},
-                    {data: 'total_buy_amount',name: 'total_buy_amount'},
-                    {data: 'total_sale_amount',name: 'total_sale_amount'},
-                    {data: 'paid_amount',name: 'paid_amount'},
+                    {data: 'total_qty',name: 'total_qty'},
+                    {data: 'sub_total',name: 'sub_total'},
                     {data: 'discount_amount',name: 'discount_amount'},
+                    {data: 'grand_total',name: 'grand_total'},
+                    {data: 'paid_amount',name: 'paid_amount'},
+                    {data: 'due_amount',name: 'due_amount'},
+                    {data: 'total_sale_price',name: 'total_sale_price'},
                     {data: 'status'},
                     // {data: 'action', name: 'action', orderable: false, searchable: false},
                 ]
