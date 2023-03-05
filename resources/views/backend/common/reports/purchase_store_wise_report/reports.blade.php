@@ -79,7 +79,7 @@
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
-                            {!! Form::open(['url' => Request::segment(1) . '/sale-store-wise-report']) !!}
+                            {!! Form::open(['url' => Request::segment(1) . '/purchase-store-wise-report']) !!}
                             <div class="row justify-content-center">
                                 <div class="col-2">
                                     <div class="form-group">
@@ -120,7 +120,7 @@
                                     <div class="form-group">
                                         <br>
                                         <button class="btn btn-primary  mt-2">Submit</button>
-                                        <a href="{{ url(Request::segment(1) . '/sale-store-wise-report') }}"
+                                        <a href="{{ url(Request::segment(1) . '/purchase-store-wise-report') }}"
                                             class="btn btn-primary" type="button" style="margin-top:8px;">Reset</a>
                                     </div>
                                 </div>
@@ -173,7 +173,7 @@
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body table-responsive">
-                            @if ($storeWiseSaleReports->isNotEmpty())
+                            @if ($storeWisePurchaseReports->isNotEmpty())
                                 <table class="table table-bordered table-striped data-table data-table">
                                     <thead>
                                         <tr>
@@ -185,22 +185,20 @@
                                             <th>Grand Total</th>
                                             <th>Paid</th>
                                             <th>Due</th>
-                                            <th>Profit</th>
                                             <th>Detail</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($storeWiseSaleReports as $sale)
+                                        @foreach ($storeWisePurchaseReports as $sale)
                                             <tr>
                                                 <td>{{ $loop->index + 01 }}</td>
                                                 <td>{{ $sale->id }}</td>
-                                                <td>{{ $sale->voucher_date }}</td>
+                                                <td>{{ $sale->entry_date }}</td>
                                                 <td>{{ @$storeInfo->name }}</td>
                                                 <td>{{ $sale->total_vat }}</td>
                                                 <td class="text-right">{{ $sale->grand_total }}</td>
                                                 <td class="text-right">{{ $sale->paid_amount }}</td>
                                                 <td class="text-right">{{ $sale->due_amount }}</td>
-                                                <td class="text-right">{{ $sale->profit_amount }}</td>
                                                 <td><a class="btn btn-warning btn-sm waves-effect" type="button"
                                                         target="_blank"
                                                         href="{{ route(\Request::segment(1) . '.sales.show', $sale->id) }}"><i
@@ -212,8 +210,8 @@
                                         <td colspan="4"></td>
                                         <td class="text-right"><strong> Total : </strong> </td>
                                         <td class="text-right"> <strong>
-                                                {{ $storeWiseSaleReports->sum('grand_total') }}</strong></td>
-                                        <td colspan="4"></td>
+                                                {{ $storeWisePurchaseReports->sum('grand_total') }}</strong></td>
+                                        <td colspan="3"></td>
                                     </tfoot>
                                 </table>
                             @else

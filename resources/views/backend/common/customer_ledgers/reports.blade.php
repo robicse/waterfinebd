@@ -1,7 +1,6 @@
-@extends('backend.layouts.master')
+ @extends('backend.layouts.master')
 @section('title', 'Customer Ledger Lists')
 @push('css')
-
     <link rel="stylesheet" href="{{ asset('backend/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('backend/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('backend/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
@@ -40,11 +39,11 @@
                             <div class="row justify-content-center">
                                 <div class="col-2">
                                     <div class="form-group">
-                                        <label>Select Warehouse:</label>
-                                        {!! Form::select('warehouse_id', $warehouses, $warehouse_id, [
+                                        <label>Select Store:</label>
+                                        {!! Form::select('store_id', $stores, $store_id, [
                                             'class' => 'form-control',
                                             'placeholder' => 'Select One',
-                                            'id' => 'warehouse_id',
+                                            'id' => 'store_id',
                                             'required',
                                         ]) !!}
                                     </div>
@@ -52,10 +51,13 @@
                                 <div class="col-2">
                                     <div class="form-group">
                                         <label>Select Customer:</label>
-                                        <select class="form-control" name="customer_user_id" id="customer_user_id">
-                                            @if(count($customers))
-                                                @foreach($customers as $customer)
-                                                    <option value="{{$customer->id}}" {{$customer->id == $customer_user_id ? 'selected' : ''}}>{{$customer->name}}</option>
+                                        <select class="form-control" name="customer_id" id="customer_id">
+                                            <option>Select One</option>
+                                            @if (count($customers))
+                                                @foreach ($customers as $customer)
+                                                    <option value="{{ $customer->id }}"
+                                                        {{ $customer->id == $customer_id ? 'selected' : '' }}>{{ $customer->name }}
+                                                    </option>
                                                 @endforeach
                                             @endif
                                         </select>
@@ -74,7 +76,7 @@
                                     </div>
                                 </div>
                                 <div class="col-2">
-                                    <div class="form-group">
+                                    <div class="form-group ">
                                         <br>
                                         <button class="btn btn-primary  mt-2">Submit</button>
                                         <a href="{{ route(Request::segment(1) . '.customer-ledgers.index') }}" class="btn btn-primary" type="button" style="margin-top:8px;">Reset</a>
@@ -95,7 +97,6 @@
     </section>
     <!-- /.content -->
 
-
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
@@ -106,7 +107,7 @@
                             <div class="row justify-content-center">
                                 <div class="col-md-6">
                                     <h6><strong>Pre Balance: </strong>{{ $preBalance }}</h6>
-                                    <h6><strong>Current Balance: </strong>{{customerLedgerCurrentBalance($customerReports)}}</h6>
+                                    <h6><strong>Current Balance: </strong>{{ Helper::ledgerCurrentBalance($customerReports) }}</h6>
                                 </div>
                                 <div class="col-md-6">
 
@@ -115,50 +116,40 @@
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body table-responsive">
-                            @if($customerReports->isNotEmpty())
-                                <table class="table table-bordered table-striped data-table">
-                                    <thead>
+                            @if ($customerReports->isNotEmpty())
+                            <table class="table table-bordered table-striped data-table">
+                                <thead>
+                                    <tr>
+                                        <th>SL</th>
+                                        <th>Date</th>
+                                        <th>Invoice</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @php
+                                        $balance = 0;
+                                    @endphp
+                                    @foreach ($customerReports as $sup)
                                         <tr>
-                                            <th>SL</th>
-                                            <th>Date</th>
-                                            <th>Description</th>
-                                            <th>Debit</th>
-                                            <th>Credit</th>
-                                            <th>Balance</th>
+                                            <td class="text-right">{{ $loop->index + 01 }}</td>
+                                            <td class="text-right">{{ $sup->date }}</td>
+                                            <td class="text-right">{{ $sup->id }}</td>
+                                            <td class="text-right">{{ $sup->amount }}</td>
+                                            <td class="text-right">{{ $sup->order_type_id == 1 ? 'Paid' : 'Due' }}</td>
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        @php
-                                            $balance = 0;
-                                        @endphp
-                                        @foreach ($customerReports as $cus)
-                                        @php
-                                            $current_debit = $cus->debit;
-                                            $current_credit = $cus->credit;
-                                            if($current_debit > 0){
-                                                $balance += $current_debit;
-                                            }else{
-                                                $balance -= $current_credit;
-                                            }
-                                        @endphp
-                                            <tr>
-                                                <td class="text-right">{{ $loop->index + 01 }}</td>
-                                                <td class="text-right">{{ $cus->date }}</td>
-                                                <td class="text-right">{{ $cus->description }}</td>
-                                                <td class="text-right">{{ $cus->debit }}</td>
-                                                <td class="text-right">{{ $cus->credit }}</td>
-                                                <td class="text-right">{{ $balance}}</td>
-                                            </tr>
-                                        @endforeach
-                                        <tfoot>
-                                            <td colspan="2"></td>
-                                            <td class="text-right"><strong> Total : </strong> </td>
-                                            <td class="text-right"> <strong> {{ $customerReports->sum('debit') }}</strong></td>
-                                            <td class="text-right"> <strong> {{ $customerReports->sum('credit') }}</strong></td>
-                                            <td class="text-right"> <strong id="ledger_balance"> {{ $balance}}</strong></td>
-                                        </tfoot>
-                                    </tbody>
-                                </table>
+                                    @endforeach
+                                <tfoot>
+                                    {{-- <td colspan="2"></td>
+                                    <td class="text-right"><strong> Total : </strong> </td>
+                                    <td class="text-right"> <strong> {{ $customerReports->sum('debit') }}</strong></td>
+                                    <td class="text-right"> <strong> {{ $customerReports->sum('credit') }}</strong></td>
+                                    <td class="text-right"> <strong> {{ $balance }}</strong></td> --}}
+                                </tfoot>
+                                </tbody>
+
+                            </table>
                             @else
                                 <div>
                                     <h2 class="text-center">No Data found</h2>
@@ -176,11 +167,9 @@
         <!-- /.container-fluid -->
     </section>
     <!-- /.content -->
-
 @stop
 
 @push('js')
-
     <script src="{{ asset('backend/plugins/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('backend/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
     <script src="{{ asset('backend/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
@@ -204,39 +193,42 @@
                 }
             });
 
-            $('.data-table').DataTable( {
+            $('.data-table').DataTable({
                 dom: 'Bflrtip',
-                lengthMenu :
-                [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+                lengthMenu: [
+                    [10, 25, 50, 100, -1],
+                    [10, 25, 50, 100, "All"]
+                ],
                 buttons: [
-                    'copy', 'csv', 'excel', 'pdf', 'print','colvis'
+                    'copy', 'csv', 'excel', 'pdf', 'print', 'colvis'
                 ]
-            } );
+            });
 
-            $('#warehouse_id').change(function () {
-            var warehouse_id = $(this).val();
-            $.ajax({
-                url: "{{ url(Request::segment(1)) }}" +'/get-warehouse-customer',
-                method: 'POST',
-                data: {
-                    warehouse_id: warehouse_id
-                },
-                success: function (res) {
-                    console.log(res);
-                    if (res !== '') {
-                        $html = '<option value="">Select One</option>';
-                        res.forEach(element => {
-                            $html += '<option value="'+element.id+'">'+element.name+'</option>';
-                        });
-                        $('#customer_user_id').html($html);
+
+            $('#store_id').change(function() {
+                var store_id = $(this).val();
+                $.ajax({
+                    url: "{{ url(Request::segment(1)) }}" + '/get-warehouse-customer',
+                    method: 'POST',
+                    data: {
+                        store_id: store_id
+                    },
+                    success: function(res) {
+                        console.log(res);
+                        if (res !== '') {
+                            $html = '<option value="">Select One</option>';
+                            res.forEach(element => {
+                                $html += '<option value="' + element.id + '">' + element
+                                    .name + '</option>';
+                            });
+                            $('#customer_id').html($html);
+                        }
+                    },
+                    error: function(err) {
+                        console.log(err);
                     }
-                },
-                error: function (err) {
-                    console.log(err);
-                }
+                })
             })
-        })
-
         })
     </script>
 @endpush

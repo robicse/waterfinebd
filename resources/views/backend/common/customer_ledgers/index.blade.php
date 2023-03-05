@@ -1,7 +1,6 @@
 @extends('backend.layouts.master')
 @section('title', 'Customer Ledger Lists')
 @push('css')
-
     {{-- <link rel="stylesheet" href="{{ asset('backend/datetimepicker/css/bootstrap-datetimepicker.min.css') }}"> --}}
 
     <link rel="stylesheet" href="{{ asset('backend/css/custom.css') }}">
@@ -12,7 +11,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Customer</h1>
+                    <h1>Customer Ledger</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -39,11 +38,11 @@
                             <div class="row justify-content-center">
                                 <div class="col-2">
                                     <div class="form-group">
-                                        <label>Select Warehouse:</label>
-                                        {!! Form::select('warehouse_id', $warehouses, @Auth::user()->warehouse_id?:null, [
+                                        <label>Select Store:</label>
+                                        {!! Form::select('store_id', $stores, @Auth::user()->store_id?:null, [
                                             'class' => 'form-control',
                                             'placeholder' => 'Select One',
-                                            'id' => 'warehouse_id',
+                                            'id' => 'store_id',
                                             'required',
                                         ]) !!}
                                     </div>
@@ -51,15 +50,15 @@
                                 <div class="col-2">
                                     <div class="form-group">
                                         <label>Select Customer:</label>
-                                        <select class="form-control" name="customer_user_id" id="customer_user_id">
+                                        <select class="form-control" name="customer_id" id="customer_id" autofocus>
                                             <option>Select One</option>
-                                            @if(@Auth::user()->warehouse_id)
+                                            {{-- @if(@Auth::user()->store_id) --}}
                                                 @if(count($customers))
                                                     @foreach($customers as $customer)
                                                         <option value="{{$customer->id}}">{{$customer->name}}</option>
                                                     @endforeach
                                                 @endif
-                                            @endif
+                                            {{-- @endif --}}
                                         </select>
                                     </div>
                                 </div>
@@ -78,7 +77,7 @@
                                 <div class="col-2">
                                     <div class="form-group ">
                                         <br>
-                                        <button class="btn btn-primary  mt-2">Submit</button>
+                                        <button class="btn btn-primary  mt-2" id="SUBMIT_BTN">Submit</button>
                                     </div>
                                 </div>
                                 <div class="col-2">&nbsp;</div>
@@ -96,46 +95,47 @@
     </section>
     <!-- /.content -->
 
+
+
 @stop
 
 @push('js')
 
-    <!-- DataTables  & Plugins -->
-    {{-- <script src="{{ asset('backend/datetimepicker/js/bootstrap-datetimepicker.min.js') }}"></script> --}}
-
     <script>
         $(document).ready(function() {
+
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
+
+            // $('#store_id').change(function() {
+            //     var store_id = $(this).val();
+            //     $.ajax({
+            //         url: "{{ url(Request::segment(1)) }}" + '/get-store-customer',
+            //         method: 'POST',
+            //         data: {
+            //             store_id: store_id
+            //         },
+            //         success: function(res) {
+            //             console.log(res);
+            //             if (res !== '') {
+            //                 $html = '<option value="">Select One</option>';
+            //                 res.forEach(element => {
+            //                     $html += '<option value="' + element.id + '">' + element
+            //                         .name + '</option>';
+            //                 });
+            //                 $('#supplier_user_id').html($html);
+            //             }
+            //         },
+            //         error: function(err) {
+            //             console.log(err);
+            //         }
+            //     })
+            // })
+
+
         });
-
-        $('#warehouse_id').change(function () {
-            var warehouse_id = $(this).val();
-            $.ajax({
-                url: "{{ url(Request::segment(1)) }}" +'/get-warehouse-customer',
-                method: 'POST',
-                data: {
-                    warehouse_id: warehouse_id
-                },
-                success: function (res) {
-                    console.log(res);
-                    if (res !== '') {
-                        $html = '<option value="">Select One</option>';
-                        res.forEach(element => {
-                            $html += '<option value="'+element.id+'">'+element.name+'</option>';
-                        });
-                        $('#customer_user_id').html($html);
-                    }
-                },
-                error: function (err) {
-                    console.log(err);
-                }
-            })
-        })
-
     </script>
-
 @endpush

@@ -140,6 +140,18 @@ class Helper
             ->first();
     }
 
+    public static function ledgerCurrentBalance($ledgers)
+    {
+        $balance = 0;
+        foreach ($ledgers as $data) {
+            $amount = $data->amount;
+            if ($data->order_type_id == 2) {
+                $balance += $amount;
+            }
+        }
+        return $balance;
+    }
+
 
 
 }

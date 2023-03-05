@@ -34,16 +34,16 @@ class SupplierLedgerController extends Controller
     }
     public function index()
     {
-        // try {
+        try {
 
             $suppliers = Supplier::wherestatus(1)->get();
             $stores = Store::wherestatus(1)->pluck('name', 'id');
             return view('backend.common.supplier_ledgers.index', compact('suppliers','stores'));
-        // } catch (\Exception $e) {
-        //     $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
-        //     Toastr::error($response['message'], "Error");
-        //     return back();
-        // }
+        } catch (\Exception $e) {
+            $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
+            Toastr::error($response['message'], "Error");
+            return back();
+        }
     }
 
     public function create()
@@ -52,24 +52,22 @@ class SupplierLedgerController extends Controller
 
     public function store(Request $request)
     {
-        // try {
+        try {
             $from = date('Y-m-d', strtotime($request->start_date));
             $to = date('Y-m-d', strtotime($request->end_date));
-            $supplier_user_id = $request->supplier_user_id;
+            $supplier_id = $request->supplier_id;
             $store_id = $request->store_id;
             $suppliers = Supplier::wherestatus(1)->get();
             $stores = Store::wherestatus(1)->pluck('name', 'id');
             $supplierReports = PaymentReceipt::whereorder_type('Purchase')->wheresupplier_id($supplier_id)->whereBetween('date', array($from, $to))->get();
-            $preBalanceDebit = PaymentReceipt::whereorder_type('Purchase')->wheresupplier_id($supplier_id)->where('date', '<', $from)->sum('debit');
-            $preBalanceCredit = PaymentReceipt::whereorder_type('Purchase')->wheresupplier_id($supplier_id)->where('date', '<', $from)->sum('credit');
-            $preBalance = $preBalanceCredit - $preBalanceDebit;
+            $preBalance = PaymentReceipt::whereorder_type('Purchase')->whereorder_type_id(2)->wheresupplier_id($supplier_id)->where('date', '<', $from)->sum('amount');
 
-            return view('backend.common.supplier_ledgers.reports', compact('supplierReports', 'preBalance', 'suppliers', 'from', 'to', 'supplier_user_id','stores','suppliers','store_id'));
-        // } catch (\Exception $e) {
-        //     $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
-        //     Toastr::error($response['message'], "Error");
-        //     return back();
-        // }
+            return view('backend.common.supplier_ledgers.reports', compact('supplierReports', 'preBalance', 'suppliers', 'from', 'to', 'supplier_id','stores','store_id'));
+        } catch (\Exception $e) {
+            $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
+            Toastr::error($response['message'], "Error");
+            return back();
+        }
     }
 
     public function show($id)

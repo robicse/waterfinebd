@@ -50,7 +50,7 @@
                                 <div class="col-2">
                                     <div class="form-group">
                                         <label>Select Supplier:</label>
-                                        <select class="form-control" name="supplier_user_id" id="supplier_user_id" autofocus>
+                                        <select class="form-control" name="supplier_id" id="supplier_id" autofocus>
                                             <option>Select One</option>
                                             {{-- @if(@Auth::user()->store_id) --}}
                                                 @if(count($suppliers))

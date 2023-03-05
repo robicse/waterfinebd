@@ -42,6 +42,50 @@ class ReportController extends Controller
     }
 
     //Sales Report Controller
+    public function purchaseStoreWiseIndex()
+    {
+        $default_currency = $this->getCurrencyInfoByDefaultCurrency();
+        try {
+            $stores = Store::wherestatus(1)->pluck('name', 'id');
+            return view('backend.common.reports.purchase_store_wise_report.index', compact('stores', 'default_currency'));
+        } catch (\Exception $e) {
+            $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
+            Toastr::error($response['message'], "Error");
+            return back();
+        }
+    }
+
+    public function purchaseStoreWiseShow(Request $request)
+    {
+        $default_currency = $this->getCurrencyInfoByDefaultCurrency();
+        $from = date('Y-m-d', strtotime($request->start_date));
+        $to = date('Y-m-d', strtotime($request->end_date));
+        $store_id = $request->store_id;
+
+        $storeInfo = Store::where('id', $store_id)->first();
+        $store = Store::find($store_id);
+        $previewtype = $request->previewtype;
+        $storeWisePurchaseReports = Purchase::where('store_id', '=', $store_id)->whereBetween('entry_date', array($from, $to))->get();
+        $stores = Store::wherestatus(1)->pluck('name', 'id');
+
+        if ($previewtype == 'htmlview') {
+            return view('backend.common.reports.purchase_store_wise_report.reports', compact('storeWisePurchaseReports', 'from', 'to', 'stores', 'store_id', 'storeInfo', 'previewtype', 'default_currency'));
+        } elseif ($previewtype == 'pdfview') {
+            $pdf = Pdf::loadView('backend.common.reports.purchase_store_wise_report.pdf_view', compact('storeWisePurchaseReports', 'from', 'to', 'store', 'store_id', 'storeInfo', 'previewtype', 'default_currency'));
+            return $pdf->stream('store_purchase_report_' . now() . '.pdf');
+        }
+        elseif ($previewtype == 'excelview') {
+            return  Excel::download(new SaleWarehouseWiseExport($storeWisePurchaseReports, $storeInfo), now() . '_purchase_store_wise.xlsx');
+        } else {
+            return view('backend.common.reports.purchase_store_wise_report.reports', compact('storeWisePurchaseReports', 'from', 'to', 'stores', 'store_id', 'storeInfo', 'previewtype', 'default_currency'));
+        }
+
+
+        /* if ($previewtype == 'excellview') {
+            return  Excel::download(new SaleReturnCustomerToVanExport($request), now() . '_sale_return_customer.xlsx');
+        } */
+    }
+
     public function saleStoreWiseIndex()
     {
         $default_currency = $this->getCurrencyInfoByDefaultCurrency();
@@ -67,7 +111,6 @@ class ReportController extends Controller
         $previewtype = $request->previewtype;
         $storeWiseSaleReports = Sale::where('store_id', '=', $store_id)->whereBetween('voucher_date', array($from, $to))->get();
 
-
         $stores = Store::wherestatus(1)->pluck('name', 'id');
 
         if ($previewtype == 'htmlview') {
@@ -77,7 +120,7 @@ class ReportController extends Controller
             return $pdf->stream('warehouse_sale_report_' . now() . '.pdf');
         }
         elseif ($previewtype == 'excelview') {
-            return  Excel::download(new SaleWarehouseWiseExport($warehouseWiseSaleReports, $warehouseInfo, $business_setting), now() . '_sale_warehouse_wise.xlsx');
+            return  Excel::download(new SaleWarehouseWiseExport($storeWiseSaleReports, $storeInfo), now() . '_sale_warehouse_wise.xlsx');
         } else {
             return view('backend.common.reports.sale_store_wise_report.reports', compact('storeWiseSaleReports', 'from', 'to', 'stores', 'store_id', 'storeInfo', 'previewtype', 'default_currency'));
         }

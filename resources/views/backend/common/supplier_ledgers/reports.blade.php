@@ -39,11 +39,11 @@
                             <div class="row justify-content-center">
                                 <div class="col-2">
                                     <div class="form-group">
-                                        <label>Select Warehouse:</label>
-                                        {!! Form::select('warehouse_id', $warehouses, $warehouse_id, [
+                                        <label>Select Store:</label>
+                                        {!! Form::select('store_id', $stores, $store_id, [
                                             'class' => 'form-control',
                                             'placeholder' => 'Select One',
-                                            'id' => 'warehouse_id',
+                                            'id' => 'store_id',
                                             'required',
                                         ]) !!}
                                     </div>
@@ -51,12 +51,12 @@
                                 <div class="col-2">
                                     <div class="form-group">
                                         <label>Select Supplier:</label>
-                                        <select class="form-control" name="supplier_user_id" id="supplier_user_id">
+                                        <select class="form-control" name="supplier_id" id="supplier_id">
                                             <option>Select One</option>
                                             @if (count($suppliers))
                                                 @foreach ($suppliers as $supplier)
                                                     <option value="{{ $supplier->id }}"
-                                                        {{ $supplier->id == $supplier_user_id ? 'selected' : '' }}>{{ $supplier->name }}
+                                                        {{ $supplier->id == $supplier_id ? 'selected' : '' }}>{{ $supplier->name }}
                                                     </option>
                                                 @endforeach
                                             @endif
@@ -107,7 +107,7 @@
                             <div class="row justify-content-center">
                                 <div class="col-md-6">
                                     <h6><strong>Pre Balance: </strong>{{ $preBalance }}</h6>
-                                    <h6><strong>Current Balance: </strong>{{ supplierLedgerCurrentBalance($supplierReports) }}</h6>
+                                    <h6><strong>Current Balance: </strong>{{ Helper::ledgerCurrentBalance($supplierReports) }}</h6>
                                 </div>
                                 <div class="col-md-6">
 
@@ -122,10 +122,9 @@
                                     <tr>
                                         <th>SL</th>
                                         <th>Date</th>
-                                        <th>Description</th>
-                                        <th>Debit</th>
-                                        <th>Credit</th>
-                                        <th>Balance</th>
+                                        <th>Invoice</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -133,30 +132,20 @@
                                         $balance = 0;
                                     @endphp
                                     @foreach ($supplierReports as $sup)
-                                        @php
-                                            $current_debit = $sup->debit;
-                                            $current_credit = $sup->credit;
-                                            if ($current_credit > 0) {
-                                                $balance += $current_credit;
-                                            } else {
-                                                $balance -= $current_debit;
-                                            }
-                                        @endphp
                                         <tr>
                                             <td class="text-right">{{ $loop->index + 01 }}</td>
                                             <td class="text-right">{{ $sup->date }}</td>
-                                            <td class="text-right">{{ $sup->description }}</td>
-                                            <td class="text-right">{{ $sup->debit }}</td>
-                                            <td class="text-right">{{ $sup->credit }}</td>
-                                            <td class="text-right">{{ $balance }}</td>
+                                            <td class="text-right">{{ $sup->id }}</td>
+                                            <td class="text-right">{{ $sup->amount }}</td>
+                                            <td class="text-right">{{ $sup->order_type_id == 1 ? 'Paid' : 'Due' }}</td>
                                         </tr>
                                     @endforeach
                                 <tfoot>
-                                    <td colspan="2"></td>
+                                    {{-- <td colspan="2"></td>
                                     <td class="text-right"><strong> Total : </strong> </td>
                                     <td class="text-right"> <strong> {{ $supplierReports->sum('debit') }}</strong></td>
                                     <td class="text-right"> <strong> {{ $supplierReports->sum('credit') }}</strong></td>
-                                    <td class="text-right"> <strong> {{ $balance }}</strong></td>
+                                    <td class="text-right"> <strong> {{ $balance }}</strong></td> --}}
                                 </tfoot>
                                 </tbody>
 
@@ -216,13 +205,13 @@
             });
 
 
-            $('#warehouse_id').change(function() {
-                var warehouse_id = $(this).val();
+            $('#store_id').change(function() {
+                var store_id = $(this).val();
                 $.ajax({
                     url: "{{ url(Request::segment(1)) }}" + '/get-warehouse-supplier',
                     method: 'POST',
                     data: {
-                        warehouse_id: warehouse_id
+                        store_id: store_id
                     },
                     success: function(res) {
                         console.log(res);
@@ -232,7 +221,7 @@
                                 $html += '<option value="' + element.id + '">' + element
                                     .name + '</option>';
                             });
-                            $('#supplier_user_id').html($html);
+                            $('#supplier_id').html($html);
                         }
                     },
                     error: function(err) {
