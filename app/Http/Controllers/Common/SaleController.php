@@ -220,6 +220,7 @@ class SaleController extends Controller
                     $sale_product->product_discount = $final_discount_amount;
                     $sale_product->after_product_discount = ($sub_total + $product_vat_amount) - $final_discount_amount;
                     $sale_product->product_total = ($sub_total + $product_vat_amount) - $final_discount_amount;
+                    $sale_product->per_product_profit = $per_qty_profit_amount;
                     $sale_product->total_profit = $total_amount;
                     $sale_product->created_by_user_id = Auth::User()->id;
                     $sale_product->save();

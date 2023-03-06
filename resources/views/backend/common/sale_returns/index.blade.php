@@ -66,6 +66,7 @@
                                     <th>Store</th>
                                     <th>Customer</th>
                                     <th>Total Quantity</th>
+                                    <th>Amount</th>
                                     <th>Status</th>
                                     {{-- <th>Action</th> --}}
                                 </tr>
@@ -80,6 +81,7 @@
                                     <th>Store</th>
                                     <th>Customer</th>
                                     <th>Total Quantity</th>
+                                    <th>Amount</th>
                                     <th>Status</th>
                                     {{-- <th>Action</th> --}}
                                 </tr>
@@ -163,6 +165,7 @@
                     {data: 'store',name: 'store'},
                     {data: 'customer',name: 'customer'},
                     {data: 'total_quantity',name: 'total_quantity'},
+                    {data: 'receivable_amount',name: 'receivable_amount'},
                     {data: 'status'},
                     // {data: 'action', name: 'action', orderable: false, searchable: false},
                 ]

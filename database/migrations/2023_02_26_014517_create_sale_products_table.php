@@ -38,6 +38,7 @@ return new class extends Migration
             $table->float('per_product_discount', 16, 2)->default(0);
             $table->float('after_product_discount', 16, 2)->default(0);
             $table->float('product_total', 16, 2)->default(0);
+            $table->float('per_product_profit', 16, 2)->nullable(0);
             $table->float('total_profit', 16, 2)->nullable(0);
             $table->bigInteger('created_by_user_id')->unsigned()->nullable();
             $table->foreign('created_by_user_id')->references('id')->on('users')->onDelete('cascade');

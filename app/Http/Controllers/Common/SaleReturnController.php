@@ -96,7 +96,7 @@ class SaleReturnController extends Controller
             'total_quantity' => 'required',
             'product_category_id.*' => 'required',
             'product_id.*' => 'required',
-            'quantity.*' => 'required'
+            'qty.*' => 'required'
         ]);
 
         // try {
@@ -111,22 +111,30 @@ class SaleReturnController extends Controller
             $sale_return->status = 1;
             $sale_return->created_by_user_id = Auth::User()->id;
             if($sale_return->save()){
+                $profit_minus_amount = 0;
                 for($i=0; $i<count($request->category_id); $i++){
                     $saleProduct = SaleProduct::wheresale_id($sale->id)->whereproduct_id($request->product_id[$i])->first();
+                    $profit_minus_amount += $saleProduct->per_product_profit * $request->qty[$i];
                     $sale_return_detail = new SaleReturnDetail();
                     $sale_return_detail->sale_return_id = $sale_return->id;
                     $sale_return_detail->store_id = $sale->store_id;
                     $sale_return_detail->category_id = $request->category_id[$i];
                     $sale_return_detail->product_id = $request->product_id[$i];
-                    $sale_return_detail->quantity = $request->quantity[$i];
-                    $sale_return_detail->amount = $saleProduct->amount;
+                    $sale_return_detail->qty = $request->qty[$i];
+                    $sale_return_detail->amount = $saleProduct->sale_price;
+                    $sale_return_detail->profit_minus = $saleProduct->total_profit;
                     $sale_return_detail->created_by_user_id = Auth::User()->id;
                     $sale_return_detail->save();
 
-                    $previous_already_return_quantity = $saleProduct->already_return_quantity;
-                    $saleProduct->already_return_quantity = ($previous_already_return_quantity + $request->quantity[$i]);
+                    $previous_already_return_qty = $saleProduct->already_return_qty;
+                    $saleProduct->already_return_qty = ($previous_already_return_qty + $request->qty[$i]);
                     $saleProduct->save();
                 }
+
+                $sale_return->receivable_amount = $saleProduct->sale_price;
+                $sale_return->receive_amount = $saleProduct->sale_price;
+                $sale_return->profit_minus_amount = $profit_minus_amount;
+                $sale_return->update();
             }
 
             Toastr::success("SaleReturn Created Successfully", "Success");
@@ -163,7 +171,7 @@ class SaleReturnController extends Controller
             'total_quantity' => 'required',
             'product_category_id.*' => 'required',
             'product_id.*' => 'required',
-            'quantity.*' => 'required'
+            'qty.*' => 'required'
         ]);
 
         try {
@@ -177,7 +185,9 @@ class SaleReturnController extends Controller
                     $sale_return_detail = new Stock();
                     $sale_return_detail->package_id = $id;
                     $sale_return_detail->product_id = $request->product_id[$i];
-                    $sale_return_detail->quantity = $request->quantity[$i];
+                    $sale_return_detail->qty = $request->qty[$i];
+                    $sale_return_detail->amount = $request->qty[$i];
+                    $sale_return_detail->profit_minus = $request->qty[$i];
                     $sale_return_detail->created_by_user_id = Auth::User()->id;
                     $sale_return_detail->updated_by_user_id = Auth::User()->id;
                     $sale_return_detail->save();

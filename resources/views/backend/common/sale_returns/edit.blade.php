@@ -110,7 +110,7 @@
                                                 </td>
                                                 <td>
                                                     <input class="input-sm text-right form-control" type="number"
-                                                        name="quantity[]" id='quantity_id_{{$current_row}}' value="{{ $packageProduct->quantity }}"
+                                                        name="qty[]" id='quantity_id_{{$current_row}}' value="{{ $packageProduct->qty }}"
                                                         placeholder="0.00" data-cell="D1" step="any" min="0"
                                                         max="99999999999999" required data-format="0[.]00">
                                                 </td>
@@ -169,7 +169,7 @@
                     '<td><select class="form-control product_id select2"  name="product_id[]" id="product_id_' +
                     n + '" onchange="getProductVal(' + n +
                     ',this);" required></select> </td>' +
-                    '<td width="12%"><input type="number"  class="input-sm text-right form-control" name="quantity[]" id="quantity_id_' +
+                    '<td width="12%"><input type="number"  class="input-sm text-right form-control" name="qty[]" id="quantity_id_' +
                     n +
                     '" required   step="any" min="0" max="99999999999999" placeholder="0.00" data-cell="D' +
                     n +

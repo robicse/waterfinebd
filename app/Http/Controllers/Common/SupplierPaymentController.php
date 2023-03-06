@@ -98,7 +98,7 @@ class SupplierPaymentController extends Controller
             'date' => 'required',
             'supplier_id' => 'required',
             'amount' => 'required|numeric|min:0|max:9999999999999999',
-            'paid_amount.*' => 'required|numeric|min:0|max:9999999999999999',
+            // 'paid_amount.*' => 'required|numeric|min:0|max:9999999999999999',
         ]);
         try {
             // DB::beginTransaction();

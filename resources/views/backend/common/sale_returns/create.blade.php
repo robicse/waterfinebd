@@ -101,8 +101,8 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <input class="input-sm text-right form-control quantity" type="number" onkeyup="quantitySum()"
-                                                        name="quantity[]" id='quantity_id_1'
+                                                    <input class="input-sm text-right form-control qty" type="number" onkeyup="quantitySum()"
+                                                        name="qty[]" id='quantity_id_1'
                                                         placeholder="0.00" data-cell="D1" step="any" min="0"
                                                         max="99999999999999" required data-format="0[.]00">
                                                 </td>
@@ -200,7 +200,7 @@
                     '</select></div></td>' +
                     '<td width="12%"><select class="form-control product_id select2"  name="product_id[]" id="product_id_' +
                     n + '" required></select> </td>' +
-                    '<td width="12%"><input type="number"  class="input-sm text-right form-control quantity" onkeyup="quantitySum()" name="quantity[]" id="quantity_id_' +
+                    '<td width="12%"><input type="number"  class="input-sm text-right form-control qty" onkeyup="quantitySum()" name="qty[]" id="quantity_id_' +
                     n +
                     '" required   step="any" min="0" max="99999999999999" placeholder="0.00" data-cell="" data-format="" data-format="0[.]00"></td>' +
                     '<td><span class="d-inline-flex"><input type="button"  class="btn btn-success addProduct" value="+"> <input type="button" class="btn btn-danger delete float-left" style="margin-left: 5px" value="x" title="Remove This Product"></span></td>' +
@@ -253,7 +253,7 @@
 
         function quantitySum(){
             var t = parseInt(0);
-            $('.quantity').each(function(i,e){
+            $('.qty').each(function(i,e){
                 var amt = $(this).val();
                 t += parseInt(amt);
             });

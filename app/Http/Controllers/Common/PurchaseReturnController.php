@@ -84,7 +84,7 @@ class PurchaseReturnController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all());
+        dd($request->all());
         $this->validate($request, [
             'return_date' => 'required',
             'store_id' => 'required',
@@ -92,10 +92,11 @@ class PurchaseReturnController extends Controller
             'total_quantity' => 'required',
             'product_category_id.*' => 'required',
             'product_id.*' => 'required',
-            'quantity.*' => 'required'
+            'qty.*' => 'required'
         ]);
 
         // try {
+            $sale = Purchase::findOrFail($request->sale_id);
             $purchase_return = new PurchaseReturn();
             $purchase_return->return_date = $request->return_date;
             $purchase_return->store_id = $request->store_id;
@@ -106,12 +107,13 @@ class PurchaseReturnController extends Controller
             $purchase_return->created_by_user_id = Auth::User()->id;
             if($purchase_return->save()){
                 for($i=0; $i<count($request->category_id); $i++){
+                    $saleProduct = Stock::wherepurchase_id($sale->id)->whereproduct_id($request->product_id[$i])->first();
                     $purchase_return_detail = new PurchaseReturnDetail();
                     $purchase_return_detail->purchase_return_id = $purchase_return->id;
                     $purchase_return_detail->store_id = $request->store_id;
                     $purchase_return_detail->category_id = $request->category_id[$i];
                     $purchase_return_detail->product_id = $request->product_id[$i];
-                    $purchase_return_detail->quantity = $request->quantity[$i];
+                    $purchase_return_detail->qty = $request->qty[$i];
                     $purchase_return_detail->status = 1;
                     $purchase_return_detail->created_by_user_id = Auth::User()->id;
                     $purchase_return_detail->save();
@@ -152,7 +154,7 @@ class PurchaseReturnController extends Controller
             'total_quantity' => 'required',
             'product_category_id.*' => 'required',
             'product_id.*' => 'required',
-            'quantity.*' => 'required'
+            'qty.*' => 'required'
         ]);
 
         try {
@@ -166,7 +168,7 @@ class PurchaseReturnController extends Controller
                     $purchase_return_detail = new Stock();
                     $purchase_return_detail->package_id = $id;
                     $purchase_return_detail->product_id = $request->product_id[$i];
-                    $purchase_return_detail->quantity = $request->quantity[$i];
+                    $purchase_return_detail->qty = $request->qty[$i];
                     $purchase_return_detail->created_by_user_id = Auth::User()->id;
                     $purchase_return_detail->updated_by_user_id = Auth::User()->id;
                     $purchase_return_detail->save();
