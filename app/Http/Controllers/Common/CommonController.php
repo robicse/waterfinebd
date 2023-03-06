@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Common;
 
 use Illuminate\Http\Request;
 use App\Helpers\ErrorTryCatch;
+use App\Helpers\Helper;
 use App\Models\Customer;
 use App\Models\Stock;
 use App\Models\Product;
@@ -60,24 +61,9 @@ class CommonController extends Controller
             ->pluck('stocks.sale_price')
             ->first();
 
-        // stock
-        $total_purchase_qty = 20;
-        // purchase return
-        $total_purchase_return_qty = 0;
-        // sale product
-        $total_product_sale_qty = 4;
-        // sale package
-        $total_package_sale_qty = 0;
-        // sale return
-        $total_sale_return_qty = 0;
-
-        $total_sale_qty=$total_product_sale_qty+ $total_package_sale_qty;
-        $purchase_sale_return_qty=($total_sale_qty-$total_sale_return_qty)+$total_purchase_return_qty;
-        $current_stock = ($total_purchase_qty-$purchase_sale_return_qty);
-
         $options = [
             'sale_price' => $sale_price,
-            'current_stock' => $current_stock,
+            'current_stock' => Helper::storeProductCurrentStock($store_id, $product_id),
             'unitOptions' => '',
         ];
 
@@ -100,16 +86,35 @@ class CommonController extends Controller
         return response()->json(['success'=>true,'data'=>$options]);
     }
 
+    // public function FindProductInfo(Request $request)
+    // {
+    //     if ($request->has('q')) {
+    //         $data = DB::table('products')
+    //             ->join('stocks', 'stocks.product_id', '=', 'products.id')
+    //             ->where(function ($query) use ($request) {
+    //                 $query->where('products.name', 'like', '%' . $request->q . '%');
+    //             })
+    //             ->where('products.status', '=', 1)
+    //             ->select('products.name', 'products.barcode', 'products.id',  'products.status', 'products.unit_id', 'products.vat_id')
+    //             ->get();
+
+    //         if ($data) {
+    //             return response()->json($data);
+    //         } else {
+    //             return response()->json(['success' => false, 'customer' => 'Error!!']);
+    //         }
+    //     }
+    // }
+
     public function FindProductInfo(Request $request)
     {
         if ($request->has('q')) {
             $data = DB::table('products')
-                ->join('stocks', 'stocks.product_id', '=', 'products.id')
                 ->where(function ($query) use ($request) {
-                    $query->where('products.name', 'like', '%' . $request->q . '%');
+                    $query->where('name', 'like', '%' . $request->q . '%');
                 })
-                ->where('products.status', '=', 1)
-                ->select('products.name', 'products.barcode', 'products.id',  'products.status', 'products.unit_id', 'products.vat_id')
+                ->where('status', '=', 1)
+                ->select('name', 'barcode', 'id',  'status', 'unit_id', 'vat_id')
                 ->get();
 
             if ($data) {

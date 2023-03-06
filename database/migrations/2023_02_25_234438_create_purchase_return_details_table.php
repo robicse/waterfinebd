@@ -23,8 +23,8 @@ return new class extends Migration
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
             $table->bigInteger('product_id')->unsigned()->nullable();
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
-            $table->integer('quantity')->default(0);
-            $table->float('buy_price',16,2)->default(0);
+            $table->integer('qty')->default(0);
+            $table->float('purchase_price',16,2)->default(0);
             $table->tinyInteger('status')->default(1);
             $table->bigInteger('created_by_user_id')->unsigned()->nullable();
             $table->foreign('created_by_user_id')->references('id')->on('users')->onDelete('cascade');

@@ -6,11 +6,15 @@ namespace App\Helpers;
 use App\Models\Module;
 use App\Models\Store;
 use App\Models\Product;
+use App\Models\Stock;
 use App\Models\User;
 use App\Models\Customer;
 use App\Models\Supplier;
 use App\Models\Purchase;
+use App\Models\PurchaseReturnDetail;
 use App\Models\Sale;
+use App\Models\SaleProduct;
+use App\Models\SaleReturnDetail;
 use App\Models\PurchaseReturn;
 use App\Models\Unit;
 use Illuminate\Support\Str;
@@ -152,6 +156,23 @@ class Helper
         return $balance;
     }
 
+    public static function storeProductCurrentStock($store_id, $product_id)
+    {
+        // stock
+        $total_purchase_qty = Stock::wherestore_id($store_id)->whereproduct_id($product_id)->sum('qty');
+        // purchase return
+        $total_purchase_return_qty = PurchaseReturnDetail::wherestore_id($store_id)->whereproduct_id($product_id)->sum('qty');
+        // sale product
+        $total_product_sale_qty = SaleProduct::wherestore_id($store_id)->whereproduct_id($product_id)->sum('qty');
+        // sale package
+        $total_package_sale_qty = 0;
+        // sale return
+        $total_sale_return_qty = SaleReturnDetail::wherestore_id($store_id)->whereproduct_id($product_id)->sum('qty');
 
+        $total_sale_qty=$total_product_sale_qty+ $total_package_sale_qty;
+        $purchase_sale_return_qty=($total_sale_qty-$total_sale_return_qty)+$total_purchase_return_qty;
+        $current_stock = ($total_purchase_qty-$purchase_sale_return_qty);
+        return $current_stock;
+    }
 
 }

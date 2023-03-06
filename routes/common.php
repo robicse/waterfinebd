@@ -67,4 +67,6 @@ Route::get('multiple-store-current-stock-report', [ReportController::class, 'Mul
 Route::post('multiple-store-current-stock-report', [ReportController::class, 'MultipleStoreCurrentStockShow']);
 Route::resource('supplier-ledgers', SupplierLedgerController::class);
 Route::resource('customer-ledgers', CustomerLedgerController::class);
+Route::get('loss-profits', [ReportController::class, 'lossProfitStoreWiseIndex'])->name('loss-profits.index');
+Route::post('loss-profit-store-wise-report', [ReportController::class, 'lossProfitStoreWiseShow']);
 

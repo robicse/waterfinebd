@@ -1,5 +1,5 @@
 @extends('backend.layouts.master')
-@section('title', 'Sale Store Wise')
+@section('title', 'Loss Profit Store Wise')
 @push('css')
     <style>
         p {
@@ -56,13 +56,13 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Sale Store Wise</h1>
+                    <h1>Loss Profit Store Wise</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{{ route(Request::segment(1) . '.dashboard') }}">Home</a>
                         </li>
-                        <li class="breadcrumb-item active">Sale Store Wise</li>
+                        <li class="breadcrumb-item active">Loss Profit Store Wise</li>
                     </ol>
                 </div>
             </div>
@@ -79,7 +79,7 @@
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
-                            {!! Form::open(['url' => Request::segment(1) . '/purchase-store-wise-report']) !!}
+                            {!! Form::open(['url' => Request::segment(1) . '/loss-profit-store-wise-report']) !!}
                             <div class="row justify-content-center">
                                 <div class="col-2">
                                     <div class="form-group">
@@ -120,7 +120,7 @@
                                     <div class="form-group">
                                         <br>
                                         <button class="btn btn-primary  mt-2">Submit</button>
-                                        <a href="{{ url(Request::segment(1) . '/purchase-store-wise-report') }}"
+                                        <a href="{{ url(Request::segment(1) . '/loss-profit-store-wise-report') }}"
                                             class="btn btn-primary" type="button" style="margin-top:8px;">Reset</a>
                                     </div>
                                 </div>
@@ -162,7 +162,7 @@
                                 @endif
 
                                 <div class="col-md-4">
-                                    {{-- <h3>Store Wise Sale</h3> --}}
+                                    {{-- <h3>Store Wise Loss Profit</h3> --}}
                                 </div>
                                 <div class="col-md-4 text-end">
                                     <h6><strong>From Date: </strong>{{ @$from }}</h6>
@@ -173,32 +173,24 @@
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body table-responsive">
-                            @if ($storeWisePurchaseReports->isNotEmpty())
+                            @if ($storeWiseLossProfitReports->isNotEmpty())
                                 <table class="table table-bordered table-striped data-table data-table">
                                     <thead>
                                         <tr>
-                                            <th>SL1</th>
+                                            <th>SL</th>
                                             <th>Invoice No</th>
                                             <th>Date</th>
-                                            <th>Store</th>
-                                            <th>Total Vat</th>
-                                            <th>Grand Total</th>
-                                            <th>Paid</th>
-                                            <th>Due</th>
+                                            <th>Loss/Profit</th>
                                             {{-- <th>Detail</th> --}}
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($storeWisePurchaseReports as $sale)
+                                        @foreach ($storeWiseLossProfitReports as $sale)
                                             <tr>
                                                 <td>{{ $loop->index + 01 }}</td>
                                                 <td>{{ $sale->id }}</td>
-                                                <td>{{ $sale->entry_date }}</td>
-                                                <td>{{ @$storeInfo->name }}</td>
-                                                <td>{{ $sale->total_vat }}</td>
-                                                <td class="text-right">{{ $sale->grand_total }}</td>
-                                                <td class="text-right">{{ $sale->paid_amount }}</td>
-                                                <td class="text-right">{{ $sale->due_amount }}</td>
+                                                <td>{{ $sale->voucher_date }}</td>
+                                                <td class="text-right">{{ $sale->profit_amount }}</td>
                                                 {{-- <td>
                                                     <a class="btn btn-warning btn-sm waves-effect" type="button"
                                                         target="_blank"
@@ -209,11 +201,10 @@
                                         @endforeach
                                     </tbody>
                                     <tfoot>
-                                        <td colspan="4"></td>
+                                        <td colspan="2"></td>
                                         <td class="text-right"><strong> Total : </strong> </td>
                                         <td class="text-right"> <strong>
-                                                {{ $storeWisePurchaseReports->sum('grand_total') }}</strong></td>
-                                        <td colspan="3"></td>
+                                                {{ $storeWiseLossProfitReports->sum('profit_amount') }}</strong></td>
                                     </tfoot>
                                 </table>
                             @else

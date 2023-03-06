@@ -186,7 +186,7 @@
                                             <th>Paid</th>
                                             <th>Due</th>
                                             <th>Profit</th>
-                                            <th>Detail</th>
+                                            {{-- <th>Detail</th> --}}
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -201,10 +201,12 @@
                                                 <td class="text-right">{{ $sale->paid_amount }}</td>
                                                 <td class="text-right">{{ $sale->due_amount }}</td>
                                                 <td class="text-right">{{ $sale->profit_amount }}</td>
-                                                <td><a class="btn btn-warning btn-sm waves-effect" type="button"
+                                                {{-- <td>
+                                                    <a class="btn btn-warning btn-sm waves-effect" type="button"
                                                         target="_blank"
                                                         href="{{ route(\Request::segment(1) . '.sales.show', $sale->id) }}"><i
-                                                            class="fa fa-eye"></i></a></td>
+                                                            class="fa fa-eye"></i></a>
+                                                </td> --}}
                                             </tr>
                                         @endforeach
                                     </tbody>

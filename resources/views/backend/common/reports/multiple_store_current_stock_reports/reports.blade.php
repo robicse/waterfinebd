@@ -1,5 +1,5 @@
 @extends('backend.layouts.master')
-@section('title', 'Sale Store Wise')
+@section('title', 'Store Current Stock Report Lists')
 @push('css')
     <style>
         p {
@@ -23,7 +23,6 @@
                 height: 297mm;
                 margin: 10px 30px !important;
             }
-
         }
 
         @media print {
@@ -42,7 +41,6 @@
             .main-cards {
                 padding: 0;
             }
-
         }
     </style>
     <!-- DataTables -->
@@ -56,13 +54,13 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Sale Store Wise</h1>
+                    <h1>Store Curent Stock Report</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{{ route(Request::segment(1) . '.dashboard') }}">Home</a>
                         </li>
-                        <li class="breadcrumb-item active">Sale Store Wise</li>
+                        <li class="breadcrumb-item active">Store Current Stock Report</li>
                     </ol>
                 </div>
             </div>
@@ -79,48 +77,37 @@
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
-                            {!! Form::open(['url' => Request::segment(1) . '/purchase-store-wise-report']) !!}
+                            {!! Form::open(['url' => Request::segment(1) . '/multiple-store-current-stock-report']) !!}
                             <div class="row justify-content-center">
-                                <div class="col-2">
+                                <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Select Store:</label>
-                                        {!! Form::select('store_id', $stores, $store_id, [
+                                        {!! Form::select('store_id[]', $stores, $store_ids, [
                                             'class' => 'form-control select2',
-                                            'placeholder' => 'Select One',
                                             'id' => 'store_id',
+                                            'required',
+                                            'multiple',
                                         ]) !!}
                                     </div>
                                 </div>
-                                <div class="col-2">
+
+                                <div class="col-md-3">
                                     <div class="form-group">
-                                        <label>Start Date:</label>
-                                        {!! Form::date('start_date', $from, ['class' => 'form-control', 'id' => 'myDatepicker', 'required']) !!}
+                                        <label>Select Product:</label>
+                                        {!! Form::select('product_id[]', $products, $product_ids, [
+                                            'class' => 'form-control select2',
+                                            'placeholder' => 'Select One',
+                                            'id' => 'product_id',
+                                            'required',
+                                            'multiple',
+                                        ]) !!}
                                     </div>
                                 </div>
-                                <div class="col-2">
-                                    <div class="form-group">
-                                        <label>End Date:</label>
-                                        {!! Form::date('end_date', $to, ['class' => 'form-control', 'id' => 'myDatepicker', 'required']) !!}
-                                    </div>
-                                </div>
-                                <div class="col-lg-1">
-                                    <label for="previewtype">
-                                        <input type="radio" name="previewtype" value="htmlview"
-                                            {{ $previewtype == 'htmlview' ? 'checked' : '' }} id="previewtype">
-                                        Normal</label>
-                                    <label for="pdfprintview">
-                                        <input type="radio" name="previewtype" value="pdfview"
-                                            {{ $previewtype == 'pdfview' ? 'checked' : '' }} id="printview"> Pdf
-                                    </label>
-                                    {{-- <label for="previewtype">
-                                        <input type="radio" name="previewtype" value="excelview" id="excelview"> Excel
-                                    </label> --}}
-                                </div>
-                                <div class="col-2">
-                                    <div class="form-group">
+                                <div class="col-lg-2">
+                                    <div class="form-group ">
                                         <br>
                                         <button class="btn btn-primary  mt-2">Submit</button>
-                                        <a href="{{ url(Request::segment(1) . '/purchase-store-wise-report') }}"
+                                        <a href="{{ url(Request::segment(1) . '/multiple-store-current-stock-report') }}"
                                             class="btn btn-primary" type="button" style="margin-top:8px;">Reset</a>
                                     </div>
                                 </div>
@@ -138,8 +125,6 @@
     </section>
     <!-- /.content -->
 
-
-
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
@@ -148,72 +133,74 @@
                     <div class="card card-info card-outline">
                         <div class="card-header">
                             <div class="row justify-content-center">
-                                @if ($storeInfo)
+                                {{-- @if ($warehouseInfo)
                                     <div class="col-md-4">
-                                        <h6><strong> Name: </strong>{{ @$storeInfo->name }}</h6>
-                                        <h6><strong> Phone: </strong>{{ @$storeInfo->phone }}</h6>
-                                        <h6><strong>Email: </strong>{{ @$storeInfo->email }}</h6>
-                                        <h6><strong>Address: </strong>{{ @$storeInfo->address }}</h6>
-                                    </div>
-                                @else
-                                    <div class="col-md-4">
-                                        <h3><strong>All Store </strong></h3>
+                                        <h6><strong> Name: </strong>{{ @$warehouseInfo->name }}</h6>
+                                        <h6><strong> Arabic Name: </strong>{{ @$warehouseInfo->arabic_name }}</h6>
+                                        <h6><strong> Phone: </strong>{{ @$warehouseInfo->phone }}</h6>
+                                        <h6><strong> Contact Person: </strong>{{ @$warehouseInfo->contact_person }}</h6>
+                                        <h6><strong>Email: </strong>{{ @$warehouseInfo->email }}</h6>
+                                        <h6><strong>Address: </strong>{{ @$warehouseInfo->address }}</h6>
                                     </div>
                                 @endif
-
                                 <div class="col-md-4">
-                                    {{-- <h3>Store Wise Sale</h3> --}}
+
                                 </div>
                                 <div class="col-md-4 text-end">
                                     <h6><strong>From Date: </strong>{{ @$from }}</h6>
                                     <h6><strong>To Date: </strong>{{ @$to }}</h6>
-                                    {{-- <button id="print-button" class="btn btn-sm btn-primary"><i class="fas fa-print"></i></button> --}}
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body table-responsive">
-                            @if ($storeWisePurchaseReports->isNotEmpty())
-                                <table class="table table-bordered table-striped data-table data-table">
+                            @if ($storeReports->isNotEmpty())
+                                <table class="table table-bordered table-striped data-table">
                                     <thead>
                                         <tr>
-                                            <th>SL1</th>
-                                            <th>Invoice No</th>
-                                            <th>Date</th>
-                                            <th>Store</th>
-                                            <th>Total Vat</th>
-                                            <th>Grand Total</th>
-                                            <th>Paid</th>
-                                            <th>Due</th>
-                                            {{-- <th>Detail</th> --}}
+                                            <th>Sl</th>
+                                            <th>Product Name</th>
+                                            <th>Unit (Base)</th>
+                                            <th>Store Name</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($storeWisePurchaseReports as $sale)
+                                        @php $total = 0; @endphp
+                                        @foreach ($storeReports as $data)
                                             <tr>
-                                                <td>{{ $loop->index + 01 }}</td>
-                                                <td>{{ $sale->id }}</td>
-                                                <td>{{ $sale->entry_date }}</td>
-                                                <td>{{ @$storeInfo->name }}</td>
-                                                <td>{{ $sale->total_vat }}</td>
-                                                <td class="text-right">{{ $sale->grand_total }}</td>
-                                                <td class="text-right">{{ $sale->paid_amount }}</td>
-                                                <td class="text-right">{{ $sale->due_amount }}</td>
-                                                {{-- <td>
-                                                    <a class="btn btn-warning btn-sm waves-effect" type="button"
-                                                        target="_blank"
-                                                        href="{{ route(\Request::segment(1) . '.sales.show', $sale->id) }}"><i
-                                                            class="fa fa-eye"></i></a>
-                                                </td> --}}
+                                                <td class="text-right">{{ $loop->index + 01 }}</td>
+                                                <td class="text-left">{{ @$data->name }}</td>
+                                                <td class="text-left">{{ @$data->unit->name }}</td>
+                                                <td class="text-right">
+                                                    {{-- {{ @$data->store->name }} --}}
+                                                    <table>
+                                                        @php
+                                                            $stores = \App\Models\Store::whereIn('id',$store_ids)->get();
+                                                        @endphp
+                                                        @if(count($stores) > 0)
+                                                            @foreach($stores as $store)
+                                                            @php
+                                                                $current_stock = \App\Helpers\Helper::storeProductCurrentStock($store->id, $data->id);
+                                                                $total += $current_stock;
+                                                            @endphp
+                                                            <tr>
+                                                                <td>{{ $store->name }}</td>
+                                                                <td>
+                                                                    {{ $current_stock }}
+                                                                </td>
+                                                            </tr>
+                                                            @endforeach
+                                                        @endif
+                                                    </table>
+                                                </td>
                                             </tr>
                                         @endforeach
                                     </tbody>
                                     <tfoot>
-                                        <td colspan="4"></td>
+                                        <td colspan="2"></td>
                                         <td class="text-right"><strong> Total : </strong> </td>
                                         <td class="text-right"> <strong>
-                                                {{ $storeWisePurchaseReports->sum('grand_total') }}</strong></td>
-                                        <td colspan="3"></td>
+                                            {{ $total }}</strong></td>
                                     </tfoot>
                                 </table>
                             @else
@@ -233,9 +220,6 @@
         <!-- /.container-fluid -->
     </section>
     <!-- /.content -->
-
-
-
 @stop
 
 @push('js')
@@ -251,7 +235,6 @@
     <script src="{{ asset('backend/plugins/datatables-buttons/js/buttons.html5.min.js') }}"></script>
     <script src="{{ asset('backend/plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
     <script src="{{ asset('backend/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
-
     <script>
         $(document).ready(function() {
             $('.data-table').DataTable({
@@ -263,14 +246,12 @@
                         exportOptions: {
                             columns: ':visible'
                         }
-                    },
-                    {
+                    }, {
                         extend: 'pdf',
                         exportOptions: {
                             columns: ':visible'
                         }
-                    },
-                    {
+                    }, {
                         extend: 'print',
                         exportOptions: {
                             columns: ':visible'
@@ -280,5 +261,18 @@
                 ]
             });
         });
+
+        $(document).ready(function() {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $('.select2').select2();
+            $('#print-button').on('click', function() {
+                window.print();
+                return false; // why false?
+            });
+        })
     </script>
 @endpush

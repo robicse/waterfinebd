@@ -147,9 +147,9 @@ class SaleController extends Controller
             for($x=0; $x<count($product_id); $x++){
                 $p_id = $product_id[$x];
                 $p_qty = $qty[$x];
-                $stock_info = Stock::wherestore_id($store_id)->whereproduct_id($p_id)->select('buy_price','sale_price')->orderBy('id', 'DESC')->first();
+                $stock_info = Stock::wherestore_id($store_id)->whereproduct_id($p_id)->select('purchase_price','sale_price')->orderBy('id', 'DESC')->first();
                 if($stock_info){
-                    $per_qty_profit_amount = $stock_info->sale_price - $stock_info->buy_price;
+                    $per_qty_profit_amount = $stock_info->sale_price - $stock_info->purchase_price;
                     $profit_amount += $per_qty_profit_amount * $p_qty;
                 }
             }
@@ -176,9 +176,9 @@ class SaleController extends Controller
                     $p_id = $product_id[$i];
                     $p_qty = $qty[$i];
                     $total_amount = 0;
-                    $stock_info = Stock::wherestore_id($store_id)->whereproduct_id($p_id)->select('buy_price','sale_price')->orderBy('id', 'DESC')->first();
+                    $stock_info = Stock::wherestore_id($store_id)->whereproduct_id($p_id)->select('purchase_price','sale_price')->orderBy('id', 'DESC')->first();
                     if($stock_info){
-                        $per_qty_profit_amount = $stock_info->sale_price - $stock_info->buy_price;
+                        $per_qty_profit_amount = $stock_info->sale_price - $stock_info->purchase_price;
                         $total_amount += $per_qty_profit_amount * $p_qty;
                     }
 

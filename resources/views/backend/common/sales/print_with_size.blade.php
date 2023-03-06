@@ -189,11 +189,11 @@ use Salla\ZATCA\Tags\TaxNumber;
                             <td colspan="3">&nbsp;</td>
                             <td style="text-align: right">{{ $default_currency->symbol }} {{number_format(@$sale->discount,2)}}</td>
                         </tr>
-                        <tr>
+                        {{-- <tr>
                             <td colspan="2" style="text-align: left">After Discount Amount:</td>
                             <td colspan="3">&nbsp;</td>
                             <td style="text-align: right">{{ $default_currency->symbol }} {{number_format(@$sale->after_discount,2)}}</td>
-                        </tr>
+                        </tr> --}}
 
                         <tr>
                             <th colspan="2" style="text-align: left"> Grand Total:</th>

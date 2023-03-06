@@ -70,6 +70,7 @@
                                     <th>Grand Total</th>
                                     <th>Paid Amount</th>
                                     <th>Due Amount</th>
+                                    <th>Profit Amount</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -88,6 +89,7 @@
                                     <th>Grand Total</th>
                                     <th>Paid Amount</th>
                                     <th>Due Amount</th>
+                                    <th>Profit Amount</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -175,6 +177,7 @@
                     {data: 'grand_total',name: 'grand_total'},
                     {data: 'paid_amount',name: 'paid_amount'},
                     {data: 'due_amount',name: 'due_amount'},
+                    {data: 'profit_amount',name: 'profit_amount'},
                     {data: 'status'},
                     {data: 'action', name: 'action', orderable: false, searchable: false},
                 ]

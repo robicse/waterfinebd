@@ -247,6 +247,15 @@
                     "serial":28,
                     "status": 1,
                     "submenu": []
+                },
+                {
+                    "parent_menu":"All Report",
+                    "name": "Loss Profit",
+                    "slug": "loss-profits",
+                    "icon": "nav-icon fas fa-university",
+                    "serial":28,
+                    "status": 1,
+                    "submenu": []
                 }
             ]
         }
@@ -411,7 +420,7 @@
         {
             "name":"supplier-payments-delete"
         },
-         {
+        {
             "name":"customer-receives-list"
         },
         {
@@ -461,6 +470,9 @@
         },
         {
             "name":"customer-ledgers-list"
+        },
+        {
+            "name":"loss-profits-list"
         }
     ]
 }
