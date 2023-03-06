@@ -114,7 +114,7 @@
                 <table class="padding text-left small border-bottom">
                     <thead>
                         <tr class="strong" style="background: #eceff4;">
-                            <th>SL</th>
+                            <th>Type</th>
                             <th>Invoice No</th>
                             <th>Date</th>
                             <th class="text-right">Loss/Profit</th>
@@ -123,10 +123,24 @@
                     <tbody class="strong">
                         @foreach ($storeWiseLossProfitReports as $sale)
                             <tr class="">
-                                <td>{{ $loop->index + 01 }}</td>
+                                <td>Sale</td>
                                 <td>{{ @$sale->id }}</td>
                                 <td>{{ @$sale->voucher_date }}</td>
                                 <td class="text-right">{{ $sale->profit_amount }}</td>
+                            </tr>
+                        @endforeach
+                        @foreach ($storeWiseLossProfitReportsReturn as $saleReturn)
+                            <tr>
+                                <td>Sale Return</td>
+                                <td>{{ $saleReturn->id }}</td>
+                                <td>{{ $saleReturn->return_date }}</td>
+                                <td class="text-right">{{ $saleReturn->profit_minus_amount }}</td>
+                                {{-- <td>
+                                    <a class="btn btn-warning btn-sm waves-effect" type="button"
+                                        target="_blank"
+                                        href="{{ route(\Request::segment(1) . '.sales.show', $sale->id) }}"><i
+                                            class="fa fa-eye"></i></a>
+                                </td> --}}
                             </tr>
                         @endforeach
                     </tbody>
@@ -144,7 +158,7 @@
 
                 <tr>
                     <th class="text-left strong">Total</th>
-                    <td class="currency">{{ $storeWiseLossProfitReports->sum('profit_amount') }}</td>
+                    <td class="currency">{{ number_format($storeWiseLossProfitReports->sum('profit_amount') - $storeWiseLossProfitReportsReturn->sum('profit_minus_amount'), 2) }}</td>
                 </tr>
             </tbody>
         </table>

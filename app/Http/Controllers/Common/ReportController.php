@@ -10,6 +10,7 @@ use App\Models\Stock;
 use App\Models\Supplier;
 use App\Models\Store;
 use App\Models\SaleProduct;
+use App\Models\SaleReturn;
 use Illuminate\Http\Request;
 use App\Helpers\ErrorTryCatch;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -195,18 +196,19 @@ class ReportController extends Controller
         $store = Store::find($store_id);
         $previewtype = $request->previewtype;
         $storeWiseLossProfitReports = Sale::where('store_id', '=', $store_id)->whereBetween('voucher_date', array($from, $to))->get();
+        $storeWiseLossProfitReportsReturn = SaleReturn::where('store_id', '=', $store_id)->whereBetween('return_date', array($from, $to))->get();
         $stores = Store::wherestatus(1)->pluck('name', 'id');
 
         if ($previewtype == 'htmlview') {
-            return view('backend.common.reports.loss_profit_store_wise_report.reports', compact('storeWiseLossProfitReports', 'from', 'to', 'stores', 'store_id', 'storeInfo', 'previewtype', 'default_currency'));
+            return view('backend.common.reports.loss_profit_store_wise_report.reports', compact('storeWiseLossProfitReports', 'storeWiseLossProfitReportsReturn','from', 'to', 'stores', 'store_id', 'storeInfo', 'previewtype', 'default_currency'));
         } elseif ($previewtype == 'pdfview') {
-            $pdf = Pdf::loadView('backend.common.reports.loss_profit_store_wise_report.pdf_view', compact('storeWiseLossProfitReports', 'from', 'to', 'store', 'store_id', 'storeInfo', 'previewtype', 'default_currency'));
+            $pdf = Pdf::loadView('backend.common.reports.loss_profit_store_wise_report.pdf_view', compact('storeWiseLossProfitReports', 'storeWiseLossProfitReportsReturn','from', 'to', 'store', 'store_id', 'storeInfo', 'previewtype', 'default_currency'));
             return $pdf->stream('store_purchase_report_' . now() . '.pdf');
         }
         elseif ($previewtype == 'excelview') {
             return  Excel::download(new SaleWarehouseWiseExport($storeWiseLossProfitReports, $storeInfo), now() . '_purchase_store_wise.xlsx');
         } else {
-            return view('backend.common.reports.loss_profit_store_wise_report.reports', compact('storeWisePurchaseReports', 'from', 'to', 'stores', 'store_id', 'storeInfo', 'previewtype', 'default_currency'));
+            return view('backend.common.reports.loss_profit_store_wise_report.reports', compact('storeWisePurchaseReports', 'storeWiseLossProfitReportsReturn','from', 'to', 'stores', 'store_id', 'storeInfo', 'previewtype', 'default_currency'));
         }
 
 
