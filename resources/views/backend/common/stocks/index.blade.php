@@ -62,6 +62,7 @@
                                 <thead>
                                 <tr>
                                     <th>Sl</th>
+                                    <th>Date</th>
                                     <th>Store</th>
                                     {{-- <th>Category</th> --}}
                                     <th>Product</th>
@@ -76,6 +77,7 @@
                                 <tfoot>
                                 <tr>
                                     <th>Sl</th>
+                                    <th>Date</th>
                                     <th>Store</th>
                                     {{-- <th>Category</th> --}}
                                     <th>Product</th>
@@ -159,9 +161,10 @@
                 ajax: "{{ route(Request::segment(1).'.stocks.index') }}",
                 columns: [
                     {data: 'id', name: 'id'},
-                    {data: 'store',name: 'store'},
+                    {data: 'purchase.entry_date',name: 'purchase.entry_date'},
+                    {data: 'store.name',name: 'store.name'},
                     // {data: 'category',name: 'category'},
-                    {data: 'product',name: 'product'},
+                    {data: 'product.name',name: 'product.name'},
                     {data: 'qty',name: 'qty'},
                     {data: 'purchase_price',name: 'purchase_price'},
                     {data: 'sale_price',name: 'sale_price'},

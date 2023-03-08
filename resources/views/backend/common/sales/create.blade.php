@@ -183,12 +183,22 @@
                                                                     required>
                                                                     {{-- <option value="">Select</option> --}}
                                                                     @if (count($payment_types) > 0)
-                                                                        @foreach ($payment_types as $payment_type)
-                                                                            <option value="{{ $payment_type->id }}" {{ $payment_type->id == '1' ? 'selected':''}}>
-                                                                                {{ $payment_type->name }}</option>
+                                                                        @foreach ($payment_types as $payment_type_id)
+                                                                            <option value="{{ $payment_type_id->id }}" {{ $payment_type_id->id == '1' ? 'selected':''}}>
+                                                                                {{ $payment_type_id->name }}</option>
                                                                         @endforeach
                                                                     @endif
                                                                 </select>
+                                                                <br/>
+                                                                <span>&nbsp;</span>
+                                                                <input type="text" name="bank_name" id="bank_name" class="form-control" placeholder="Bank Name">
+                                                                <span>&nbsp;</span>
+                                                                <input type="text" name="cheque_number" id="cheque_number" class="form-control" placeholder="Cheque Number">
+                                                                <span>&nbsp;</span>
+                                                                <input type="text" name="transaction_number" id="transaction_number" class="form-control" placeholder="Transaction Number">
+                                                                <input type="text" name="note" id="note" class="form-control" placeholder="Note">
+                                                                <span>&nbsp;</span>
+                                                                <input type="text" name="cheque_date" id="cheque_date" class="datepicker form-control" placeholder="Issue Deposit Date ">
                                                             </p>
                                                         </div>
                                                     </div>
@@ -820,5 +830,43 @@
             // focus on the popup //
             myWindow.focus();
         }
+
+        $(function() {
+            $('#note').hide();
+            $('#transaction_number').hide();
+            $('#bank_name').hide();
+            $('#cheque_number').hide();
+            $('#cheque_date').hide();
+            $('#payment_type_id').change(function(){
+                if($('#payment_type_id').val() == '3') {
+                    $('#bank_name').show();
+                    $('#cheque_number').show();
+                    $('#cheque_date').show();
+                    $('#transaction_number').hide();
+                    $('#note').hide();
+                }else if($('#payment_type_id').val() == '2') {
+                    $('#transaction_number').show();
+                    $('#bank_name').hide();
+                    $('#cheque_number').hide();
+                    $('#cheque_date').hide();
+                    $('#note').hide();
+                }else if($('#payment_type_id').val() == '4') {
+                    $('#note').show();
+                    $('#bank_name').hide();
+                    $('#cheque_number').hide();
+                    $('#cheque_date').hide();
+                    $('#transaction_number').hide();
+                } else {
+                    $('#note').val('');
+                    $('#note').hide();
+                    $('#transaction_number').hide();
+                    $('#bank_name').val('');
+                    $('#bank_name').hide();
+                    $('#cheque_number').val('');
+                    $('#cheque_number').hide();
+                    $('#cheque_date').hide();
+                }
+            });
+        });
     </script>
 @endpush

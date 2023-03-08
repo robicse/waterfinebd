@@ -32,30 +32,21 @@ class StockController extends Controller
 
     public function index(Request $request)
     {
-        // try {
+        try {
             $User=$this->User;
             if ($request->ajax()) {
-                $stocks = Stock::orderBy('id', 'DESC');
+                $stocks = Stock::with('purchase','product','store')->latest();
                 return Datatables::of($stocks)
                     ->addIndexColumn()
-                    ->addColumn('store', function ($data) {
-                        return $data->store->name;
-                    })
-                    // ->addColumn('category', function ($data) {
-                    //     return $data->category->name;
-                    // })
-                    ->addColumn('product', function ($data) {
-                        return $data->product->name;
-                    })
                     ->rawColumns(['action', 'status'])
                     ->make(true);
             }
 
             return view('backend.common.stocks.index');
-        // } catch (\Exception $e) {
-        //     $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
-        //     Toastr::error($response['message'], "Error");
-        //     return back();
-        // }
+        } catch (\Exception $e) {
+            $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
+            Toastr::error($response['message'], "Error");
+            return back();
+        }
     }
 }

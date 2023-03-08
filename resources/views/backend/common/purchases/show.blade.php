@@ -60,6 +60,32 @@
                                     {{-- @if($purchase->payment_type_id)
                                     <h6><strong>Purchase Type:</strong> {{Helper::getPaymentTypeName($purchase->payment_type_id)}}</h6>
                                     @endif --}}
+                                    @php
+                                        $transactions = Helper::getPurchasePaymentInfo($purchase->id);
+                                    @endphp
+                                    @if(count($transactions) > 0)
+                                        <h6>
+                                            <strong>Payment Type</strong>
+                                            <ul>
+                                                @foreach($transactions as $transaction)
+                                                    <li>
+                                                        {{Helper::getPaymentTypeName($transaction->payment_type_id)}}
+                                                        @if($transaction->payment_type_id == 3)
+                                                            ( Bank Name: {{$transaction->bank_name}} )<br/>
+                                                            ( Cheque Number: {{$transaction->cheque_number}} )<br/>
+                                                            ( Cheque Date: {{$transaction->cheque_date}} )<br/>
+                                                        @elseif($transaction->payment_type_id == 2)
+                                                            ( Transaction Number: {{$transaction->transaction_number}} )<br/>
+                                                        @elseif($transaction->payment_type_id == 2)
+                                                            ( Note: {{$transaction->note}} )<br/>
+                                                        @endif
+                                                        :
+                                                        Tk.{{number_format($transaction->amount,2)}} ({{$transaction->created_at}})
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        </h6>
+                                    @endif
                                 </div>
                             </div>
                         </div>

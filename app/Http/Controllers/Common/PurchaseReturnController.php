@@ -95,7 +95,7 @@ class PurchaseReturnController extends Controller
             'qty.*' => 'required'
         ]);
 
-        // try {
+        try {
             $sale = Purchase::findOrFail($request->sale_id);
             $purchase_return = new PurchaseReturn();
             $purchase_return->return_date = $request->return_date;
@@ -122,11 +122,11 @@ class PurchaseReturnController extends Controller
 
             Toastr::success("PurchaseReturn Created Successfully", "Success");
             return redirect()->route(\Request::segment(1) . '.purchase-returns.index');
-        // } catch (\Exception $e) {
-        //     $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
-        //     Toastr::error($response['message'], "Error");
-        //     return back();
-        // }
+        } catch (\Exception $e) {
+            $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
+            Toastr::error($response['message'], "Error");
+            return back();
+        }
     }
 
     public function show($id)

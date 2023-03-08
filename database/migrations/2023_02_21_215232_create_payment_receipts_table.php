@@ -30,6 +30,11 @@ return new class extends Migration
             $table->foreign('payment_type_id')->references('id')->on('payment_types')->onDelete('cascade');
             $table->float('amount',16,2)->default(0);
             $table->float('exchange',16,2)->default(0);
+            $table->string('bank_name',100);
+            $table->string('cheque_number',100);
+            $table->string('cheque_date',50);
+            $table->string('transaction_number',50);
+            $table->string('note',255);
             $table->tinyInteger('status')->default(1);
             $table->bigInteger('created_by_user_id')->unsigned()->nullable();
             $table->foreign('created_by_user_id')->references('id')->on('users')->onDelete('cascade');

@@ -112,7 +112,7 @@ class PurchaseController extends Controller
             'sale_price.*' => 'required'
         ]);
 
-        // try {
+        try {
             $entry_date = $request->entry_date;
             $store_id = $request->store_id;
             $supplier_id = $request->supplier_id;
@@ -212,7 +212,12 @@ class PurchaseController extends Controller
                     $payment_receipt->order_id = $purchase->id;
                     $payment_receipt->supplier_id = $supplier_id;
                     $payment_receipt->order_type_id = 1;
-                    $payment_receipt->payment_type_id = 1;
+                    $payment_receipt->payment_type_id = $request->payment_type_id;
+                    $payment_receipt->bank_name = $request->bank_name ? $request->bank_name : '';
+                    $payment_receipt->cheque_number = $request->cheque_number ? $request->cheque_number : '';
+                    $payment_receipt->cheque_date = $request->cheque_date ? $request->cheque_date : '';
+                    $payment_receipt->transaction_number = $request->transaction_number ? $request->transaction_number : '';
+                    $payment_receipt->note = $request->note ? $request->note : '';
                     $payment_receipt->amount = $paid_amount;
                     $payment_receipt->created_by_user_id = Auth::User()->id;
                     $payment_receipt->save();
@@ -221,11 +226,11 @@ class PurchaseController extends Controller
 
             Toastr::success("Purchase Created Successfully", "Success");
             return redirect()->route(\Request::segment(1) . '.purchases.index');
-        // } catch (\Exception $e) {
-        //     $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
-        //     Toastr::error($response['message'], "Error");
-        //     return back();
-        // }
+        } catch (\Exception $e) {
+            $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
+            Toastr::error($response['message'], "Error");
+            return back();
+        }
     }
 
     public function show($id)

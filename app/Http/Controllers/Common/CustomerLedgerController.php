@@ -55,7 +55,7 @@ class CustomerLedgerController extends Controller
 
     public function store(Request $request)
     {
-        // try {
+        try {
             $digit = new NumberFormatter("en", NumberFormatter::SPELLOUT);
             $from = date('Y-m-d', strtotime($request->start_date));
             $to = date('Y-m-d', strtotime($request->end_date));
@@ -76,11 +76,11 @@ class CustomerLedgerController extends Controller
                 $pdf = Pdf::loadView('backend.common.customer_ledgers.pdf_view', compact('customerReports', 'preBalance', 'customers', 'from', 'to', 'customer_id','stores','store_id','store','customer','digit'));
                 return $pdf->stream('store_purchase_report_' . now() . '.pdf');
             }
-        // } catch (\Exception $e) {
-        //     $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
-        //     Toastr::error($response['message'], "Error");
-        //     return back();
-        // }
+        } catch (\Exception $e) {
+            $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
+            Toastr::error($response['message'], "Error");
+            return back();
+        }
     }
     public function show($id)
     {

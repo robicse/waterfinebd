@@ -151,7 +151,7 @@ class ReportController extends Controller
         $store_ids = $request->store_id;
         $product_ids = $request->product_id;
         //dd($product_ids);
-        // try {
+        try {
             // $storeReports = Stock::with('store')
             //     // ->selectRaw(DB::raw('SUM(current_stock_qty) as current_stock_qty, product_id'))
             //     ->select('stocks.product_id')
@@ -165,11 +165,11 @@ class ReportController extends Controller
             $products = Product::wherestatus(1)->pluck('name', 'id');
             $stores = Store::wherestatus(1)->pluck('name', 'id');
             return view('backend.common.reports.multiple_store_current_stock_reports.reports', compact('storeReports', 'stores', 'products', 'store_ids', 'product_ids'));
-        // } catch (\Exception $e) {
-        //     $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
-        //     Toastr::error($response['message'], "Error");
-        //     return back();
-        // }
+        } catch (\Exception $e) {
+            $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
+            Toastr::error($response['message'], "Error");
+            return back();
+        }
     }
 
     public function lossProfitStoreWiseIndex()

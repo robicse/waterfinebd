@@ -162,7 +162,16 @@
                                     'placeholder' => 'Select One',
                                 ]) !!}
                             </div>
-                            <div class="form-group d-none" id="bankName">
+                            <span>&nbsp;</span>
+                            <input type="text" name="bank_name" id="bank_name" class="form-control" placeholder="Bank Name">
+                            <span>&nbsp;</span>
+                            <input type="text" name="cheque_number" id="cheque_number" class="form-control" placeholder="Cheque Number">
+                            <span>&nbsp;</span>
+                            <input type="text" name="transaction_number" id="transaction_number" class="form-control" placeholder="Transaction Number">
+                            <input type="text" name="note" id="note" class="form-control" placeholder="Note">
+                            <span>&nbsp;</span>
+                            <input type="text" name="cheque_date" id="cheque_date" class="datepicker form-control" placeholder="Issue Deposit Date ">
+                            {{-- <div class="form-group d-none" id="bankName">
                                 <label for="bank_id">Bank Name <span class="required">*</span></label>
                                 <select class="form-control select2" name="code" id="bank_id" style="width: 100%">
                                     <option value="">Select One *</option>
@@ -172,7 +181,7 @@
                                 <label for="note">Note<span class="required"> </span></label>
                                 {!! Form::text('note', null, ['id' => 'note', 'class' => 'form-control']) !!}
 
-                            </div>
+                            </div> --}}
                             <div class="card-footer">
                                 <button type="submit" id="SUBMIT_BTN" class="btn btn-primary">Submit</button>
                             </div>
@@ -322,5 +331,43 @@
             $form.calx('getCell', 'G1').setFormula('SUM(F1:F' + 5000 + ')');
             $form.calx('getCell', 'G1').calculate();
         }
+
+        $(function() {
+            $('#note').hide();
+            $('#transaction_number').hide();
+            $('#bank_name').hide();
+            $('#cheque_number').hide();
+            $('#cheque_date').hide();
+            $('#payment_type_id').change(function(){
+                if($('#payment_type_id').val() == '3') {
+                    $('#bank_name').show();
+                    $('#cheque_number').show();
+                    $('#cheque_date').show();
+                    $('#transaction_number').hide();
+                    $('#note').hide();
+                }else if($('#payment_type_id').val() == '2') {
+                    $('#transaction_number').show();
+                    $('#bank_name').hide();
+                    $('#cheque_number').hide();
+                    $('#cheque_date').hide();
+                    $('#note').hide();
+                }else if($('#payment_type_id').val() == '4') {
+                    $('#note').show();
+                    $('#bank_name').hide();
+                    $('#cheque_number').hide();
+                    $('#cheque_date').hide();
+                    $('#transaction_number').hide();
+                } else {
+                    $('#note').val('');
+                    $('#note').hide();
+                    $('#transaction_number').hide();
+                    $('#bank_name').val('');
+                    $('#bank_name').hide();
+                    $('#cheque_number').val('');
+                    $('#cheque_number').hide();
+                    $('#cheque_date').hide();
+                }
+            });
+        });
     </script>
 @endpush

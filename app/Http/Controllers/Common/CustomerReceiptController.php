@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Store;
 use App\Models\Sale;
 use DataTables;
+use App\Helpers\Helper;
 
 class CustomerReceiptController extends Controller
 {
@@ -68,12 +69,30 @@ class CustomerReceiptController extends Controller
                     return @$data->customer->name;
                 })
                 ->addColumn('payment_type_name', function ($data) {
-                    return @$data->payment_type->name;
+                    $transactions = Helper::getSalePaymentInfo($data->order_id);
+                    $payment_info = $data->payment_type->name;
+                    if(count($transactions) > 0){
+                        foreach($transactions as $transaction){
+                            $payment_info .= '<span>';
+                            if($transaction->payment_type_id == 3){
+                                $payment_info .= '( Bank Name:'. $transaction->bank_name . ')<br/>';
+                                $payment_info .= '( Cheque Number:'. $transaction->cheque_number . ')<br/>';
+                                $payment_info .= '( Cheque Date:'. $transaction->cheque_date . ')<br/>';
+                            }elseif($transaction->payment_type_id == 2){
+                                $payment_info .= '( Transaction Number:'. $transaction->transaction_number . ')<br/>';
+                            }elseif($transaction->payment_type_id == 2){
+                                $payment_info .= '( Note:'. $transaction->note . ')<br/>';
+                            }else{
+                            }
+                            $payment_info .= 'Tk.'. $transaction->amount .'</span>';
+                        }
+                    }
+                    return $payment_info;
                 })
                 ->addColumn('created_by_user', function ($data) {
                     return $data->created_by_user->name;
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['action','payment_type_name'])
                 ->make(true);
         }
         return view('backend.common.customer_receipts.index');
@@ -152,6 +171,11 @@ class CustomerReceiptController extends Controller
                     $payment_receipt->customer_id = $customer_id;
                     $payment_receipt->order_type_id = 1;
                     $payment_receipt->payment_type_id = $payment_type_id;
+                    $payment_receipt->bank_name = $request->bank_name ? $request->bank_name : '';
+                    $payment_receipt->cheque_number = $request->cheque_number ? $request->cheque_number : '';
+                    $payment_receipt->cheque_date = $request->cheque_date ? $request->cheque_date : '';
+                    $payment_receipt->card_number = $request->card_number ? $request->card_number : '';
+                    $payment_receipt->note = $request->note ? $request->note : '';
                     $payment_receipt->amount = $paid_amount;
                     $payment_receipt->created_by_user_id = Auth::User()->id;
                     $payment_receipt->save();

@@ -5,6 +5,7 @@ namespace App\Helpers;
 
 use App\Models\Module;
 use App\Models\Store;
+use App\Models\PaymentReceipt;
 use App\Models\Product;
 use App\Models\Stock;
 use App\Models\User;
@@ -155,6 +156,16 @@ class Helper
     public static function getAlreadySaleReturnQty($sale_id,$product_id)
     {
         return SaleProduct::wheresale_id($sale_id)->whereproduct_id($product_id)->pluck('already_return_qty')->first();
+    }
+
+    public static function getSalePaymentInfo($sale_id)
+    {
+        return PaymentReceipt::whereorder_id($sale_id)->whereorder_type_id(1)->where('payment_type_id','!=',NULL)->whereorder_type('Sale')->get();
+    }
+
+    public static function getPurchasePaymentInfo($purchase_id)
+    {
+        return PaymentReceipt::whereorder_id($purchase_id)->whereorder_type_id(1)->where('payment_type_id','!=',NULL)->whereorder_type('Purchase')->get();
     }
 
     public static function ledgerCurrentBalance($ledgers)

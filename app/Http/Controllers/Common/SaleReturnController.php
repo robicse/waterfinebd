@@ -100,7 +100,7 @@ class SaleReturnController extends Controller
             'qty.*' => 'required'
         ]);
 
-        // try {
+        try {
             $sale = Sale::findOrFail($request->sale_id);
             $sale_return = new SaleReturn();
             $sale_return->return_date = $request->return_date;
@@ -140,11 +140,11 @@ class SaleReturnController extends Controller
 
             Toastr::success("SaleReturn Created Successfully", "Success");
             return redirect()->route(\Request::segment(1) . '.sale-returns.index');
-        // } catch (\Exception $e) {
-        //     $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
-        //     Toastr::error($response['message'], "Error");
-        //     return back();
-        // }
+        } catch (\Exception $e) {
+            $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
+            Toastr::error($response['message'], "Error");
+            return back();
+        }
     }
 
     public function show($id)

@@ -119,7 +119,7 @@ class SaleController extends Controller
             'sale_price.*' => 'required'
         ]);
 
-        // try {
+        try {
             $voucher_date = $request->voucher_date;
             $store_id = $request->store_id;
             $customer_id = $request->customer_id;
@@ -257,7 +257,12 @@ class SaleController extends Controller
                     $payment_receipt->order_id = $sale->id;
                     $payment_receipt->customer_id = $customer_id;
                     $payment_receipt->order_type_id = 1;
-                    $payment_receipt->payment_type_id = 1;
+                    $payment_receipt->payment_type_id = $request->payment_type_id;
+                    $payment_receipt->bank_name = $request->bank_name ? $request->bank_name : '';
+                    $payment_receipt->cheque_number = $request->cheque_number ? $request->cheque_number : '';
+                    $payment_receipt->cheque_date = $request->cheque_date ? $request->cheque_date : '';
+                    $payment_receipt->transaction_number = $request->transaction_number ? $request->transaction_number : '';
+                    $payment_receipt->note = $request->note ? $request->note : '';
                     $payment_receipt->amount = $paid_amount;
                     $payment_receipt->created_by_user_id = Auth::User()->id;
                     $payment_receipt->save();
@@ -266,11 +271,11 @@ class SaleController extends Controller
 
             Toastr::success("Sale Created Successfully", "Success");
             return redirect()->route(\Request::segment(1) . '.sales.index');
-        // } catch (\Exception $e) {
-        //     $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
-        //     Toastr::error($response['message'], "Error");
-        //     return back();
-        // }
+        } catch (\Exception $e) {
+            $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
+            Toastr::error($response['message'], "Error");
+            return back();
+        }
     }
 
     public function show($id)
