@@ -59,8 +59,9 @@ class SaleReturnController extends Controller
                     })
                     ->addColumn('action', function ($sale_return)use($User) {
                         $btn='';
+                        $btn .= '<span  class="d-inline-flex"><a href=' . route(\Request::segment(1) . '.sale-returns.show', $sale_return->id) . ' class="btn btn-warning btn-sm waves-effect"><i class="fa fa-eye"></i></a>';
                         if($User->can('sale-returns-edit')){
-                        $btn = '<a href=' . route(\Request::segment(1) . '.sale-returns.edit', $sale_return->id) . ' class="btn btn-info btn-sm waves-effect"><i class="fa fa-edit"></i></a>';
+                        $btn = '<a href=' . route(\Request::segment(1) . '.sale-returns.edit', $sale_return->id) . ' class="btn btn-info btn-sm waves-effect"><i class="fa fa-edit"></i></a></span>';
                         }
                         return $btn;
                     })
@@ -148,8 +149,11 @@ class SaleReturnController extends Controller
 
     public function show($id)
     {
-        $sale_return = SaleReturn::findOrFail($id);
-        return view('backend.common.sale_returns.show', compact('sale'));
+
+        $SaleReturn = SaleReturn::findOrFail($id);
+        $store= Store::findOrFail($SaleReturn->store_id);
+        $SaleReturnDetails = SaleReturnDetail::wheresale_return_id($SaleReturn->id)->get();
+        return view('backend.common.sale_returns.show', compact('store','SaleReturn','SaleReturnDetails'));
     }
 
     public function edit($id)

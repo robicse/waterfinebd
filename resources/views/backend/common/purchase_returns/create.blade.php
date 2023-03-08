@@ -66,19 +66,17 @@
                                     <table class="table table-responsive" id="table1">
                                         <thead>
                                             <tr>
-                                                <th>Category <span class="required">*</span></th>
-                                                <th>
-                                                    Product <span class="required">*</span>
-                                                </th>
-                                                <th>Quantity <span class="required">*</span></th>
+                                                <th style="width: 20%">Category <span class="required">*</span></th>
+                                                <th style="width: 20%">Product <span class="required">*</span></th>
+                                                <th style="width: 20%">Quantity <span class="required">*</span></th>
                                                 {{-- <th>Buy Price (Unit) <span class="required">*</span></th>
                                                 <th>Min Sell Price (Unit) <span class="required">*</span></th> --}}
-                                                <th>Action</th>
+                                                <th style="width: 20%">Action</th>
                                             </tr>
                                         </thead>
                                         <tbody id="itemlist">
                                             <tr>
-                                                <td>
+                                                <td style="width: 20%">
                                                     <div>
                                                         <select class="form-control category_id select2"
                                                             name="category_id[]" required id="category_id_1"
@@ -92,13 +90,13 @@
                                                         </select>
                                                     </div>
                                                 </td>
-                                                <td>
+                                                <td style="width: 20%">
                                                     <select class="form-control product_id select2"
                                                         name="product_id[]" id="product_id_1"
                                                         required>
                                                     </select>
                                                 </td>
-                                                <td>
+                                                <td style="width: 20%">
                                                     <input class="input-sm text-right form-control qty" type="number" onkeyup="quantitySum()"
                                                         name="qty[]" id='quantity_id_1'
                                                         placeholder="0.00" data-cell="D1" step="any" min="0"
@@ -119,7 +117,7 @@
                                                         data-format="0[.]00" data-formula=""
                                                         step="any" min="0" max="99999999999999">
                                                 </td> --}}
-                                                <td>
+                                                <td style="width: 20%">
                                                     <input type="button" class="btn btn-success addProduct"
                                                         value="+">
                                                 </td>
@@ -193,15 +191,15 @@
                 var n = ($('#itemlist tr').length - 0) + 1;
                 var tr =
                     '<tr>' +
-                        '<td width="12%"><div><select  class="form-control category_id select2" name="category_id[]" id="category_id_' +
+                        '<td style="width: 20%"><div><select  class="form-control category_id select2" name="category_id[]" id="category_id_' +
                     n + '" onchange="getCategoryVal(' + n + ',this);" required>' + category +
                     '</select></div></td>' +
-                    '<td width="12%"><select class="form-control product_id select2"  name="product_id[]" id="product_id_' +
+                    '<td style="width: 20%"><select class="form-control product_id select2"  name="product_id[]" id="product_id_' +
                     n + '" required></select> </td>' +
-                    '<td width="12%"><input type="number"  class="input-sm text-right form-control qty" onkeyup="quantitySum()" name="qty[]" id="quantity_id_' +
+                    '<td style="width: 20%"><input type="number"  class="input-sm text-right form-control qty" onkeyup="quantitySum()" name="qty[]" id="quantity_id_' +
                     n +
                     '" required   step="any" min="0" max="99999999999999" placeholder="0.00" data-cell="" data-format="" data-format="0[.]00"></td>' +
-                    '<td><span class="d-inline-flex"><input type="button"  class="btn btn-success addProduct" value="+"> <input type="button" class="btn btn-danger delete float-left" style="margin-left: 5px" value="x" title="Remove This Product"></span></td>' +
+                    '<td style="width: 20%"><span class="d-inline-flex"><input type="button"  class="btn btn-success addProduct" value="+"> <input type="button" class="btn btn-danger delete float-left" style="margin-left: 5px" value="x" title="Remove This Product"></span></td>' +
                     '</tr>';
                 $('#itemlist').append(tr);
                 $('.select2').select2();

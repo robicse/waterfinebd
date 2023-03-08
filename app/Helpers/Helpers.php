@@ -17,6 +17,7 @@ use App\Models\SaleProduct;
 use App\Models\SaleReturnDetail;
 use App\Models\PurchaseReturn;
 use App\Models\Unit;
+use App\Models\PaymentType;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -142,6 +143,18 @@ class Helper
         return Store::where('id', $id)
             ->pluck('name')
             ->first();
+    }
+
+    public static function getPaymentTypeName($id)
+    {
+        return PaymentType::where('id', $id)
+            ->pluck('name')
+            ->first();
+    }
+
+    public static function getAlreadySaleReturnQty($sale_id,$product_id)
+    {
+        return SaleProduct::wheresale_id($sale_id)->whereproduct_id($product_id)->pluck('already_return_qty')->first();
     }
 
     public static function ledgerCurrentBalance($ledgers)

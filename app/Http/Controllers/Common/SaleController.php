@@ -70,7 +70,7 @@ class SaleController extends Controller
                         // if($User->can('sales-edit')){
                         // $btn = '<a href=' . route(\Request::segment(1) . '.sales.edit', $sale->id) . ' class="btn btn-info btn-sm waves-effect"><i class="fa fa-edit"></i></a>';
                         // }
-                        // $btn = '<span  class="d-inline-flex"><a href=' . route(\Request::segment(1) . '.sales.show', $sale->id) . ' class="btn btn-warning btn-sm waves-effect"><i class="fa fa-eye"></i></a>';
+                        $btn = '<span  class="d-inline-flex"><a href=' . route(\Request::segment(1) . '.sales.show', $sale->id) . ' class="btn btn-warning btn-sm waves-effect"><i class="fa fa-eye"></i></a>';
                         $btn .= '<a href=' . url(\Request::segment(1) . '/sales-prints/' . $sale->id . '/a4') . ' class="btn btn-info  btn-sm float-left" style="margin-left: 5px"><i class="fa fa-print"></i>A4</a>';
                         // $btn .= '<a href=' . url(\Request::segment(1) . "/sales-prints/" . $sale->id . '/80mm') . ' class="btn btn-info  btn-sm float-left" style="margin-left: 5px"><i class="fa fa-print"></i>80MM</a>';
                         $btn .= '<a target="_blank" href=' . url(\Request::segment(1) . "/sales-invoice-pdf/" . $sale->id) . ' class="btn btn-info  btn-sm float-left" style="margin-left: 5px"><i class="fas fa-file-pdf"></i>PDF</a>';
@@ -275,8 +275,11 @@ class SaleController extends Controller
 
     public function show($id)
     {
+        $default_currency = $this->getCurrencyInfoByDefaultCurrency();
         $sale = Sale::findOrFail($id);
-        return view('backend.common.sales.show', compact('sale'));
+        $saleDetails = SaleProduct::where('sale_id', $id)->get();
+        $previousDue = Sale::where('id', '!=', $id)->wherecustomer_id($sale->customer_id)->sum('due_amount');
+        return view('backend.common.sales.show', compact('sale', 'saleDetails', 'default_currency', 'previousDue'));
     }
 
     public function edit($id)

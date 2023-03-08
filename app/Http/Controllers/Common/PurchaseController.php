@@ -16,12 +16,14 @@ use App\Models\Store;
 use App\Models\Supplier;
 use App\Models\Stock;
 use App\Models\PaymentReceipt;
+use App\Http\Traits\CurrencyTrait;
 use Illuminate\Support\Facades\Auth;
 use Brian2694\Toastr\Facades\Toastr;
 use DataTables;
 
 class PurchaseController extends Controller
 {
+    use CurrencyTrait;
     function __construct()
     {
         $this->middleware(function ($request, $next) {
@@ -61,9 +63,10 @@ class PurchaseController extends Controller
                     })
                     ->addColumn('action', function ($purchase)use($User) {
                         $btn='';
-                        if($User->can('purchases-edit')){
-                        $btn = '<a href=' . route(\Request::segment(1) . '.purchases.edit', $purchase->id) . ' class="btn btn-info btn-sm waves-effect"><i class="fa fa-edit"></i></a>';
-                        }
+                        $btn .= '<span  class="d-inline-flex"><a href=' . route(\Request::segment(1) . '.purchases.show', $purchase->id) . ' class="btn btn-sm btn-warning waves-effect float-left" style="margin-left: 5px"><i class="fa fa-eye"></i></a>';
+                        // if($User->can('purchases-edit')){
+                        // $btn .= '<a href=' . route(\Request::segment(1) . '.purchases.edit', $purchase->id) . ' class="btn btn-info btn-sm waves-effect"><i class="fa fa-edit"></i></a></span>';
+                        // }
                         return $btn;
                     })
                     ->rawColumns(['category','action', 'status'])
@@ -227,8 +230,11 @@ class PurchaseController extends Controller
 
     public function show($id)
     {
+        $default_currency = $this->getCurrencyInfoByDefaultCurrency();
         $purchase = Purchase::findOrFail($id);
-        return view('backend.common.purchases.show', compact('purchase'));
+        $supplier = Supplier::findOrFail($purchase->supplier_id);
+        $purchaseDetails = Stock::where('purchase_id', $purchase->id)->get();
+        return view('backend.common.purchases.show', compact('purchase', 'supplier','purchaseDetails', 'default_currency'));
     }
 
     public function edit($id)

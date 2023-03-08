@@ -13,6 +13,10 @@ class Stock extends Model
         return $this->belongsTo(Store::class);
     }
 
+    public function unit(){
+        return $this->belongsTo(Unit::class);
+    }
+
     public function category(){
         return $this->belongsTo(Category::class,'category_id');
     }

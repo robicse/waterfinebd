@@ -1,18 +1,20 @@
-<strong> @extends('backend.layouts.master') </strong>@section("title","Supplier Show")
+@extends('backend.layouts.master')
+@section("title","Purchase Details")
 @section('content')
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Supplers</h1>
+                    <h1>Purchase</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item active"><a
-                                href="{{route(Request::segment(1).'.dashboard')}}">Home</a></li>
-                        <li class="breadcrumb-item active">supplers</li>
-                        <li class="breadcrumb-item active">show</li>
+                                href="{{route(Request::segment(1).'.dashboard')}}">Home</a>
+                        </li>
+                        <li class="breadcrumb-item active">purchases</li>
+                        <li class="breadcrumb-item active">details</li>
                     </ol>
                 </div>
             </div>
@@ -26,9 +28,9 @@
                 <div class="col-12">
                     <div class="card card-info card-outline">
                         <div class="card-header">
-                            <h3 class="card-title">Supplers Details</h3>
+                            <h3 class="card-title">Purchase</h3>
                             <div class="float-right">
-                                <a href="{{ route(Request::segment(1).'.suppliers.index') }}">
+                                <a href="{{ route(Request::segment(1).'.purchases.index') }}">
                                     <button class="btn btn-success">
                                         <i class="fa fa-plus-circle"></i>
                                         Back
@@ -40,29 +42,24 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-lg-6">
-                                    <h6><strong> Name: </strong> {{$supplier->name}}</h6>
-                                    <h6><strong> Type: </strong> {{$supplier->supplier->type}}</h6>
-                                    <h6><strong> Address: </strong> {{$supplier->address}}</h6>
-                                    <h6><strong> Code: </strong> {{$supplier->supplier->code}}</h6>
-                                    <h6><strong> Vat No: </strong> {{$supplier->supplier->vat_no}}</h6>
-                                    <h6><strong> Phone: </strong> {{$supplier->phone}}</h6>
-                                    <h6><strong> Supplier Location : </strong>{{$supplier->supplier->supplier_location }}</h6>
-                                    <h6><strong> Comercial Registration No: </strong>{{$supplier->supplier->comercial_registration_no  }}</h6>
-                                    <h6><strong>Warehouse: </strong> {{@$supplier->warehouse->name}}</h6>
-                                    <h6><strong>Pay Type: </strong> {{$supplier->pay_type}}</h6>
+                                    <h6><strong>Invoice NO:</strong> {{$purchase->id}}</h6>
+                                    <h6><strong>Purchase From:</strong> {{$purchase->purchase_from}}</h6>
+                                    <h6><strong>Supplier:</strong> {{$purchase->supplier->name}}</h6>
+                                    <h6><strong>Store:</strong> {{$purchase->store->name}}</h6>
+                                    <h6><strong>Sub Total:</strong> {{$purchase->sub_total}}</h6>
+                                    <h6><strong>Created BY:</strong> {{$purchase->created_by_user->name}}</h6>
                                 </div>
                                 <div class="col-lg-6">
-                                    
-                                    <h6><strong> Bank Accounts Details: </strong>{{$supplier->supplier->bank_accounts_details  }}</h6>
-                                    <h6><strong> Product Groups: </strong>{{$supplier->supplier->bank_accounts_details   }}</h6>
-                                    <h6><strong> Credit Limit: </strong> {{$supplier->supplier->credit_limit}}</h6>
-                                    <h6><strong> Days Limit: </strong> {{$supplier->supplier->days_limit}}</h6>
-                                    <h6><strong> Payment Terms: </strong> {{$supplier->supplier->payment_terms}}</h6>
-                                    <h6><strong> Email: </strong> {{$supplier->email}}</h6>
-                                   {{--  <h6><strong> Latitude: </strong> {{$supplier->lat}}</h6>
-                                    <h6><strong> Longitude: </strong> {{$supplier->lng}}</h6> --}}
-                                    <h6><strong> Status: </strong> {{$supplier->status == 0 ? 'Inactive' : 'Active'}}
-                                    </h6>
+                                    <h6><strong>Vat:</strong> {{ $default_currency->symbol }} {{$purchase->total_vat}}</h6>
+                                    <h6><strong>Grand Total:</strong> {{ $default_currency->symbol }} {{$purchase->grand_total}}</h6>
+                                    <h6><strong>Paid:</strong> {{ $default_currency->symbol }} {{$purchase->paid_amount}}</h6>
+                                    <h6><strong>Due:</strong> {{ $default_currency->symbol }} {{$purchase->due_amount}}</h6>
+                                    @if($purchase->payment_type_id)
+                                    <h6><strong>Payment Type:</strong> {{Helper::getPaymentTypeName($purchase->payment_type_id)}}</h6>
+                                    @endif
+                                    {{-- @if($purchase->payment_type_id)
+                                    <h6><strong>Purchase Type:</strong> {{Helper::getPaymentTypeName($purchase->payment_type_id)}}</h6>
+                                    @endif --}}
                                 </div>
                             </div>
                         </div>
@@ -71,6 +68,52 @@
                     <!-- /.card -->
                 </div>
                 <!-- /.col -->
+
+                <div class="col-12">
+                    <div class="card card-info card-outline">
+                        <div class="card-header">
+                            <h3 class="card-title">Stock Details</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-striped data-table">
+                                            <thead>
+                                            <tr>
+                                                <th>#Id</th>
+                                                <th>Product</th>
+                                                <th>Unit</th>
+                                                <th>Qty</th>
+                                                <th>Total ({{ $default_currency->symbol }})</th>
+                                                <th>Product Total ({{ $default_currency->symbol }})</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            @foreach($purchaseDetails  as $purchaseDetail)
+                                                <tr>
+                                                    <td>{{$purchaseDetail->id}}</td>
+                                                    <td>{{$purchaseDetail->product->name}}</td>
+                                                    <td>{{$purchaseDetail->product->unit->name}}</td>
+                                                    <td>{{$purchaseDetail->qty}}</td>
+                                                    <td>{{$purchaseDetail->purchase_price}}</td>
+                                                    <td>{{$purchaseDetail->product_total}}</td>
+                                                </tr>
+
+                                            @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
+
             </div>
             <!-- /.row -->
         </div>
