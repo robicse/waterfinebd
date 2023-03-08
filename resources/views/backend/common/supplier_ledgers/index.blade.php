@@ -74,6 +74,14 @@
                                         {!! Form::date('end_date', date('Y-m-d'), ['class' => 'form-control', 'id' => 'myDatepicker1', 'required']) !!}
                                     </div>
                                 </div>
+                                <div class="col-lg-1">
+                                    <label for="previewtype">
+                                        <input type="radio" name="previewtype" value="htmlview" checked id="previewtype">
+                                        Normal</label>
+                                    <label for="pdfprintview">
+                                        <input type="radio" name="previewtype" value="pdfview" id="printview"> Pdf
+                                    </label>
+                                </div>
                                 <div class="col-2">
                                     <div class="form-group ">
                                         <br>

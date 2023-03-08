@@ -9,11 +9,13 @@ use App\Models\Supplier;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Helpers\ErrorTryCatch;
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Http\Controllers\Controller;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ChartOfAccountTransaction;
 use App\Models\Store;
+use NumberFormatter;
 
 class SupplierLedgerController extends Controller
 {
@@ -53,16 +55,25 @@ class SupplierLedgerController extends Controller
     public function store(Request $request)
     {
         try {
+            $digit = new NumberFormatter("en", NumberFormatter::SPELLOUT);
             $from = date('Y-m-d', strtotime($request->start_date));
             $to = date('Y-m-d', strtotime($request->end_date));
             $supplier_id = $request->supplier_id;
             $store_id = $request->store_id;
+            $store = Store::find($store_id);
+            $supplier = Supplier::find($supplier_id);
+            $previewtype = $request->previewtype;
             $suppliers = Supplier::wherestatus(1)->get();
             $stores = Store::wherestatus(1)->pluck('name', 'id');
             $supplierReports = PaymentReceipt::whereorder_type('Purchase')->wheresupplier_id($supplier_id)->whereBetween('date', array($from, $to))->get();
             $preBalance = PaymentReceipt::whereorder_type('Purchase')->whereorder_type_id(2)->wheresupplier_id($supplier_id)->where('date', '<', $from)->sum('amount');
 
-            return view('backend.common.supplier_ledgers.reports', compact('supplierReports', 'preBalance', 'suppliers', 'from', 'to', 'supplier_id','stores','store_id'));
+            if ($previewtype == 'htmlview') {
+                return view('backend.common.supplier_ledgers.reports', compact('supplierReports', 'preBalance', 'suppliers', 'from', 'to', 'supplier_id','stores','store_id','store','supplier','digit'));
+            }else{
+                $pdf = Pdf::loadView('backend.common.supplier_ledgers.pdf_view', compact('supplierReports', 'preBalance', 'suppliers', 'from', 'to', 'supplier_id','stores','store_id','store','supplier','digit'));
+                return $pdf->stream('store_purchase_report_' . now() . '.pdf');
+            }
         } catch (\Exception $e) {
             $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
             Toastr::error($response['message'], "Error");
