@@ -63,7 +63,7 @@
                                                 <tr>
                                                     {{-- <th style="width: 12%">Barcode </th> --}}
                                                     {{-- <th style="width: 12%">Category <span class="required">*</span></th> --}}
-                                                    <th style="width: 24%">
+                                                    <th style="width: 15%">
                                                         Product <span class="required">*</span>
                                                         {{-- <button type="button" class="btn btn-primary btn-sm"
                                                             title="Add New Product And Find Product By Type Product Name"
@@ -71,14 +71,14 @@
                                                             <i class="fa fa-plus"></i>
                                                         </button> --}}
                                                     </th>
-                                                    <th style="width: 8%">Unit</th>
+                                                    <th style="width: 10%">Unit</th>
                                                     <th style="width: 10%">Qty</th>
-                                                    <th style="width: 15%">Purchase Price</th>
-                                                    <th style="width: 15%">Sell Price</th>
+                                                    <th style="width: 10%">Purchase Price</th>
+                                                    <th style="width: 10%">Sell Price</th>
                                                     <th style="width: 10%">Vat(%)</th>
                                                     <th style="width: 10%">Vat Amount</th>
                                                     <th style="width: 15%">Sub Total</th>
-                                                    <th style="width: 15%">Action</th>
+                                                    <th style="width: 10%">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="itemlist">
@@ -97,15 +97,15 @@
                                                             </select>
                                                         </div>
                                                     </td> --}}
-                                                    <td width="24%">
+                                                    <td width="15%">
                                                         <select class="form-control product_id select2" name="product_id[]"
-                                                            id="product_id_1" onchange="getval(1,this);" required>
+                                                            id="product_id_1" onchange="getval(1,this);" required style="width: 100%">
                                                         </select>
                                                     </td>
-                                                    <td width="12%">
+                                                    <td width="10%">
                                                         <div>
                                                             <select class="form-control unit_id select2" name="unit_id[]"
-                                                                required id="unit_id_1" onchange="getUnitVal(1,this);">
+                                                                required id="unit_id_1" onchange="getUnitVal(1,this);" style="width: 100%">
                                                                 <option value="">Select Unit</option>
                                                             </select>
                                                         </div>
@@ -117,15 +117,15 @@
                                                             min="0" max="9999999999999999" required
                                                             data-format="0[.]00">
                                                     </td>
-                                                    <td width="15%">
+                                                    <td width="10%">
                                                         <input type="number" onblur="CheckBuyPrice(1,this);"
                                                             class="input-sm text-right form-control purchase_price" placeholder="0.00"
                                                             name="purchase_price[]" id='buy_price_id_1' step="any"
                                                             min="0" max="9999999999999999" required
                                                             data-format="0[.]00" data-cell="E1">
                                                     </td>
-                                                    <td width="15%">
-                                                        <input type="number" onblur="CheckPrice(1,this);"
+                                                    <td width="10%">
+                                                        <input type="number" onblur="CheckSalePrice(1,this);"
                                                             class="input-sm text-right form-control sale_price" placeholder="0.00"
                                                             name="sale_price[]" id='sale_price_id_1' step="any"
                                                             min="0" max="9999999999999999" required
@@ -146,10 +146,10 @@
                                                         <input type="text"
                                                             class="amount form-control input-sm text-right" name="total[]"
                                                             placeholder="0.00" data-cell="F1" data-format="0[.]00"
-                                                            data-formula="(C1*D1)" readonly step="any" min="0"
+                                                            data-formula="(E1*D1)" readonly step="any" min="0"
                                                             max="999999999999999">
                                                     </td>
-                                                    <td width="15%">
+                                                    <td width="10%">
                                                         <input type="button" class="btn btn-success addProduct"
                                                             value="+">
                                                     </td>
@@ -266,13 +266,13 @@
                                                 class="form-control" onkeyup="priceCalculation('')" step="any"
                                                 min="0" max="9999999999999999">
                                         </td>
-                                        <th>Total Buy Total:</th>
+                                        <th>Total Buy:</th>
                                         <td>
                                             <input type="number" name="grand_total" id="grand_total"
                                                 class="form-control" readonly step="any" min="0"
                                                 max="9999999999999999" />
                                         </td>
-                                        <th>Total Sale Total:</th>
+                                        <th>Total Sale:</th>
                                         <td>
                                             <input type="number" name="total_sale_price" id="total_sale_price"
                                                 class="form-control" readonly step="any" min="0"
@@ -358,7 +358,7 @@
                     dataType: "JSON",
                     delay: 250,
                     data: function(params) {
-                        console.log('params', params)
+                        // console.log('params', params)
                         return {
                             q: params.term,
                             store_id: $('#store_id').val(),
@@ -366,7 +366,7 @@
                     },
                     //mark:select
                     processResults: function(data) {
-                        console.log(data)
+                        // console.log(data)
                         return {
                             results: $.map(data, function(item) {
                                 // console.log('item', item)
@@ -384,6 +384,7 @@
 
 
             $(document).on('click', '.addProduct', function(event) {
+                console.log('addProduct')
                 // $('.addProduct').on('click', function(event) {
                 var product = $('.product_id').html();
                 var n = ($('#itemlist tr').length - 0) + 1;
@@ -394,25 +395,25 @@
                     // '</select></div></td>' +
                     '<td><select class="form-control product_id select2" name="product_id[]" id="product_id_' +
                     n + '" onchange="getval(' + n +
-                    ',this);" required ></select></td>' +
+                    ',this);" required  style="width: 100%"></select></td>' +
 
                     '<td width="12%"><div><select class="form-control unit_id select2" name="unit_id[]" id="unit_id_' +
                     n + '" onchange="getUnitVal(' + n +
-                    ',this);" required > required' +
+                    ',this);" required  style="width: 100%"> required' +
                     '</select></div></td>' +
 
                     '<td width="12%"><input type="number" class="input-sm text-right form-control quantity" name="qty[]" id="qty_id_' +
-                    n + '" required  step="any" placeholder="0.00" data-cell="D' + n +
+                    n + '" required placeholder="0.00" data-cell="D' + n +
                     '" step="any" min="0" max="9999999999999999" data-format="0[.]00" onblur="getQty(' +
                     n + ',this);"></td>' +
 
                     '<td width="12%"><input type="number"  onblur="CheckBuyPrice(' + n +
                     ',this);" step="any" min="0" max="9999999999999999" class="input-sm text-right form-control purchase_price"  data-format="0[.]00" name="purchase_price[]" id="buy_price_id_' +
-                    n + '" data-cell="e' + n + '"   value="" required></td>' +
+                    n + '" data-cell="E' + n + '"   value="" required></td>' +
 
-                    '<td width="12%"><input type="number"  onblur="CheckPrice(' + n +
+                    '<td width="12%"><input type="number"  onblur="CheckSalePrice(' + n +
                     ',this);" step="any" min="0" max="9999999999999999" class="input-sm text-right form-control sale_price"  data-format="0[.]00" name="sale_price[]" id="sale_price_id_' +
-                    n + '" data-cell="c' + n + '"   value="" required></td>' +
+                    n + '" data-cell="C' + n + '"   value="" required></td>' +
 
                     '<td width="12%"><input type="number" class="form-control input-sm text-right" placeholder="0.00" data-format="0[.]00" name="product_vat[]" id="product_vat_id_' +
                     n + '"  data-cell="V' + n + '" required readonly></td>' +
@@ -421,7 +422,7 @@
                     n + '" readonly data-cell="K' + n + '" data-formula="(C' + n + '/100*V' + n + ')*D' +
                     n + ' " data-format="0[.]00" required></td>' +
                     '<td style="widht:12px"><input class="form-control input-sm text-right" placeholder="0.00" readonly name="total[]"  data-cell="F' +
-                    n + '" data-format="0[.]00" data-formula="(C' + n + '*D' + n + ') "></td>' +
+                    n + '" data-format="0[.]00" data-formula="(E' + n + '*D' + n + ') "></td>' +
                     '<td><span class="d-inline-flex"><input type="button" class="btn btn-success addProduct" value="+" title="Add New"> <input type="button" class="btn btn-danger delete float-left" style="margin-left: 5px" value="x" title="Remove This Product"></span></td>' +
                     '</tr>';
 
@@ -465,7 +466,8 @@
                 // search product end
             });
 
-            $(document).on('keydown', '#itemlist tr:last .sale_price', function(e) {
+            $(document).on('keydown', '#itemlist tr:last .purchase_price', function(e) {
+                console.log('keydown');
                 if (e.keyCode == 9) {
                     var product = $('.product_id').html();
                     var n = ($('#itemlist tr').length - 0) + 1;
@@ -480,11 +482,11 @@
                         '</select></div></td>' +
 
                         '<td width="12%"><input type="number" class="input-sm text-right form-control quantity" name="qty[]" id="qty_id_' +
-                        n + '" required  step="any" placeholder="0.00" data-cell="D' + n +
+                        n + '" required placeholder="0.00" data-cell="D' + n +
                         '" step="any" min="0" max="9999999999999999" data-format="0[.]00" onblur="getQty(' +
                         n + ',this);"><span id="show_stock_qty_' + n + '"></span></td>' +
 
-                        '<td width="12%"><input type="number"  onblur="CheckPrice(' + n +
+                        '<td width="12%"><input type="number"  onblur="CheckSalePrice(' + n +
                         ',this);" step="any" min="0" max="9999999999999999" class="input-sm text-right form-control sale_price"  data-format="0[.]00" name="sale_price[]" id="sale_price_id_' +
                         n + '" data-cell="c' + n +
                         '"   value="" required>MSP <span id="show_min_sale_price_' +
@@ -594,6 +596,7 @@
         });
 
         function getval(row, sel) {
+            console.log('getval')
             // alert(sel.value);
             var current_row = row;
             var store_id = $('#store_id').val();
@@ -620,7 +623,7 @@
                 },
 
                 success: function(res) {
-                    console.log('res',res)
+                    // console.log('res',res)
                     $(("#unit_id_" + current_row)).html(res.data.unitOptions);
                 },
                 error: function(err) {
@@ -651,14 +654,15 @@
                 t += parseFloat(amt) * parseFloat($('#qty_id_' + index).val());
             });
             console.log('t',t)
+            $('#amount').val(t);
             $('#grand_total').val(t);
-            $('#paid_amount').val(t);
-            $('#due_amount').val(0);
+            $('#paid').val(t);
+            $('#due').val(0);
         }
 
         //onkeyup
         function getQty(row, sel) {
-
+            console.log('getQty')
             var inputValue = parseFloat(sel.value);
             var stock_qty = parseFloat($('#show_stock_qty_' + row).html());
             if (inputValue > stock_qty) {
@@ -693,6 +697,7 @@
         }
 
         $('#discount_type').on('change', function(event) {
+            console.log('discount_type')
             //event.preventDefault();
             var discount_type = $('#discount_type').val();
             var total_vat = $("#total_vat").val();
@@ -722,35 +727,51 @@
         })
 
         function CheckBuyPrice(row, sel) {
-            console.log('buy price')
+            console.log('CheckBuyPrice')
             buyPriceSum();
         }
 
-        function CheckPrice(row, sel) {
-            var inputValue = parseFloat(sel.value);
+        function sellPriceSum(){
+            console.log('sellPriceSum')
+            var t = parseFloat(0);
+            $('.sale_price').each(function(i,e){
+                // console.log('i',i)
+                index = i + 1;
+                var amt = $(this).val();
+                t += parseFloat(amt) * parseFloat($('#qty_id_' + index).val());
+            });
+            // console.log('t',t)
+            $('#total_sale_price').val(t);
+        }
 
-            $form = $('#dynamic').calx();
-            $form.calx('update');
-            $form.calx('getCell', 'G1').setFormula('SUM(F1:F' + 5000 + ')');
-            $form.calx('getCell', 'G1').calculate();
-            $form.calx('getCell', 'T1').setFormula('SUM(K1:K' + 5000 + ')');
-            $form.calx('getCell', 'T1').calculate();
+        function CheckSalePrice(row, sel) {
+            console.log('check price');
+            sellPriceSum();
+            // var inputValue = parseFloat(sel.value);
 
-            var sub_total = $("#amount").val();
-            var total_vat = $("#total_vat").val();
-            var total_sale_price = parseFloat(sub_total) + parseFloat(total_vat);
-            $('#total_sale_price').val(total_sale_price);
+            // $form = $('#dynamic').calx();
+            // $form.calx('update');
+            // $form.calx('getCell', 'G1').setFormula('SUM(F1:F' + 5000 + ')');
+            // $form.calx('getCell', 'G1').calculate();
+            // $form.calx('getCell', 'T1').setFormula('SUM(K1:K' + 5000 + ')');
+            // $form.calx('getCell', 'T1').calculate();
+
+            // var sub_total = $("#amount").val();
+            // var total_vat = $("#total_vat").val();
+            // var total_sale_price = parseFloat(sub_total) + parseFloat(total_vat);
+            // $('#total_sale_price').val(total_sale_price);
         }
 
 
-        $(window).keydown(function(e) {
-            priceCalculation();
-        });
-        $(window).click(function(e) {
-            priceCalculation();
-        });
+        // $(window).keydown(function(e) {
+        //     priceCalculation();
+        // });
+        // $(window).click(function(e) {
+        //     priceCalculation();
+        // });
 
         function priceCalculation() {
+            console.log('priceCalculation');
             var discount_type = $('#discount_type').val();
 
             var sub_total = $("#amount").val();
@@ -790,14 +811,14 @@
 
             var sale_type_id = $('#sale_type_id').val();
             if (sale_type_id === '2') {
-                console.log(2)
+                // console.log(2)
                 var paid = $("#paid").val(0);
                 $('#due').val(final_amount);
                 $('#paid').prop("readonly", true);
                 $("#payment_type_id").html('<option value="">NULL</option>');
                 $('#payment_type_id').prop("readonly", true);
             } else {
-                console.log(1)
+                // console.log(1)
                 var paid = $("#paid").val(final_amount);
                 $('#due').val(0);
             }

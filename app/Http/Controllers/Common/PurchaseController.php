@@ -154,10 +154,10 @@ class PurchaseController extends Controller
                 for($i=0; $i<count($product_id); $i++){
                     $product = Product::whereid($product_id[$i])->first();
                     $p_id = $product_id[$i];
-                    $price = $purchase_price[$i];
-                    $sale_price = $sale_price[$i];
-                    $qty = $qty[$i];
-                    $total = ($qty * $price);
+                    $p_price = $purchase_price[$i];
+                    $p_sale_price = $sale_price[$i];
+                    $p_qty = $qty[$i];
+                    $total = ($p_qty * $p_price);
                     //change  to unit id
                     $unit_id = $request->unit_id[$i];
                     $product_vat = $request->product_vat[$i];
@@ -170,11 +170,11 @@ class PurchaseController extends Controller
                     $stock->purchase_id = $purchase->id;
                     $stock->store_id = $store_id;
                     //$stock->category_id = $product->category_id;
-                    $stock->qty = $qty;
+                    $stock->qty = $p_qty;
                     $stock->product_id = $p_id;
                     $stock->already_return_qty = 0;
-                    $stock->purchase_price = $price;
-                    $stock->sale_price = $sale_price;
+                    $stock->purchase_price = $p_price;
+                    $stock->sale_price = $p_sale_price;
                     $stock->product_total = $total;
                     $stock->product_vat = $product_vat;
                     $stock->product_vat_amount = $product_vat_amount;
