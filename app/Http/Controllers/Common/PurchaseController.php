@@ -65,8 +65,11 @@ class PurchaseController extends Controller
                         $btn='';
                         $btn .= '<span  class="d-inline-flex"><a href=' . route(\Request::segment(1) . '.purchases.show', $purchase->id) . ' class="btn btn-sm btn-warning waves-effect float-left" style="margin-left: 5px"><i class="fa fa-eye"></i></a>';
                         // if($User->can('purchases-edit')){
-                        // $btn .= '<a href=' . route(\Request::segment(1) . '.purchases.edit', $purchase->id) . ' class="btn btn-info btn-sm waves-effect"><i class="fa fa-edit"></i></a></span>';
+                        $btn .= '<a href=' . route(\Request::segment(1) . '.purchases.edit', $purchase->id) . ' class="btn btn-info btn-sm waves-effect"><i class="fa fa-edit"></i></a></span>';
                         // }
+                        $btn .= '<form method="post" action=' . route(\Request::segment(1) . '.purchases.destroy',$purchase->id) . '">'.csrf_field().'<input type="hidden" name="_method" value="DELETE">';
+                        $btn .= '<button class="btn btn-sm btn-danger" style="margin-left: 5px;" type="submit" onclick="return confirm(\'You Are Sure This Delete !\')"><i class="fa fa-trash"></i></button>';
+                        $btn .= '</form></span>';
                         return $btn;
                     })
                     ->rawColumns(['category','action', 'status'])
@@ -157,6 +160,7 @@ class PurchaseController extends Controller
                 for($i=0; $i<count($product_id); $i++){
                     $product = Product::whereid($product_id[$i])->first();
                     $p_id = $product_id[$i];
+                    $u_id = $unit_id[$i];
                     $p_price = $purchase_price[$i];
                     $p_sale_price = $sale_price[$i];
                     $p_qty = $qty[$i];
@@ -175,6 +179,7 @@ class PurchaseController extends Controller
                     //$stock->category_id = $product->category_id;
                     $stock->qty = $p_qty;
                     $stock->product_id = $p_id;
+                    $stock->unit_id = $u_id;
                     $stock->already_return_qty = 0;
                     $stock->purchase_price = $p_price;
                     $stock->sale_price = $p_sale_price;
@@ -245,59 +250,174 @@ class PurchaseController extends Controller
     public function edit($id)
     {
         $purchase = Purchase::findOrFail($id);
-        $packageProducts = Stock::wherepackage_id($id)->get();
+        $stocks = Stock::wherepurchase_id($id)->get();
+        $order_types = OrderType::whereIn('name', ['Cash', 'Credit'])->get();
+        $payment_types = PaymentType::whereIn('name', ['Cash', 'Card', 'Cheque', 'Condition'])->get();
+        $stores = Store::wherestatus(1)->pluck('name','id');
+        $suppliers = Supplier::wherestatus(1)->pluck('name','id');
         $categories = Category::wherestatus(1)->get();
-        $products = Product::wherestatus(1)->get();
-        return view('backend.common.purchases.edit', compact('purchase','packageProducts','categories','products'));
+        $units = Unit::wherestatus(1)->get();
+        return view('backend.common.purchases.edit', compact('purchase','stocks','stores','suppliers','categories','order_types','payment_types','units'));
     }
 
     public function update(Request $request, $id)
     {
+        // dd($request->all());
         $this->validate($request, [
             'entry_date' => 'required',
             'store_id' => 'required',
             'supplier_id' => 'required',
             'total_qty' => 'required',
-            'total_sale_price' => 'required',
+            'sub_total' => 'required',
             'grand_total' => 'required',
-            'discount_amount' => 'required',
-            'paid_amount' => 'required',
+            'total_sale_price' => 'required',
+            //'discount_amount' => 'required',
+            'paid' => 'required',
             'product_category_id.*' => 'required',
             'product_id.*' => 'required',
-            'quantity.*' => 'required',
+            'qty.*' => 'required',
             'purchase_price.*' => 'required',
             'sale_price.*' => 'required'
         ]);
 
-        try {
+        // try {
+            $entry_date = $request->entry_date;
+            $store_id = $request->store_id;
+            $supplier_id = $request->supplier_id;
+            $total_qty = $request->total_qty;
+            $sub_total = $request->sub_total;
+            $discount_amount = $request->discount ? $request->discount : 0;
+            $grand_total = $request->grand_total;
+            $total_sale_price = $request->total_sale_price;
+            $payment_type_id = $request->payment_type_id;
+            $paid_amount = $request->paid;
+            $due_amount = $request->due;
+            $discount_type = 'Flat';
+            $discount_percent = NULL;
+            $discount = 0;
+            $total_vat = $request->total_vat;
+            //$category_id = $request->category_id;
+            $unit_id = $request->unit_id;
+            $product_id = $request->product_id;
+            $qty = $request->qty;
+            $purchase_price = $request->purchase_price;
+            $sale_price = $request->sale_price;
+
             $purchase = Purchase::findOrFail($id);
-            $purchase->name = $request->name;
-            $purchase->amount = $request->amount;
+            $purchase->entry_date = $entry_date;
+            $purchase->store_id = $store_id;
+            $purchase->supplier_id = $supplier_id;
+            $purchase->total_qty = $total_qty;
+            $purchase->sub_total = $sub_total;
+            $purchase->discount_amount = $discount_amount;
+            $purchase->total_vat = $total_vat;
+            $purchase->discount_type = $discount_type;
+            $purchase->discount_percent = $discount_percent;
+            $purchase->after_discount = $grand_total;
+            $purchase->grand_total = $grand_total;
+            $purchase->payment_type_id = $payment_type_id;
+            $purchase->paid_amount = $paid_amount;
+            $purchase->due_amount = $due_amount;
+            $purchase->total_sale_price = $total_sale_price;
+            $purchase->status = 1;
             $purchase->updated_by_user_id = Auth::User()->id;
             if($purchase->save()){
-                DB::table('package_products')->wherepackage_id($id)->delete();
-                for($i=0; $i<count($request->category_id); $i++){
+                DB::table('stocks')->where('purchase_id',$id)->delete();
+                DB::table('payment_receipts')->where('order_id',$id)->whereorder_type('Purchase')->delete();
+                for($i=0; $i<count($product_id); $i++){
+                    $product = Product::whereid($product_id[$i])->first();
+                    $p_id = $product_id[$i];
+                    $u_id = $product->unit_id;
+                    $p_price = $purchase_price[$i];
+                    $p_sale_price = $sale_price[$i];
+                    $p_qty = $qty[$i];
+                    $total = ($p_qty * $p_price);
+                    //change  to unit id
+                    $product_vat = $request->product_vat[$i];
+                    $product_vat_amount = $request->product_vat_amount[$i];
+                    $average_purchase_price = 0;
+                    //discount calculation
+                    $final_discount_amount = 0;
+
                     $stock = new Stock();
-                    $stock->package_id = $id;
-                    $stock->product_id = $request->product_id[$i];
-                    $stock->quantity = $request->quantity[$i];
+                    $stock->purchase_id = $purchase->id;
+                    $stock->store_id = $store_id;
+                    //$stock->category_id = $product->category_id;
+                    $stock->qty = $p_qty;
+                    $stock->product_id = $p_id;
+                    $stock->unit_id = $u_id;
+                    $stock->already_return_qty = 0;
+                    $stock->purchase_price = $p_price;
+                    $stock->sale_price = $p_sale_price;
+                    $stock->product_total = $total;
+                    $stock->product_vat = $product_vat;
+                    $stock->product_vat_amount = $product_vat_amount;
+                    $stock->product_total = $total - $final_discount_amount + $product_vat_amount;
+                    $stock->product_discount_type = $discount_type;
+                    $stock->product_discount_percent = $discount_percent;
+                    $stock->product_discount = $final_discount_amount;
+                    $stock->after_product_discount = $total - $final_discount_amount + $product_vat_amount;
                     $stock->created_by_user_id = Auth::User()->id;
-                    $stock->updated_by_user_id = Auth::User()->id;
                     $stock->save();
                 }
+
+                // for due amount > 0
+                if($due_amount > 0){
+                    $payment_receipt = new PaymentReceipt();
+                    $payment_receipt->date = date('Y-m-d');
+                    $payment_receipt->store_id = $store_id;
+                    $payment_receipt->order_type = 'Purchase';
+                    $payment_receipt->order_id = $purchase->id;
+                    $payment_receipt->supplier_id = $supplier_id;
+                    $payment_receipt->order_type_id = 2;
+                    $payment_receipt->amount = $due_amount;
+                    $payment_receipt->created_by_user_id = Auth::User()->id;
+                    $payment_receipt->save();
+                }
+                // for paid amount > 0
+                if($paid_amount > 0){
+                    $payment_receipt = new PaymentReceipt();
+                    $payment_receipt->date = date('Y-m-d');
+                    $payment_receipt->store_id = $store_id;
+                    $payment_receipt->order_type = 'Purchase';
+                    $payment_receipt->order_id = $purchase->id;
+                    $payment_receipt->supplier_id = $supplier_id;
+                    $payment_receipt->order_type_id = 1;
+                    $payment_receipt->payment_type_id = $request->payment_type_id;
+                    $payment_receipt->bank_name = $request->bank_name ? $request->bank_name : '';
+                    $payment_receipt->cheque_number = $request->cheque_number ? $request->cheque_number : '';
+                    $payment_receipt->cheque_date = $request->cheque_date ? $request->cheque_date : '';
+                    $payment_receipt->transaction_number = $request->transaction_number ? $request->transaction_number : '';
+                    $payment_receipt->note = $request->note ? $request->note : '';
+                    $payment_receipt->amount = $paid_amount;
+                    $payment_receipt->created_by_user_id = Auth::User()->id;
+                    $payment_receipt->save();
+                }
             }
-            Toastr::success("Purchase Updated Successfully", "Success");
+
+            Toastr::success("Purchase Created Successfully", "Success");
+            return redirect()->route(\Request::segment(1) . '.purchases.index');
+        // } catch (\Exception $e) {
+        //     $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
+        //     Toastr::error($response['message'], "Error");
+        //     return back();
+        // }
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $purchase = Purchase::find($id);
+            DB::table('stocks')->where('purchase_id',$id)->delete();
+            DB::table('payment_receipts')->where('order_id',$id)->whereorder_type('Purchase')->delete();
+            $purchase->delete();
+            Toastr::success("SaleReturn Created Successfully", "Success");
             return redirect()->route(\Request::segment(1) . '.purchases.index');
         } catch (\Exception $e) {
             $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
             Toastr::error($response['message'], "Error");
             return back();
         }
-    }
-
-    public function destroy($id)
-    {
-        //
     }
 
     public function FindProductBySearchProductName(Request $request)

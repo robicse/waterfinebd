@@ -61,8 +61,12 @@ class SaleReturnController extends Controller
                         $btn='';
                         $btn .= '<span  class="d-inline-flex"><a href=' . route(\Request::segment(1) . '.sale-returns.show', $sale_return->id) . ' class="btn btn-warning btn-sm waves-effect"><i class="fa fa-eye"></i></a>';
                         if($User->can('sale-returns-edit')){
-                        $btn = '<a href=' . route(\Request::segment(1) . '.sale-returns.edit', $sale_return->id) . ' class="btn btn-info btn-sm waves-effect"><i class="fa fa-edit"></i></a></span>';
+                        $btn .= '<a href=' . route(\Request::segment(1) . '.sale-returns.edit', $sale_return->id) . ' class="btn btn-info btn-sm waves-effect float-left" style="margin-left: 5px"><i class="fa fa-edit"></i></a>';
                         }
+                        $btn .= '<form method="post" action=' . route(\Request::segment(1) . '.sale-returns.destroy',$sale_return->id) . '">'.csrf_field().'<input type="hidden" name="_method" value="DELETE">';
+                        $btn .= '<button class="btn btn-sm btn-danger" style="margin-left: 5px;" type="submit" onclick="return confirm(\'You Are Sure This Delete !\')"><i class="fa fa-trash"></i></button>';
+                        $btn .= '</form></span>';
+
                         return $btn;
                     })
                     ->rawColumns(['category','action', 'status'])
@@ -136,6 +140,26 @@ class SaleReturnController extends Controller
                 $sale_return->receive_amount = $saleProduct->sale_price;
                 $sale_return->profit_minus_amount = $profit_minus_amount;
                 $sale_return->update();
+
+                // for paid amount > 0
+                // if($paid_amount > 0){
+                    $payment_receipt = new PaymentReceipt();
+                    $payment_receipt->date = date('Y-m-d');
+                    $payment_receipt->store_id = $sale->store_id;
+                    $payment_receipt->order_type = 'Sale Return';
+                    $payment_receipt->order_id = $sale->id;
+                    $payment_receipt->customer_id = $sale->customer_id;
+                    $payment_receipt->order_type_id = 1;
+                    $payment_receipt->payment_type_id = 1;
+                    $payment_receipt->bank_name = $request->bank_name ? $request->bank_name : '';
+                    $payment_receipt->cheque_number = $request->cheque_number ? $request->cheque_number : '';
+                    $payment_receipt->cheque_date = $request->cheque_date ? $request->cheque_date : '';
+                    $payment_receipt->transaction_number = $request->transaction_number ? $request->transaction_number : '';
+                    $payment_receipt->note = $request->note ? $request->note : '';
+                    $payment_receipt->amount = $saleProduct->sale_price;
+                    $payment_receipt->created_by_user_id = Auth::User()->id;
+                    $payment_receipt->save();
+                // }
             }
 
             Toastr::success("SaleReturn Created Successfully", "Success");
@@ -149,7 +173,6 @@ class SaleReturnController extends Controller
 
     public function show($id)
     {
-
         $SaleReturn = SaleReturn::findOrFail($id);
         $store= Store::findOrFail($SaleReturn->store_id);
         $SaleReturnDetails = SaleReturnDetail::wheresale_return_id($SaleReturn->id)->get();
@@ -158,11 +181,17 @@ class SaleReturnController extends Controller
 
     public function edit($id)
     {
-        $sale_return = SaleReturn::findOrFail($id);
-        $packageProducts = Stock::wherepackage_id($id)->get();
-        $categories = Category::wherestatus(1)->get();
-        $products = Product::wherestatus(1)->get();
-        return view('backend.common.sale_returns.edit', compact('sale','packageProducts','categories','products'));
+        // $sale_return = SaleReturn::findOrFail($id);
+        // $packageProducts = Stock::wherepackage_id($id)->get();
+        // $categories = Category::wherestatus(1)->get();
+        // $products = Product::wherestatus(1)->get();
+        // return view('backend.common.sale_returns.edit', compact('sale','packageProducts','categories','products'));
+
+        $sale = SaleReturn::with('customer')->findOrFail($id);
+        $saleDetails = SaleDetails::where('sale_id', $id)->get();
+
+        $payment_types = PaymentType::where('name', '!=', 'LC')->get();
+        return view('backend.common.sale_returns.edit', compact('sale', 'saleDetails', 'vans', 'salesmans', 'payment_types'));
     }
 
     public function update(Request $request, $id)
@@ -208,7 +237,31 @@ class SaleReturnController extends Controller
 
     public function destroy($id)
     {
-        //
+        // dd($id);
+        try {
+            $saleReturn = SaleReturn::find($id);
+            $saleReturnDetails= DB::table('sale_return_details')->where('sale_return_id',$id)->get();
+            $countSaleReturnDetails = count($saleReturnDetails);
+            if($countSaleReturnDetails > 0){
+                foreach($saleReturnDetails as $saleReturnDetail){
+                    $saleProduct = SaleProduct::wheresale_id($saleReturn->sale_id)->whereproduct_id($saleReturnDetail->product_id)->first();
+                    if($saleProduct){
+                        $exists_qty = $saleProduct->already_return_qty;
+                        $saleProduct->already_return_qty = $exists_qty - $saleReturnDetail->qty;
+                        $saleProduct->save();
+                    }
+                }
+            }
+            DB::table('sale_return_details')->where('sale_return_id',$id)->delete();
+            DB::table('payment_receipts')->where('order_id',$id)->whereorder_type('Sale Return')->delete();
+            $saleReturn->delete();
+            Toastr::success("SaleReturn Created Successfully", "Success");
+            return redirect()->route(\Request::segment(1) . '.sale-returns.index');
+        } catch (\Exception $e) {
+            $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
+            Toastr::error($response['message'], "Error");
+            return back();
+        }
     }
 
     public function FindProductBySearchProductName(Request $request)

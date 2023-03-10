@@ -71,9 +71,12 @@ class SaleController extends Controller
                         // $btn = '<a href=' . route(\Request::segment(1) . '.sales.edit', $sale->id) . ' class="btn btn-info btn-sm waves-effect"><i class="fa fa-edit"></i></a>';
                         // }
                         $btn = '<span  class="d-inline-flex"><a href=' . route(\Request::segment(1) . '.sales.show', $sale->id) . ' class="btn btn-warning btn-sm waves-effect"><i class="fa fa-eye"></i></a>';
-                        $btn .= '<a href=' . url(\Request::segment(1) . '/sales-prints/' . $sale->id . '/a4') . ' class="btn btn-info  btn-sm float-left" style="margin-left: 5px"><i class="fa fa-print"></i>A4</a>';
+                        $btn .= '<a href=' . url(\Request::segment(1) . '/sales-prints/' . $sale->id . '/a4') . ' class="btn btn-info  btn-sm float-left" style="margin-left: 5px"><i class="fa fa-print"></i></a>';
                         // $btn .= '<a href=' . url(\Request::segment(1) . "/sales-prints/" . $sale->id . '/80mm') . ' class="btn btn-info  btn-sm float-left" style="margin-left: 5px"><i class="fa fa-print"></i>80MM</a>';
-                        $btn .= '<a target="_blank" href=' . url(\Request::segment(1) . "/sales-invoice-pdf/" . $sale->id) . ' class="btn btn-info  btn-sm float-left" style="margin-left: 5px"><i class="fas fa-file-pdf"></i>PDF</a>';
+                        $btn .= '<a target="_blank" href=' . url(\Request::segment(1) . "/sales-invoice-pdf/" . $sale->id) . ' class="btn btn-info  btn-sm float-left" style="margin-left: 5px"><i class="fas fa-file-pdf"></i></a>';
+                        $btn .= '<form method="post" action=' . route(\Request::segment(1) . '.sales.destroy',$sale->id) . '">'.csrf_field().'<input type="hidden" name="_method" value="DELETE">';
+                        $btn .= '<button class="btn btn-sm btn-danger" style="margin-left: 5px;" type="submit" onclick="return confirm(\'You Are Sure This Delete !\')"><i class="fa fa-trash"></i></button>';
+                        $btn .= '</form></span>';
 
                         return $btn;
                     })
@@ -343,7 +346,19 @@ class SaleController extends Controller
 
     public function destroy($id)
     {
-        //
+        try {
+            $sale = Sale::find($id);
+            DB::table('sale_products')->where('sale_id',$id)->get();
+            DB::table('sale_packages')->where('sale_id',$id)->get();
+            DB::table('payment_receipts')->where('order_id',$id)->whereorder_type('Sale')->delete();
+            $sale->delete();
+            Toastr::success("Sale Created Successfully", "Success");
+            return redirect()->route(\Request::segment(1) . '.sales.index');
+        } catch (\Exception $e) {
+            $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
+            Toastr::error($response['message'], "Error");
+            return back();
+        }
     }
 
     public function FindProductBySearchProductName(Request $request)

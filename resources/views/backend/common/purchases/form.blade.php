@@ -12,7 +12,7 @@ $status = '1';
     <div class="col-md-3">
         <div class="form-group">
             <label>Store <span class="required">*</span></label>
-            {!! Form::select('store_id', @$stores, null, [
+            {!! Form::select('store_id', @$stores, @$purchase->store_id, [
                 'id' => 'store_id',
                 'class' => 'form-control select2',
                 'placeholder' => 'Select One',
@@ -24,7 +24,7 @@ $status = '1';
     <div class="col-md-3">
         <div class="form-group">
             <label>Supplier <span class="required">*</span></label>
-            {!! Form::select('supplier_id', @$suppliers, null, [
+            {!! Form::select('supplier_id', @$suppliers, @$purchase->supplier_id, [
                 'id' => 'supplier_id',
                 'class' => 'form-control select2',
                 'placeholder' => 'Select One',
