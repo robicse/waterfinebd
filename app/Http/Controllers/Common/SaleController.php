@@ -68,12 +68,13 @@ class SaleController extends Controller
                     ->addColumn('action', function ($sale)use($User) {
                         $btn='';
                         // if($User->can('sales-edit')){
-                        // $btn = '<a href=' . route(\Request::segment(1) . '.sales.edit', $sale->id) . ' class="btn btn-info btn-sm waves-effect"><i class="fa fa-edit"></i></a>';
+
                         // }
                         $btn = '<span  class="d-inline-flex"><a href=' . route(\Request::segment(1) . '.sales.show', $sale->id) . ' class="btn btn-warning btn-sm waves-effect"><i class="fa fa-eye"></i></a>';
                         $btn .= '<a href=' . url(\Request::segment(1) . '/sales-prints/' . $sale->id . '/a4') . ' class="btn btn-info  btn-sm float-left" style="margin-left: 5px"><i class="fa fa-print"></i></a>';
                         // $btn .= '<a href=' . url(\Request::segment(1) . "/sales-prints/" . $sale->id . '/80mm') . ' class="btn btn-info  btn-sm float-left" style="margin-left: 5px"><i class="fa fa-print"></i>80MM</a>';
                         $btn .= '<a target="_blank" href=' . url(\Request::segment(1) . "/sales-invoice-pdf/" . $sale->id) . ' class="btn btn-info  btn-sm float-left" style="margin-left: 5px"><i class="fas fa-file-pdf"></i></a>';
+                        $btn .= '<a href=' . route(\Request::segment(1) . '.sales.edit', $sale->id) . ' class="btn btn-info btn-sm waves-effect float-left" style="margin-left: 5px"><i class="fa fa-edit"></i></a>';
                         $btn .= '<form method="post" action=' . route(\Request::segment(1) . '.sales.destroy',$sale->id) . '">'.csrf_field().'<input type="hidden" name="_method" value="DELETE">';
                         $btn .= '<button class="btn btn-sm btn-danger" style="margin-left: 5px;" type="submit" onclick="return confirm(\'You Are Sure This Delete !\')"><i class="fa fa-trash"></i></button>';
                         $btn .= '</form></span>';
@@ -292,11 +293,24 @@ class SaleController extends Controller
 
     public function edit($id)
     {
-        $sale = Sale::findOrFail($id);
-        $packageProducts = Stock::wherepackage_id($id)->get();
+        // $sale = Sale::with('customer')->findOrFail($id);
+        // $saleDetails = SaleProduct::where('sale_id', $id)->get();
+        // $SalePackages = SalePackage::where('sale_id', $id)->get();
+        // $order_types = OrderType::wherestatus(1)->get();
+        // $payment_types = PaymentType::wherestatus(1)->get();
+        // return view('backend.common.sales.edit', compact('sale', 'saleDetails', 'SalePackages','order_types','payment_types'));
+
+        $sale = Sale::with('customer')->findOrFail($id);
+        $saleDetails = SaleProduct::where('sale_id', $id)->get();
+        $SalePackages = SalePackage::where('sale_id', $id)->get();
+        $order_types = OrderType::whereIn('name', ['Cash', 'Credit'])->get();
+        $payment_types = PaymentType::whereIn('name', ['Cash', 'Card', 'Cheque', 'Condition'])->get();
+        $stores = Store::wherestatus(1)->pluck('name','id');
+        $customers = Customer::wherestatus(1)->pluck('name','id');
         $categories = Category::wherestatus(1)->get();
-        $products = Product::wherestatus(1)->get();
-        return view('backend.common.sales.edit', compact('sale','packageProducts','categories','products'));
+        $units = Unit::wherestatus(1)->get();
+        $packages = Package::wherestatus(1)->pluck('name','id');
+        return view('backend.common.sales.edit', compact('sale', 'saleDetails', 'SalePackages','stores','customers','categories','units','packages','payment_types','order_types'));
     }
 
     public function update(Request $request, $id)
