@@ -96,6 +96,7 @@ class CustomerController extends Controller
             Toastr::success('Store Update Successfully', 'Success');
             return redirect()->route(request()->segment(1) . '.customers.index');
         }catch (\Exception $e) {
+            DB::rollBack();
             $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
             Toastr::error($response['message'], "Error");
             return back();
@@ -122,17 +123,19 @@ class CustomerController extends Controller
         ]);
 
         try {
-        $customer = Customer::find($id);
-        $customer->name = $request->name;
-        $customer->phone = $request->phone;
-        $customer->email = $request->email;
-        $customer->address = $request->address;
-        $customer->updated_by_user_id = Auth::User()->id;
-        $customer->save();
-
-        Toastr::success("Customer Updated Successfully", "Success");
-        return redirect()->route(\Request::segment(1) . '.customers.index');
+            DB::beginTransaction();
+            $customer = Customer::find($id);
+            $customer->name = $request->name;
+            $customer->phone = $request->phone;
+            $customer->email = $request->email;
+            $customer->address = $request->address;
+            $customer->updated_by_user_id = Auth::User()->id;
+            $customer->save();
+            DB::commit();
+            Toastr::success("Customer Updated Successfully", "Success");
+            return redirect()->route(\Request::segment(1) . '.customers.index');
         } catch (\Exception $e) {
+            DB::rollBack();
             $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
             Toastr::error($response['message'], "Error");
             return back();

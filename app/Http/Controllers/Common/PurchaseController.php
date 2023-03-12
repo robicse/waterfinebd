@@ -45,7 +45,7 @@ class PurchaseController extends Controller
         try {
             $User=$this->User;
             if ($request->ajax()) {
-                $purchases = Purchase::orderBy('id', 'DESC');
+                $purchases = Purchase::latest();
                 return Datatables::of($purchases)
                     ->addIndexColumn()
                     ->addColumn('store', function ($data) {
@@ -65,7 +65,7 @@ class PurchaseController extends Controller
                         $btn='';
                         $btn .= '<span  class="d-inline-flex"><a href=' . route(\Request::segment(1) . '.purchases.show', $purchase->id) . ' class="btn btn-sm btn-warning waves-effect float-left" style="margin-left: 5px"><i class="fa fa-eye"></i></a>';
                         // if($User->can('purchases-edit')){
-                        $btn .= '<a href=' . route(\Request::segment(1) . '.purchases.edit', $purchase->id) . ' class="btn btn-info btn-sm waves-effect"><i class="fa fa-edit"></i></a></span>';
+                        $btn .= '<a href=' . route(\Request::segment(1) . '.purchases.edit', $purchase->id) . ' class="btn btn-info btn-sm waves-effect float-left" style="margin-left: 5px"><i class="fa fa-edit"></i></a>';
                         // }
                         $btn .= '<form method="post" action=' . route(\Request::segment(1) . '.purchases.destroy',$purchase->id) . '">'.csrf_field().'<input type="hidden" name="_method" value="DELETE">';
                         $btn .= '<button class="btn btn-sm btn-danger" style="margin-left: 5px;" type="submit" onclick="return confirm(\'You Are Sure This Delete !\')"><i class="fa fa-trash"></i></button>';
@@ -116,6 +116,7 @@ class PurchaseController extends Controller
         ]);
 
         try {
+            DB::beginTransaction();
             $entry_date = $request->entry_date;
             $store_id = $request->store_id;
             $supplier_id = $request->supplier_id;
@@ -228,10 +229,11 @@ class PurchaseController extends Controller
                     $payment_receipt->save();
                 }
             }
-
+            DB::commit();
             Toastr::success("Purchase Created Successfully", "Success");
             return redirect()->route(\Request::segment(1) . '.purchases.index');
         } catch (\Exception $e) {
+            DB::rollBack();
             $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
             Toastr::error($response['message'], "Error");
             return back();
@@ -280,7 +282,8 @@ class PurchaseController extends Controller
             'sale_price.*' => 'required'
         ]);
 
-        // try {
+        try {
+            DB::beginTransaction();
             $entry_date = $request->entry_date;
             $store_id = $request->store_id;
             $supplier_id = $request->supplier_id;
@@ -394,26 +397,30 @@ class PurchaseController extends Controller
                     $payment_receipt->save();
                 }
             }
-
+            DB::commit();
             Toastr::success("Purchase Created Successfully", "Success");
             return redirect()->route(\Request::segment(1) . '.purchases.index');
-        // } catch (\Exception $e) {
-        //     $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
-        //     Toastr::error($response['message'], "Error");
-        //     return back();
-        // }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
+            Toastr::error($response['message'], "Error");
+            return back();
+        }
     }
 
     public function destroy($id)
     {
         try {
+            DB::beginTransaction();
             $purchase = Purchase::find($id);
             DB::table('stocks')->where('purchase_id',$id)->delete();
             DB::table('payment_receipts')->where('order_id',$id)->whereorder_type('Purchase')->delete();
             $purchase->delete();
+            DB::commit();
             Toastr::success("SaleReturn Created Successfully", "Success");
             return redirect()->route(\Request::segment(1) . '.purchases.index');
         } catch (\Exception $e) {
+            DB::rollBack();
             $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
             Toastr::error($response['message'], "Error");
             return back();

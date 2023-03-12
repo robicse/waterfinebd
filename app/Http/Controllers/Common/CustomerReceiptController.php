@@ -119,7 +119,7 @@ class CustomerReceiptController extends Controller
             // 'paid_amount.*' => 'required|numeric|min:0|max:9999999999999999',
         ]);
         try {
-            // DB::beginTransaction();
+            DB::beginTransaction();
             $row_count = count($request->paid_amount);
 
             $store_id = $request->store_id;
@@ -182,13 +182,13 @@ class CustomerReceiptController extends Controller
                 }
             }
 
-            // DB::commit();
+            DB::commit();
             Toastr::success('Customer Receive  Create Successfully', 'Success');
             return redirect()->route(
                 \Request::segment(1) . '.customer-receipts.index'
             );
         } catch (\Exception $e) {
-            // DB::rollBack();
+            DB::rollBack();
             $response = ErrorTryCatch::createResponse(false,500,'Internal Server Error.',null);
             Toastr::error($response['message'], 'Error');
             return back();

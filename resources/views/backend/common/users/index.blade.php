@@ -63,6 +63,7 @@
 
                                 </tbody>
                                 <tfoot>
+                                    <tr>
                                     <th>Sl</th>
                                     <th>Full Name</th>
                                     <th>User Name</th>

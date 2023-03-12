@@ -96,6 +96,7 @@ class PurchaseReturnController extends Controller
         ]);
 
         try {
+            DB::beginTransaction();
             $sale = Purchase::findOrFail($request->sale_id);
             $purchase_return = new PurchaseReturn();
             $purchase_return->return_date = $request->return_date;
@@ -119,10 +120,11 @@ class PurchaseReturnController extends Controller
                     $purchase_return_detail->save();
                 }
             }
-
+            DB::commit();
             Toastr::success("PurchaseReturn Created Successfully", "Success");
             return redirect()->route(\Request::segment(1) . '.purchase-returns.index');
         } catch (\Exception $e) {
+            DB::rollBack();
             $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
             Toastr::error($response['message'], "Error");
             return back();
@@ -158,6 +160,7 @@ class PurchaseReturnController extends Controller
         ]);
 
         try {
+            DB::beginTransaction();
             $purchase_return = PurchaseReturn::findOrFail($id);
             $purchase_return->name = $request->name;
             $purchase_return->amount = $request->amount;
@@ -174,9 +177,11 @@ class PurchaseReturnController extends Controller
                     $purchase_return_detail->save();
                 }
             }
+            DB::commit();
             Toastr::success("PurchaseReturn Updated Successfully", "Success");
             return redirect()->route(\Request::segment(1) . '.purchase-returns.index');
         } catch (\Exception $e) {
+            DB::rollBack();
             $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
             Toastr::error($response['message'], "Error");
             return back();

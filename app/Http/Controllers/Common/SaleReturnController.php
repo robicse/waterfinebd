@@ -105,6 +105,7 @@ class SaleReturnController extends Controller
         ]);
 
         try {
+            DB::beginTransaction();
             $sale = Sale::findOrFail($request->sale_id);
             $sale_return = new SaleReturn();
             $sale_return->return_date = $request->return_date;
@@ -161,10 +162,11 @@ class SaleReturnController extends Controller
                     $payment_receipt->save();
                 // }
             }
-
+            DB::commit();
             Toastr::success("SaleReturn Created Successfully", "Success");
             return redirect()->route(\Request::segment(1) . '.sale-returns.index');
         } catch (\Exception $e) {
+            DB::rollBack();
             $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
             Toastr::error($response['message'], "Error");
             return back();
@@ -181,12 +183,6 @@ class SaleReturnController extends Controller
 
     public function edit($id)
     {
-        // $sale_return = SaleReturn::findOrFail($id);
-        // $packageProducts = Stock::wherepackage_id($id)->get();
-        // $categories = Category::wherestatus(1)->get();
-        // $products = Product::wherestatus(1)->get();
-        // return view('backend.common.sale_returns.edit', compact('sale','packageProducts','categories','products'));
-
         $sale = SaleReturn::with('customer')->findOrFail($id);
         $saleDetails = SaleDetails::where('sale_id', $id)->get();
 
@@ -208,6 +204,7 @@ class SaleReturnController extends Controller
         ]);
 
         try {
+            DB::beginTransaction();
             $sale_return = SaleReturn::findOrFail($id);
             $sale_return->name = $request->name;
             $sale_return->amount = $request->amount;
@@ -226,9 +223,11 @@ class SaleReturnController extends Controller
                     $sale_return_detail->save();
                 }
             }
+            DB::commit();
             Toastr::success("SaleReturn Updated Successfully", "Success");
             return redirect()->route(\Request::segment(1) . '.sale-returns.index');
         } catch (\Exception $e) {
+            DB::rollBack();
             $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
             Toastr::error($response['message'], "Error");
             return back();
@@ -237,8 +236,8 @@ class SaleReturnController extends Controller
 
     public function destroy($id)
     {
-        // dd($id);
         try {
+            DB::beginTransaction();
             $saleReturn = SaleReturn::find($id);
             $saleReturnDetails= DB::table('sale_return_details')->where('sale_return_id',$id)->get();
             $countSaleReturnDetails = count($saleReturnDetails);
@@ -255,9 +254,11 @@ class SaleReturnController extends Controller
             DB::table('sale_return_details')->where('sale_return_id',$id)->delete();
             DB::table('payment_receipts')->where('order_id',$id)->whereorder_type('Sale Return')->delete();
             $saleReturn->delete();
+            DB::commit();
             Toastr::success("SaleReturn Created Successfully", "Success");
             return redirect()->route(\Request::segment(1) . '.sale-returns.index');
         } catch (\Exception $e) {
+            DB::rollBack();
             $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
             Toastr::error($response['message'], "Error");
             return back();

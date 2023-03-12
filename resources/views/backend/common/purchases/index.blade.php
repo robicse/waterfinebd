@@ -58,7 +58,8 @@
                                     </ul>
                                 </div>
                             @endif
-                            <table class="table table-bordered table-striped data-table">
+                            {{-- <div class="card-body table-responsive"> --}}
+                                <table id="example1" class="table table-bordered table-striped data-table">
                                 <thead>
                                 <tr>
                                     <th>Sl</th>
@@ -182,7 +183,7 @@
                     {data: 'due_amount',name: 'due_amount'},
                     {data: 'total_sale_price',name: 'total_sale_price'},
                     {data: 'status'},
-                    {data: 'action', name: 'action', orderable: false, searchable: false},
+                    {data: 'action', name: 'action', orderable: false, searchable: true},
                 ]
             });
         });

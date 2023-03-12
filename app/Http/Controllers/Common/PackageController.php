@@ -83,6 +83,7 @@ class PackageController extends Controller
         ]);
 
         try {
+            DB::beginTransaction();
             $package = new Package();
             $package->name = $request->name;
             $package->amount = $request->amount;
@@ -98,10 +99,11 @@ class PackageController extends Controller
                     $package_product->save();
                 }
             }
-
+            DB::commit();
             Toastr::success("Package Created Successfully", "Success");
             return redirect()->route(\Request::segment(1) . '.packages.index');
         } catch (\Exception $e) {
+            DB::rollBack();
             $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
             Toastr::error($response['message'], "Error");
             return back();
@@ -134,6 +136,7 @@ class PackageController extends Controller
         ]);
 
         try {
+            DB::beginTransaction();
             $package = Package::findOrFail($id);
             $package->name = $request->name;
             $package->amount = $request->amount;
@@ -150,9 +153,11 @@ class PackageController extends Controller
                     $package_product->save();
                 }
             }
+            DB::commit();
             Toastr::success("Package Updated Successfully", "Success");
             return redirect()->route(\Request::segment(1) . '.packages.index');
         } catch (\Exception $e) {
+            DB::rollBack();
             $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
             Toastr::error($response['message'], "Error");
             return back();

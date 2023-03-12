@@ -84,16 +84,18 @@ class ProductController extends Controller
         ]);
 
         try {
+            DB::beginTransaction();
             $product = new Product();
             $product->category_id = $request->category_id;
             $product->unit_id = $request->unit_id;
             $product->name = $request->name;
             $product->created_by_user_id = Auth::User()->id;
             $product->save();
-
+            DB::commit();
             Toastr::success("Product Created Successfully", "Success");
             return redirect()->route(\Request::segment(1) . '.products.index');
         } catch (\Exception $e) {
+            DB::rollBack();
             $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
             Toastr::error($response['message'], "Error");
             return back();
@@ -123,15 +125,18 @@ class ProductController extends Controller
         ]);
 
         try {
+            DB::beginTransaction();
             $product = Product::findOrFail($id);
             $product->category_id = $request->category_id;
             $product->unit_id = $request->unit_id;
             $product->name = $request->name;
             $product->updated_by_user_id = Auth::User()->id;
             $product->save();
+            DB::commit();
             Toastr::success("Product Updated Successfully", "Success");
             return redirect()->route(\Request::segment(1) . '.products.index');
         } catch (\Exception $e) {
+            DB::rollBack();
             $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
             Toastr::error($response['message'], "Error");
             return back();

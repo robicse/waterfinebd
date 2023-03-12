@@ -112,9 +112,11 @@
                                                         <div>
                                                             <select class="form-control unit_id select2" name="unit_id[]"
                                                                 required id="unit_id_1" onchange="getUnitVal(1,this);">
-                                                                <option value="">Select Unit</option>
-                                                                <option value="{{ $saleDetail->unit_id }}">
-                                                                    {{ $saleDetail->product->unit->name }}</option>
+                                                                @if(count($units) > 0)
+                                                                    @foreach($units as $unit)
+                                                                    <option value="{{ $unit->id }}" {{ $unit->id == $saleDetail->unit_id ? 'selected' : ''}}>{{ $unit->name }}</option>
+                                                                    @endforeach
+                                                                @endif
                                                             </select>
                                                         </div>
                                                     </td>

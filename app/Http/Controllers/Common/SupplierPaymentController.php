@@ -112,15 +112,13 @@ class SupplierPaymentController extends Controller
     }
     public function store(Request $request)
     {
-        // dd($request->all());
         $this->validate($request, [
             'date' => 'required',
             'supplier_id' => 'required',
             'amount' => 'required|numeric|min:0|max:9999999999999999',
-            // 'paid_amount.*' => 'required|numeric|min:0|max:9999999999999999',
         ]);
         try {
-            // DB::beginTransaction();
+            DB::beginTransaction();
             $row_count = count($request->paid_amount);
 
             $store_id = $request->store_id;
@@ -183,13 +181,13 @@ class SupplierPaymentController extends Controller
                 }
             }
 
-            // DB::commit();
+            DB::commit();
             Toastr::success('Customer Receive  Create Successfully', 'Success');
             return redirect()->route(
                 \Request::segment(1) . '.supplier-payments.index'
             );
         } catch (\Exception $e) {
-            // DB::rollBack();
+            DB::rollBack();
             $response = ErrorTryCatch::createResponse(false,500,'Internal Server Error.',null);
             Toastr::error($response['message'], 'Error');
             return back();

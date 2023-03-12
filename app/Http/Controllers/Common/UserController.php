@@ -120,18 +120,24 @@ class UserController extends Controller
             'password' => 'required|same:confirm_password',
             'roles' => 'required',
         ]);
-
-        $input = $request->all();
-        $input['password'] = Hash::make($input['password']);
-        $input['user_type'] = $input['roles'];
-        $input['status'] = 1;
-        $input['last_login'] = date('Y-m-d H:i:s');
-
-        $user = User::create($input);
-        $user->assignRole($request->input('roles'));
-
-        Toastr::success('User Created Successfully', 'Success');
-        return redirect()->route(\Request::segment(1) . '.users.index');
+        try {
+            DB::beginTransaction();
+            $input = $request->all();
+            $input['password'] = Hash::make($input['password']);
+            $input['user_type'] = $input['roles'];
+            $input['status'] = 1;
+            $input['last_login'] = date('Y-m-d H:i:s');
+            $user = User::create($input);
+            $user->assignRole($request->input('roles'));
+            DB::commit();
+            Toastr::success('User Created Successfully', 'Success');
+            return redirect()->route(\Request::segment(1) . '.users.index');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $response = ErrorTryCatch::createResponse(false,500,'Internal Server Error.',null);
+            Toastr::error($response['message'], 'Error');
+            return back();
+        }
     }
 
     public function show($id)
@@ -162,44 +168,48 @@ class UserController extends Controller
             'password' => 'same:confirm-password',
             'roles' => 'required',
         ]);
-
-        $input = $request->all();
-        if (!empty($input['password'])) {
-            $input['password'] = Hash::make($input['password']);
-        } else {
-            $input = Arr::except($input, ['password']);
+        try {
+            DB::beginTransaction();
+            $input = $request->all();
+            if (!empty($input['password'])) {
+                $input['password'] = Hash::make($input['password']);
+            } else {
+                $input = Arr::except($input, ['password']);
+            }
+            $input['user_type'] = $input['roles'];
+            $image = $request->file('image');
+            if (isset($image)) {
+                $currentDate = Carbon::now()->toDateString();
+                $image_name =
+                    $currentDate .
+                    '-' .
+                    uniqid() .
+                    '.' .
+                    $image->getClientOriginalExtension();
+                $userImage = Image::make($image)
+                    ->resize(200, 200)
+                    ->save($image->getClientOriginalExtension());
+                Storage::disk('public')->put(
+                    'uploads/user/' . $image_name,
+                    $userImage
+                );
+                $input['image'] = 'uploads/user/' . $image_name;
+            }
+            $user = User::find($id);
+            $user->update($input);
+            DB::table('model_has_roles')
+                ->where('model_id', $id)
+                ->delete();
+            $user->assignRole($request->input('roles'));
+            DB::commit();
+            Toastr::success('User Updated Successfully', 'Success');
+            return redirect()->route(\Request::segment(1) . '.users.index');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $response = ErrorTryCatch::createResponse(false,500,'Internal Server Error.',null);
+            Toastr::error($response['message'], 'Error');
+            return back();
         }
-        $input['user_type'] = $input['roles'];
-
-        $image = $request->file('image');
-        if (isset($image)) {
-            $currentDate = Carbon::now()->toDateString();
-            $image_name =
-                $currentDate .
-                '-' .
-                uniqid() .
-                '.' .
-                $image->getClientOriginalExtension();
-            $userImage = Image::make($image)
-                ->resize(200, 200)
-                ->save($image->getClientOriginalExtension());
-            Storage::disk('public')->put(
-                'uploads/user/' . $image_name,
-                $userImage
-            );
-            $input['image'] = 'uploads/user/' . $image_name;
-        }
-
-        $user = User::find($id);
-        $user->update($input);
-        DB::table('model_has_roles')
-            ->where('model_id', $id)
-            ->delete();
-
-        $user->assignRole($request->input('roles'));
-
-        Toastr::success('User Updated Successfully', 'Success');
-        return redirect()->route(\Request::segment(1) . '.users.index');
     }
 
     public function destroy($id)
@@ -221,20 +231,29 @@ class UserController extends Controller
             'password' => 'required|min:6|max:30',
             'confirm-password' => 'required|same:password',
         ]);
-        if (!Hash::check($request->oldpassword, Auth::user()->password)) {
-            Toastr::error('Old Password wrong', 'Error');
+        try {
+            DB::beginTransaction();
+            if (!Hash::check($request->oldpassword, Auth::user()->password)) {
+                Toastr::error('Old Password wrong', 'Error');
+                return back();
+            } else {
+                User::find(Auth::user()->id)->update(['remember_token' => null]);
+                $userinfo = User::find(Auth::user()->id)->update([
+                    'password' => Hash::make($request->confirm),
+                ]);
+            }
+            if ($userinfo) {
+                Auth::logout();
+                $request->session()->invalidate();
+                DB::commit();
+                Toastr::success('Password Update Successfully', 'Success');
+                return Redirect::to('login');
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $response = ErrorTryCatch::createResponse(false,500,'Internal Server Error.',null);
+            Toastr::error($response['message'], 'Error');
             return back();
-        } else {
-            User::find(Auth::user()->id)->update(['remember_token' => null]);
-            $userinfo = User::find(Auth::user()->id)->update([
-                'password' => Hash::make($request->confirm),
-            ]);
-        }
-        if ($userinfo) {
-            Auth::logout();
-            $request->session()->invalidate();
-            Toastr::success('Password Update Successfully', 'Success');
-            return Redirect::to('login');
         }
     }
 

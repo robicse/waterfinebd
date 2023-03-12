@@ -124,6 +124,7 @@ class SaleController extends Controller
         ]);
 
         try {
+            DB::beginTransaction();
             $voucher_date = $request->voucher_date;
             $store_id = $request->store_id;
             $customer_id = $request->customer_id;
@@ -179,6 +180,7 @@ class SaleController extends Controller
                     $product = Product::whereid($product_id[$i])->first();
                     $p_id = $product_id[$i];
                     $p_qty = $qty[$i];
+                    $p_product_vat = $product_vat[$i];
                     $total_amount = 0;
                     $stock_info = Stock::wherestore_id($store_id)->whereproduct_id($p_id)->select('purchase_price','sale_price')->orderBy('id', 'DESC')->first();
                     if($stock_info){
@@ -188,7 +190,7 @@ class SaleController extends Controller
 
                     $sub_total = ($qty[$i] * $sale_price[$i]);
                     $unit_id = $unit_id[$i];
-                    $product_vat = $product_vat[$i] != NULL ? $request->product_vat : 0;
+                    $product_vat = $p_product_vat != NULL ? $p_product_vat : 0;
                     $product_vat_amount = $product_vat_amount[$i];
                     $producttotal = $total[$i];
                     $final_discount_amount = 0;
@@ -215,7 +217,6 @@ class SaleController extends Controller
                     $sale_product->qty = $qty[$i];
                     $sale_product->sale_price = $sale_price[$i];
                     $sale_product->total = $sub_total;
-                    //$sale_detail->date = $date;
                     $sale_product->product_vat = $product_vat;
                     $sale_product->product_vat_amount = $product_vat_amount;
                     $sale_product->product_discount_type = $discount_type;
@@ -272,10 +273,11 @@ class SaleController extends Controller
                     $payment_receipt->save();
                 }
             }
-
+            DB::commit();
             Toastr::success("Sale Created Successfully", "Success");
             return redirect()->route(\Request::segment(1) . '.sales.index');
         } catch (\Exception $e) {
+            DB::rollBack();
             $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
             Toastr::error($response['message'], "Error");
             return back();
@@ -293,13 +295,6 @@ class SaleController extends Controller
 
     public function edit($id)
     {
-        // $sale = Sale::with('customer')->findOrFail($id);
-        // $saleDetails = SaleProduct::where('sale_id', $id)->get();
-        // $SalePackages = SalePackage::where('sale_id', $id)->get();
-        // $order_types = OrderType::wherestatus(1)->get();
-        // $payment_types = PaymentType::wherestatus(1)->get();
-        // return view('backend.common.sales.edit', compact('sale', 'saleDetails', 'SalePackages','order_types','payment_types'));
-
         $sale = Sale::with('customer')->findOrFail($id);
         $saleDetails = SaleProduct::where('sale_id', $id)->get();
         $SalePackages = SalePackage::where('sale_id', $id)->get();
@@ -321,37 +316,175 @@ class SaleController extends Controller
             'store_id' => 'required',
             'customer_id' => 'required',
             'total_quantity' => 'required',
-            'payable_amount' => 'required',
+            'sub_total' => 'required',
             'grand_total' => 'required',
-            'discount_amount' => 'required',
-            'paid_amount' => 'required',
-            'product_category_id.*' => 'required',
+            //'discount' => 'required',
+            'paid' => 'required',
+            'due' => 'required',
             'product_id.*' => 'required',
-            'quantity.*' => 'required',
-            'amount.*' => 'required'
+            'qty.*' => 'required',
+            'sale_price.*' => 'required'
         ]);
 
         try {
-            $sale = Sale::findOrFail($id);
-            $sale->name = $request->name;
-            $sale->amount = $request->amount;
-            // $sale->status = $request->status;
-            $sale->updated_by_user_id = Auth::User()->id;
-            if($sale->save()){
-                DB::table('package_products')->wherepackage_id($id)->delete();
-                for($i=0; $i<count($request->category_id); $i++){
-                    $sale_product = new Stock();
-                    $sale_product->package_id = $id;
-                    $sale_product->product_id = $request->product_id[$i];
-                    $sale_product->quantity = $request->quantity[$i];
-                    $sale_product->created_by_user_id = Auth::User()->id;
-                    $sale_product->updated_by_user_id = Auth::User()->id;
-                    $sale_product->save();
+            DB::beginTransaction();
+            $voucher_date = $request->voucher_date;
+            $store_id = $request->store_id;
+            $customer_id = $request->customer_id;
+            $total_quantity = $request->total_quantity;
+            $sub_total = $request->sub_total;
+            $discount_type = $request->discount_type;
+            $discount_percent = $request->discount_percent;
+            $discount_amount = $request->discount ? $request->discount : 0;
+            $total_vat = $request->total_vat;
+            $grand_total = $request->grand_total;
+            $after_discount_amount = $grand_total - $discount_amount;
+            $paid_amount = $request->paid;
+            $due_amount = $request->due;
+
+            $product_id = $request->product_id;
+            $unit_id = $request->unit_id;
+            $qty = $request->qty;
+            $product_vat = $request->product_vat;
+            $product_vat_amount = $request->product_vat_amount;
+            $sale_price = $request->sale_price;
+            $total = $request->total;
+            $package_id = $request->package_id;
+
+            $profit_amount = 0;
+            for($x=0; $x<count($product_id); $x++){
+                $p_id = $product_id[$x];
+                $p_qty = $qty[$x];
+                $stock_info = Stock::wherestore_id($store_id)->whereproduct_id($p_id)->select('purchase_price','sale_price')->orderBy('id', 'DESC')->first();
+                if($stock_info){
+                    $per_qty_profit_amount = $stock_info->sale_price - $stock_info->purchase_price;
+                    $profit_amount += $per_qty_profit_amount * $p_qty;
                 }
             }
+
+            $sale = Sale::findOrFail($id);
+            $sale->voucher_date = $voucher_date;
+            $sale->store_id = $store_id;
+            $sale->customer_id = $customer_id;
+            $sale->total_quantity = $total_quantity;
+            $sale->sub_total = $sub_total;
+            $sale->discount_type = $discount_type;
+            $sale->discount_percent = $discount_percent;
+            $sale->discount_amount = $discount_amount;
+            $sale->total_vat = $total_vat;
+            $sale->grand_total = $grand_total;
+            $sale->paid_amount = $paid_amount;
+            $sale->due_amount = $due_amount;
+            $sale->profit_amount = $profit_amount;
+            $sale->status = 1;
+            $sale->updated_by_user_id = Auth::User()->id;
+            if($sale->save()){
+                DB::table('sale_products')->where('sale_id',$id)->delete();
+                DB::table('sale_packages')->where('sale_id',$id)->delete();
+                DB::table('payment_receipts')->where('order_id',$id)->whereorder_type('Sale')->delete();
+                for($i=0; $i<count($product_id); $i++){
+                    $product = Product::whereid($product_id[$i])->first();
+                    $p_id = $product_id[$i];
+                    $p_qty = $qty[$i];
+                    $p_sale_price = $sale_price[$i];
+                    $p_product_vat = $product_vat[$i];
+                    $total_amount = 0;
+                    $stock_info = Stock::wherestore_id($store_id)->whereproduct_id($p_id)->select('purchase_price','sale_price')->orderBy('id', 'DESC')->first();
+                    if($stock_info){
+                        $per_qty_profit_amount = $stock_info->sale_price - $stock_info->purchase_price;
+                        $total_amount += $per_qty_profit_amount * $p_qty;
+                    }
+
+                    $sub_total = ($p_qty * $p_sale_price);
+                    $unit_id = $unit_id[$i];
+                    $product_vat = $p_product_vat != NULL ? $p_product_vat : 0;
+                    $product_vat_amount = $product_vat_amount[$i];
+                    $producttotal = $total[$i];
+                    $final_discount_amount = 0;
+                    $extra_discount_amount = NULL;
+                    if ($discount_type != NULL) {
+                        //$discount_amount = $request->discount;
+
+                        // including vat
+                        $cal_discount = $discount_amount;
+                        $cal_product_total_amount = $product_vat_amount + $producttotal;
+                        $cal_grand_total = $sub_total + $total_vat;
+
+                        $cal_discount_amount =  (round((float)$cal_discount, 2) * round((float)$cal_product_total_amount, 2)) / round((float)$cal_grand_total, 2);
+                        $final_discount_amount = round((float)$cal_discount_amount, 2);
+                        $per_product_discount =  $final_discount_amount / $p_qty;
+                    }
+
+                    $sale_product = new SaleProduct();
+                    $sale_product->sale_id = $sale->id;
+                    $sale_product->store_id = $store_id;
+                    $sale_product->category_id =$product->category_id;
+                    $sale_product->unit_id = $product->unit_id;
+                    $sale_product->product_id = $product_id[$i];
+                    $sale_product->qty = $p_qty;
+                    $sale_product->sale_price = $p_sale_price;
+                    $sale_product->total = $sub_total;
+                    $sale_product->product_vat = $product_vat;
+                    $sale_product->product_vat_amount = $product_vat_amount;
+                    $sale_product->product_discount_type = $discount_type;
+                    $sale_product->per_product_discount = $per_product_discount;
+                    $sale_product->product_discount_percent = $discount_percent;
+                    $sale_product->product_discount = $final_discount_amount;
+                    $sale_product->after_product_discount = ($sub_total + $product_vat_amount) - $final_discount_amount;
+                    $sale_product->product_total = ($sub_total + $product_vat_amount) - $final_discount_amount;
+                    $sale_product->per_product_profit = $per_qty_profit_amount;
+                    $sale_product->total_profit = $total_amount;
+                    $sale_product->created_by_user_id = Auth::User()->id;
+                    $sale_product->save();
+                }
+                if($package_id){
+                    $sale_package = new SalePackage();
+                    $sale_package->sale_id = $sale->id;
+                    $sale_package->store_id = $store_id;
+                    $sale_package->package_id = $package_id;
+                    $sale_package->amount = Package::whereid($package_id)->pluck('amount')->first();
+                    $sale_package->created_by_user_id = Auth::User()->id;
+                    $sale_package->save();
+                }
+
+                // for due amount > 0
+                if($due_amount > 0){
+                    $payment_receipt = new PaymentReceipt();
+                    $payment_receipt->date = date('Y-m-d');
+                    $payment_receipt->store_id = $store_id;
+                    $payment_receipt->order_type = 'Sale';
+                    $payment_receipt->order_id = $sale->id;
+                    $payment_receipt->customer_id = $customer_id;
+                    $payment_receipt->order_type_id = 2;
+                    $payment_receipt->amount = $due_amount;
+                    $payment_receipt->created_by_user_id = Auth::User()->id;
+                    $payment_receipt->save();
+                }
+                // for paid amount > 0
+                if($paid_amount > 0){
+                    $payment_receipt = new PaymentReceipt();
+                    $payment_receipt->date = date('Y-m-d');
+                    $payment_receipt->store_id = $store_id;
+                    $payment_receipt->order_type = 'Sale';
+                    $payment_receipt->order_id = $sale->id;
+                    $payment_receipt->customer_id = $customer_id;
+                    $payment_receipt->order_type_id = 1;
+                    $payment_receipt->payment_type_id = $request->payment_type_id;
+                    $payment_receipt->bank_name = $request->bank_name ? $request->bank_name : '';
+                    $payment_receipt->cheque_number = $request->cheque_number ? $request->cheque_number : '';
+                    $payment_receipt->cheque_date = $request->cheque_date ? $request->cheque_date : '';
+                    $payment_receipt->transaction_number = $request->transaction_number ? $request->transaction_number : '';
+                    $payment_receipt->note = $request->note ? $request->note : '';
+                    $payment_receipt->amount = $paid_amount;
+                    $payment_receipt->created_by_user_id = Auth::User()->id;
+                    $payment_receipt->save();
+                }
+            }
+            DB::commit();
             Toastr::success("Sale Updated Successfully", "Success");
             return redirect()->route(\Request::segment(1) . '.sales.index');
         } catch (\Exception $e) {
+            DB::rollBack();
             $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
             Toastr::error($response['message'], "Error");
             return back();
@@ -361,14 +494,17 @@ class SaleController extends Controller
     public function destroy($id)
     {
         try {
+            DB::beginTransaction();
             $sale = Sale::find($id);
             DB::table('sale_products')->where('sale_id',$id)->get();
             DB::table('sale_packages')->where('sale_id',$id)->get();
             DB::table('payment_receipts')->where('order_id',$id)->whereorder_type('Sale')->delete();
             $sale->delete();
+            DB::commit();
             Toastr::success("Sale Created Successfully", "Success");
             return redirect()->route(\Request::segment(1) . '.sales.index');
         } catch (\Exception $e) {
+            DB::rollBack();
             $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
             Toastr::error($response['message'], "Error");
             return back();

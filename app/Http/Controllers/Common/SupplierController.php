@@ -122,17 +122,19 @@ class SupplierController extends Controller
         ]);
 
         try {
-        $supplier = Supplier::find($id);
-        $supplier->name = $request->name;
-        $supplier->phone = $request->phone;
-        $supplier->email = $request->email;
-        $supplier->address = $request->address;
-        $supplier->updated_by_user_id = Auth::User()->id;
-        $supplier->save();
-
-        Toastr::success("Supplier Updated Successfully", "Success");
-        return redirect()->route(\Request::segment(1) . '.suppliers.index');
+            DB::beginTransaction();
+            $supplier = Supplier::find($id);
+            $supplier->name = $request->name;
+            $supplier->phone = $request->phone;
+            $supplier->email = $request->email;
+            $supplier->address = $request->address;
+            $supplier->updated_by_user_id = Auth::User()->id;
+            $supplier->save();
+            DB::commit();
+            Toastr::success("Supplier Updated Successfully", "Success");
+            return redirect()->route(\Request::segment(1) . '.suppliers.index');
         } catch (\Exception $e) {
+            DB::rollBack();
             $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
             Toastr::error($response['message'], "Error");
             return back();

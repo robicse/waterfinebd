@@ -96,7 +96,7 @@ class Helper
     {
         return DB::table('permissions')
             ->where('module_id', $module_id)
-            ->orderBy('serial', 'asc')
+            // ->orderBy('serial', 'asc')
             ->get();
     }
 

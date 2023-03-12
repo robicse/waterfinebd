@@ -116,4 +116,25 @@
         <!-- /.container-fluid -->
     </section>
     <!-- /.content -->
-@stop
+    @stop
+    @push('js')
+    <script>
+        $("#checkAll").click(function () {
+            $('input:checkbox').not(this).prop('checked', this.checked);
+        });
+        function checkUncheck(id){
+            console.log('id',id);
+            if ($("#checkAllModuleAction_"+id).is(':checked')) {
+                console.log("checked");
+                $('.action_'+id+':input:checkbox').each(function() {
+                    this.checked = true;
+                });
+            }else{
+                console.log("unchecked");
+                $('.action_'+id+':input:checkbox').each(function() {
+                    this.checked = false;
+                });
+            }
+        }
+    </script>
+    @endpush

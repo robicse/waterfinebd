@@ -6,7 +6,7 @@ $status = '1';
     <div class="col-md-3">
         <div class="form-group">
             <label for="voucher_date">Voucher Date <span class="required">*</span></label>
-            {!! Form::date('voucher_date', date('Y-m-d'), ['id' => 'voucher_date', 'class' => 'form-control', 'required', 'tabindex' => 4]) !!}
+            {!! Form::date('voucher_date', null, ['id' => 'voucher_date', 'class' => 'form-control', 'required', 'tabindex' => 4]) !!}
         </div>
     </div>
     <div class="col-md-3">
