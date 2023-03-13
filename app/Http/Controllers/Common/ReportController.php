@@ -67,7 +67,7 @@ class ReportController extends Controller
         $storeInfo = Store::where('id', $store_id)->first();
         $store = Store::find($store_id);
         $previewtype = $request->previewtype;
-        $storeWisePurchaseReports = Purchase::where('store_id', '=', $store_id)->whereBetween('entry_date', array($from, $to))->get();
+        $storeWisePurchaseReports = Purchase::where('store_id', '=', $store_id)->whereBetween('purchase_date', array($from, $to))->get();
         $stores = Store::wherestatus(1)->pluck('name', 'id');
 
         if ($previewtype == 'htmlview') {

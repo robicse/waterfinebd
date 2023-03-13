@@ -130,7 +130,7 @@
                 },
                 {
                     "parent_menu":"Purchase Stock",
-                    "name": "Low Stock",
+                    "name": "Stock Low",
                     "slug": "stock-lows",
                     "icon": "nav-icon fas fa-boxes",
                     "serial": 14,

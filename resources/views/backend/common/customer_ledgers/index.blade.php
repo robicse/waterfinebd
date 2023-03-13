@@ -2,7 +2,6 @@
 @section('title', 'Customer Ledger Lists')
 @push('css')
     {{-- <link rel="stylesheet" href="{{ asset('backend/datetimepicker/css/bootstrap-datetimepicker.min.css') }}"> --}}
-
     <link rel="stylesheet" href="{{ asset('backend/css/custom.css') }}">
 @endpush
 @section('content')
@@ -39,12 +38,14 @@
                                 <div class="col-2">
                                     <div class="form-group">
                                         <label>Select Store:</label>
-                                        {!! Form::select('store_id', $stores, @Auth::user()->store_id?:null, [
-                                            'class' => 'form-control',
-                                            'placeholder' => 'Select One',
-                                            'id' => 'store_id',
-                                            'required',
-                                        ]) !!}
+                                        <select class="form-control" name="store_id" id="store_id" autofocus>
+                                            <option value="All">All Store</option>
+                                            @if(count($stores))
+                                                @foreach($stores as $store)
+                                                    <option value="{{$store->id}}">{{$store->name}}</option>
+                                                @endforeach
+                                            @endif
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-2">
@@ -52,13 +53,11 @@
                                         <label>Select Customer:</label>
                                         <select class="form-control" name="customer_id" id="customer_id" autofocus>
                                             <option>Select One</option>
-                                            {{-- @if(@Auth::user()->store_id) --}}
-                                                @if(count($customers))
-                                                    @foreach($customers as $customer)
-                                                        <option value="{{$customer->id}}">{{$customer->name}}</option>
-                                                    @endforeach
-                                                @endif
-                                            {{-- @endif --}}
+                                            @if(count($customers))
+                                                @foreach($customers as $customer)
+                                                    <option value="{{$customer->id}}">{{$customer->name}}</option>
+                                                @endforeach
+                                            @endif
                                         </select>
                                     </div>
                                 </div>
@@ -102,13 +101,9 @@
         <!-- /.container-fluid -->
     </section>
     <!-- /.content -->
-
-
-
 @stop
 
 @push('js')
-
     <script>
         $(document).ready(function() {
 
@@ -117,33 +112,6 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-
-            // $('#store_id').change(function() {
-            //     var store_id = $(this).val();
-            //     $.ajax({
-            //         url: "{{ url(Request::segment(1)) }}" + '/get-store-customer',
-            //         method: 'POST',
-            //         data: {
-            //             store_id: store_id
-            //         },
-            //         success: function(res) {
-            //             console.log(res);
-            //             if (res !== '') {
-            //                 $html = '<option value="">Select One</option>';
-            //                 res.forEach(element => {
-            //                     $html += '<option value="' + element.id + '">' + element
-            //                         .name + '</option>';
-            //                 });
-            //                 $('#supplier_user_id').html($html);
-            //             }
-            //         },
-            //         error: function(err) {
-            //             console.log(err);
-            //         }
-            //     })
-            // })
-
-
         });
     </script>
 @endpush

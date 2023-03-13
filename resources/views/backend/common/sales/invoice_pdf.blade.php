@@ -212,6 +212,12 @@
             </table>
         </div>
 
+        <div style="padding:0 1.5rem;">
+            <div class="col-md-12" style="text-align:right;float:right;">
+                <span>Print Date: {{date('Y-m-d H:i:s')}} Computer Generated Invoice</span>
+            </div>
+        </div>
+
     </div>
 </body>
 

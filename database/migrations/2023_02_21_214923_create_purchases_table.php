@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('purchases', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('entry_date',100)->nullable();
+            $table->string('purchase_date',100)->nullable();
             $table->bigInteger('store_id')->unsigned()->nullable();
             $table->foreign('store_id')->references('id')->on('stores')->onDelete('cascade');
             $table->bigInteger('supplier_id')->unsigned()->nullable();

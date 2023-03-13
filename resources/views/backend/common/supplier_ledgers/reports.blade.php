@@ -40,12 +40,14 @@
                                 <div class="col-2">
                                     <div class="form-group">
                                         <label>Select Store:</label>
-                                        {!! Form::select('store_id', $stores, $store_id, [
-                                            'class' => 'form-control',
-                                            'placeholder' => 'Select One',
-                                            'id' => 'store_id',
-                                            'required',
-                                        ]) !!}
+                                        <select class="form-control" name="store_id" id="store_id" autofocus>
+                                            <option value="All" {{ 'All' == $store_id ? 'selected' : '' }}>All Store</option>
+                                            @if(count($stores))
+                                                @foreach($stores as $store)
+                                                    <option value="{{$store->id}}" {{ $store->id == $store_id ? 'selected' : '' }}>{{$store->name}}</option>
+                                                @endforeach
+                                            @endif
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-2">
@@ -110,7 +112,6 @@
                                     <h6><strong>Current Balance: </strong>{{ Helper::ledgerCurrentBalance($supplierReports) }}</h6>
                                 </div>
                                 <div class="col-md-6">
-
                                 </div>
                             </div>
                         </div>
@@ -182,17 +183,13 @@
     <script src="{{ asset('backend/plugins/datatables-buttons/js/buttons.html5.min.js') }}"></script>
     <script src="{{ asset('backend/plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
     <script src="{{ asset('backend/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
-
-
     <script>
         $(document).ready(function() {
-
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-
             $('.data-table').DataTable({
                 dom: 'Bflrtip',
                 lengthMenu: [
@@ -203,32 +200,6 @@
                     'copy', 'csv', 'excel', 'pdf', 'print', 'colvis'
                 ]
             });
-
-
-            $('#store_id').change(function() {
-                var store_id = $(this).val();
-                $.ajax({
-                    url: "{{ url(Request::segment(1)) }}" + '/get-warehouse-supplier',
-                    method: 'POST',
-                    data: {
-                        store_id: store_id
-                    },
-                    success: function(res) {
-                        console.log(res);
-                        if (res !== '') {
-                            $html = '<option value="">Select One</option>';
-                            res.forEach(element => {
-                                $html += '<option value="' + element.id + '">' + element
-                                    .name + '</option>';
-                            });
-                            $('#supplier_id').html($html);
-                        }
-                    },
-                    error: function(err) {
-                        console.log(err);
-                    }
-                })
-            })
         })
     </script>
 @endpush

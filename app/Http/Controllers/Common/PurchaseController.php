@@ -99,7 +99,7 @@ class PurchaseController extends Controller
     {
         // dd($request->all());
         $this->validate($request, [
-            'entry_date' => 'required',
+            'purchase_date' => 'required',
             'store_id' => 'required',
             'supplier_id' => 'required',
             'total_qty' => 'required',
@@ -117,7 +117,7 @@ class PurchaseController extends Controller
 
         try {
             DB::beginTransaction();
-            $entry_date = $request->entry_date;
+            $purchase_date = $request->purchase_date;
             $store_id = $request->store_id;
             $supplier_id = $request->supplier_id;
             $total_qty = $request->total_qty;
@@ -140,7 +140,7 @@ class PurchaseController extends Controller
             $sale_price = $request->sale_price;
 
             $purchase = new Purchase();
-            $purchase->entry_date = $entry_date;
+            $purchase->purchase_date = $purchase_date;
             $purchase->store_id = $store_id;
             $purchase->supplier_id = $supplier_id;
             $purchase->total_qty = $total_qty;
@@ -266,7 +266,7 @@ class PurchaseController extends Controller
     {
         // dd($request->all());
         $this->validate($request, [
-            'entry_date' => 'required',
+            'purchase_date' => 'required',
             'store_id' => 'required',
             'supplier_id' => 'required',
             'total_qty' => 'required',
@@ -284,7 +284,7 @@ class PurchaseController extends Controller
 
         try {
             DB::beginTransaction();
-            $entry_date = $request->entry_date;
+            $purchase_date = $request->purchase_date;
             $store_id = $request->store_id;
             $supplier_id = $request->supplier_id;
             $total_qty = $request->total_qty;
@@ -307,7 +307,7 @@ class PurchaseController extends Controller
             $sale_price = $request->sale_price;
 
             $purchase = Purchase::findOrFail($id);
-            $purchase->entry_date = $entry_date;
+            $purchase->purchase_date = $purchase_date;
             $purchase->store_id = $store_id;
             $purchase->supplier_id = $supplier_id;
             $purchase->total_qty = $total_qty;

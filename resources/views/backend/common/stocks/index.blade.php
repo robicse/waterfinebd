@@ -161,7 +161,7 @@
                 ajax: "{{ route(Request::segment(1).'.stocks.index') }}",
                 columns: [
                     {data: 'id', name: 'id'},
-                    {data: 'purchase.entry_date',name: 'purchase.entry_date'},
+                    {data: 'purchase.purchase_date',name: 'purchase.purchase_date'},
                     {data: 'store.name',name: 'store.name'},
                     // {data: 'category',name: 'category'},
                     {data: 'product.name',name: 'product.name'},

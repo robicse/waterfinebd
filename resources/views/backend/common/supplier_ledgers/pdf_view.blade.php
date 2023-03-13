@@ -82,27 +82,32 @@
 <body>
     <div>
         <div style="background: #eceff4;padding: 1.5rem;">
+            @if (@$store != 'All')
+                <table>
+                    <tr>
+                        <td style="text-align:center;">
+                            <img loading="lazy" src="{{ asset(@$store->logo) }}" height="80" width="auto"
+                                style="display:inline-block;">
+                        </td>
+                    </tr>
+                </table>
+            @endif
             <table>
                 <tr>
-                    <td style="text-align:center;">
-                        <img loading="lazy" src="{{ asset(@$store->logo) }}" height="80" width="auto"
-                            style="display:inline-block;">
-                    </td>
+                    <td style="text-align:center;font-size: 1.2rem"><span class="strong"
+                            style="display:inline-block;">Ledger Report</span></td>
                 </tr>
             </table>
             <table>
                 <tr>
-                    <td style="text-align:center;font-size: 1.2rem"><span class="strong" style="display:inline-block;">Ledger Report</span></td>
+                    <td style="text-align:center;"><span class="small"
+                            style="display:inline-block;">Date:{!! @$from !!} To{{ @$to }}</span></td>
                 </tr>
             </table>
             <table>
                 <tr>
-                    <td style="text-align:center;"><span class="small" style="display:inline-block;">Date:{!! @$from !!} To{{ @$to }}</span></td>
-                </tr>
-            </table>
-            <table>
-                <tr>
-                    <td style="text-align:center;"><span class="small" style="display:inline-block;">Printed Date:{{ date('Y-m-d H:i A') }}</span></td>
+                    <td style="text-align:center;"><span class="small" style="display:inline-block;">Printed
+                            Date:{{ date('Y-m-d H:i A') }}</span></td>
                 </tr>
             </table>
             <table>
@@ -110,27 +115,26 @@
                     <td style="text-align:center;">&nbsp;</td>
                 </tr>
             </table>
-            <table>
-                {{-- <tr>
-                    <td style="width: 50%;font-size: 1.2rem" class="strong"> Supplier Ledger Report </td>
-                    <td style="width: 50%;" class="text-right">at {{ date('Y-m-d H:i A') }}</td>
-                </tr> --}}
-                <tr>
-                    <td style="width: 50%;" class="strong small">
-                        Store : {{ @$store->name }}<br>
-                    </td>
-                    <td style="width: 50%;" class="text-right small">Supplier: {{ @$supplier->name }}</td>
-                </tr>
-                <tr>
-                    <td style="width: 50%;height:70px;" class="text-left small"><span class=" small">Address :
-                            {{ @$store->address }}</span></td>
-                    <td style="width: 50%;" class="text-right small">Address: {{ @$supplier->address }}</td>
-                </tr>
-                <tr>
-                    <td style="width: 50%;" class="strong small">Phone: {{ @$store->phone }}</td>
-                    <td style="width: 50%;" class="text-right small strong"><span class="small">Phone: {{ @$supplier->phone }}</span></td>
-                </tr>
-            </table>
+            @if (@$store != 'All')
+                <table>
+                    <tr>
+                        <td style="width: 50%;" class="strong small">
+                            Store : {{ @$store->name }}<br>
+                        </td>
+                        <td style="width: 50%;" class="text-right small">Supplier: {{ @$supplier->name }}</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 50%;height:70px;" class="text-left small"><span class=" small">Address :
+                                {{ @$store->address }}</span></td>
+                        <td style="width: 50%;" class="text-right small">Address: {{ @$supplier->address }}</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 50%;" class="strong small">Phone: {{ @$store->phone }}</td>
+                        <td style="width: 50%;" class="text-right small strong"><span class="small">Phone:
+                                {{ @$supplier->phone }}</span></td>
+                    </tr>
+                </table>
+            @endif
         </div>
         @if ($supplierReports->isNotEmpty())
             <div style="padding: 1.5rem;">
@@ -150,7 +154,7 @@
                                 <td>{{ $loop->index + 01 }}</td>
                                 <td>{{ @$sup->date }}</td>
                                 <td>{{ @$sup->id }}</td>
-                                <td class="text-right">{{ number_format(@$sup->amount,2) }}</td>
+                                <td class="text-right">{{ number_format(@$sup->amount, 2) }}</td>
                                 <td>{{ $sup->order_type_id == 1 ? 'Paid' : 'Due' }}</td>
                             </tr>
                         @endforeach
@@ -167,31 +171,35 @@
             <tbody>
                 <tr>
                     <th class="text-left strong">Total Amount</th>
-                    <td class="currency">{{ number_format($supplierReports->sum('amount'),2) }}</td>
+                    <td class="currency">{{ number_format($supplierReports->sum('amount'), 2) }}</td>
                 </tr>
                 <tr>
                     <th class="text-left strong">Paid Amount</th>
                     <td class="currency">
-                        {{ number_format($supplierReports->sum('amount') - Helper::ledgerCurrentBalance($supplierReports),2) }}</td>
+                        {{ number_format($supplierReports->sum('amount') - Helper::ledgerCurrentBalance($supplierReports), 2) }}
+                    </td>
                 </tr>
                 <tr>
                     <th class="text-left strong">Due Amount</th>
-                    <td class="currency">{{ number_format(Helper::ledgerCurrentBalance($supplierReports),2) }}</td>
+                    <td class="currency">{{ number_format(Helper::ledgerCurrentBalance($supplierReports), 2) }}</td>
                 </tr>
                 <tr>
                     <th class="text-left strong">Previous Due Amount</th>
-                    <td class="currency">{{ number_format($preBalance,2) }}</td>
+                    <td class="currency">{{ number_format($preBalance, 2) }}</td>
                 </tr>
                 <tr>
                     <th class="text-left strong">Final Due Amount</th>
-                    <td class="currency">{{ number_format($preBalance + Helper::ledgerCurrentBalance($supplierReports),2) }}</td>
+                    <td class="currency">
+                        {{ number_format($preBalance + Helper::ledgerCurrentBalance($supplierReports), 2) }}</td>
                 </tr>
             </tbody>
         </table>
         <table style="width: 100%;margin-right:auto;padding-top: 5px;" class="text-right sm-padding small strong pt-2">
             <tbody>
                 <tr>
-                    <th class="text-right strong">In Word :{{ucwords($digit->format($preBalance + Helper::ledgerCurrentBalance($supplierReports)))}} Only</th>
+                    <th class="text-right strong">In Word
+                        :{{ ucwords($digit->format($supplierReports->sum('amount'))) }}
+                        Only</th>
                 </tr>
             </tbody>
         </table>

@@ -5,8 +5,8 @@ $status = '1';
 <div class="row">
     <div class="col-md-3">
         <div class="form-group">
-            <label for="entry_date">Entry Date <span class="required">*</span></label>
-            {!! Form::date('entry_date', date('Y-m-d'), ['id' => 'entry_date', 'class' => 'form-control', 'required', 'tabindex' => 4]) !!}
+            <label for="purchase_date">Purchase Date <span class="required">*</span></label>
+            {!! Form::date('purchase_date', date('Y-m-d'), ['id' => 'purchase_date', 'class' => 'form-control', 'required', 'tabindex' => 4]) !!}
         </div>
     </div>
     <div class="col-md-3">

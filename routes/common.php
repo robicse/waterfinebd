@@ -49,7 +49,7 @@ Route::post('get-product-by-search', [PackageController::class, 'FindProductBySe
 Route::get('/category-product-info', [PackageController::class, 'categoryProductInfo'])->name('category.product.info');
 Route::resource('purchases', PurchaseController::class);
 Route::resource('stocks', StockController::class);
-Route::get('stock-low-list', [StockController::class, 'stockLowList'])->name('low-stocks.index');
+Route::get('stock-low-list', [StockController::class, 'stockLowList'])->name('stock-lows.index');
 Route::get('stock-low-list-details/{store_id}', [StockController::class, 'stockLowListDEtails'])->name('stock.low.list.details');
 Route::resource('purchase-returns', PurchaseReturnController::class);
 Route::resource('sales', SaleController::class);

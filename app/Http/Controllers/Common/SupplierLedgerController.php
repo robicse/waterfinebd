@@ -40,7 +40,7 @@ class SupplierLedgerController extends Controller
         try {
 
             $suppliers = Supplier::wherestatus(1)->get();
-            $stores = Store::wherestatus(1)->pluck('name', 'id');
+            $stores = Store::wherestatus(1)->get();
             return view('backend.common.supplier_ledgers.index', compact('suppliers','stores'));
         } catch (\Exception $e) {
             $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
@@ -61,14 +61,19 @@ class SupplierLedgerController extends Controller
             $to = date('Y-m-d', strtotime($request->end_date));
             $supplier_id = $request->supplier_id;
             $store_id = $request->store_id;
-            $store = Store::find($store_id);
             $supplier = Supplier::find($supplier_id);
             $previewtype = $request->previewtype;
             $suppliers = Supplier::wherestatus(1)->get();
-            $stores = Store::wherestatus(1)->pluck('name', 'id');
-            $supplierReports = PaymentReceipt::whereorder_type('Purchase')->wheresupplier_id($supplier_id)->whereBetween('date', array($from, $to))->get();
-            $preBalance = PaymentReceipt::whereorder_type('Purchase')->whereorder_type_id(2)->wheresupplier_id($supplier_id)->where('date', '<', $from)->sum('amount');
-
+            $stores = Store::wherestatus(1)->get();
+            if($store_id == 'All'){
+                $store = 'All';
+                $supplierReports = PaymentReceipt::whereorder_type('Purchase')->wheresupplier_id($supplier_id)->whereBetween('date', array($from, $to))->get();
+                $preBalance = PaymentReceipt::whereorder_type('Purchase')->whereorder_type_id(2)->wheresupplier_id($supplier_id)->where('date', '<', $from)->sum('amount');
+            }else{
+                $store = Store::find($store_id);
+                $supplierReports = PaymentReceipt::whereorder_type('Purchase')->wherestore_id($store_id)->wheresupplier_id($supplier_id)->whereBetween('date', array($from, $to))->get();
+                $preBalance = PaymentReceipt::whereorder_type('Purchase')->whereorder_type_id(2)->wherestore_id($store_id)->wheresupplier_id($supplier_id)->where('date', '<', $from)->sum('amount');
+            }
             if ($previewtype == 'htmlview') {
                 return view('backend.common.supplier_ledgers.reports', compact('supplierReports', 'preBalance', 'suppliers', 'from', 'to', 'supplier_id','stores','store_id','store','supplier','digit'));
             }else{

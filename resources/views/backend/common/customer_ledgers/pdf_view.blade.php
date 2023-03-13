@@ -82,14 +82,16 @@
 <body>
     <div>
         <div style="background: #eceff4;padding: 1.5rem;">
-            <table>
-                <tr>
-                    <td style="text-align:center;">
-                        <img loading="lazy" src="{{ asset(@$store->logo) }}" height="80" width="auto"
-                            style="display:inline-block;">
-                    </td>
-                </tr>
-            </table>
+            @if (@$store != 'All')
+                <table>
+                    <tr>
+                        <td style="text-align:center;">
+                            <img loading="lazy" src="{{ asset(@$store->logo) }}" height="80" width="auto"
+                                style="display:inline-block;">
+                        </td>
+                    </tr>
+                </table>
+            @endif
             <table>
                 <tr>
                     <td style="text-align:center;font-size: 1.2rem"><span class="strong" style="display:inline-block;">Ledger Report</span></td>
@@ -110,27 +112,25 @@
                     <td style="text-align:center;">&nbsp;</td>
                 </tr>
             </table>
-            <table>
-                {{-- <tr>
-                    <td style="width: 50%;font-size: 1.2rem" class="strong"> Customer Ledger Report </td>
-                    <td style="width: 50%;" class="text-right">at {{ date('Y-m-d H:i A') }}</td>
-                </tr> --}}
-                <tr>
-                    <td style="width: 50%;" class="strong small">
-                        Store : {{ @$store->name }}<br>
-                    </td>
-                    <td style="width: 50%;" class="text-right small">Supplier: {{ @$customer->name }}</td>
-                </tr>
-                <tr>
-                    <td style="width: 50%;height:70px;" class="text-left small"><span class=" small">Address :
-                            {{ @$store->address }}</span></td>
-                    <td style="width: 50%;" class="text-right small">Address: {{ @$customer->address }}</td>
-                </tr>
-                <tr>
-                    <td style="width: 50%;" class="strong small">Phone: {{ @$store->phone }}</td>
-                    <td style="width: 50%;" class="text-right small strong"><span class="small">Phone: {{ @$customer->phone }}</span></td>
-                </tr>
-            </table>
+            @if (@$store != 'All')
+                <table>
+                    <tr>
+                        <td style="width: 50%;" class="strong small">
+                            Store : {{ @$store->name }}<br>
+                        </td>
+                        <td style="width: 50%;" class="text-right small">Supplier: {{ @$customer->name }}</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 50%;height:70px;" class="text-left small"><span class=" small">Address :
+                                {{ @$store->address }}</span></td>
+                        <td style="width: 50%;" class="text-right small">Address: {{ @$customer->address }}</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 50%;" class="strong small">Phone: {{ @$store->phone }}</td>
+                        <td style="width: 50%;" class="text-right small strong"><span class="small">Phone: {{ @$customer->phone }}</span></td>
+                    </tr>
+                </table>
+            @endif
         </div>
         @if ($customerReports->isNotEmpty())
             <div style="padding: 1.5rem;">
@@ -191,7 +191,7 @@
         <table style="width: 100%;margin-right:auto;padding-top: 5px;" class="text-right sm-padding small strong pt-2">
             <tbody>
                 <tr>
-                    <th class="text-right strong">In Word :{{ucwords($digit->format($preBalance + Helper::ledgerCurrentBalance($customerReports)))}} Only</th>
+                    <th class="text-right strong">In Word :{{ucwords($digit->format($customerReports->sum('amount'),2))}} Only</th>
                 </tr>
             </tbody>
         </table>

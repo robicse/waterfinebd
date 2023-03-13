@@ -193,7 +193,7 @@
                                             <tr>
                                                 <td>{{ $loop->index + 01 }}</td>
                                                 <td>{{ $sale->id }}</td>
-                                                <td>{{ $sale->entry_date }}</td>
+                                                <td>{{ $sale->purchase_date }}</td>
                                                 <td>{{ @$storeInfo->name }}</td>
                                                 <td>{{ $sale->total_vat }}</td>
                                                 <td class="text-right">{{ $sale->grand_total }}</td>

@@ -40,12 +40,14 @@
                                 <div class="col-2">
                                     <div class="form-group">
                                         <label>Select Store:</label>
-                                        {!! Form::select('store_id', $stores, $store_id, [
-                                            'class' => 'form-control',
-                                            'placeholder' => 'Select One',
-                                            'id' => 'store_id',
-                                            'required',
-                                        ]) !!}
+                                        <select class="form-control" name="store_id" id="store_id" autofocus>
+                                            <option value="All" {{ 'All' == $store_id ? 'selected' : '' }}>All Store</option>
+                                            @if(count($stores))
+                                                @foreach($stores as $store)
+                                                    <option value="{{$store->id}}" {{ $store->id == $store_id ? 'selected' : '' }}>{{$store->name}}</option>
+                                                @endforeach
+                                            @endif
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-2">

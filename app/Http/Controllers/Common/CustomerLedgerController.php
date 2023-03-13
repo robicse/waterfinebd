@@ -41,7 +41,7 @@ class CustomerLedgerController extends Controller
         try {
 
             $customers = Customer::wherestatus(1)->get();
-            $stores = Store::wherestatus(1)->pluck('name', 'id');
+            $stores = Store::wherestatus(1)->get();
             return view('backend.common.customer_ledgers.index', compact('customers','stores'));
         } catch (\Exception $e) {
             $response = ErrorTryCatch::createResponse(false, 500, 'Internal Server Error.', null);
@@ -63,14 +63,19 @@ class CustomerLedgerController extends Controller
             $customer_id = $request->customer_id;
             $store_id = $request->store_id;
             $customers = Customer::wherestatus(1)->get();
-            $stores = Store::wherestatus(1)->pluck('name', 'id');
-            $store = Store::find($store_id);
+            $stores = Store::wherestatus(1)->get();
             $customer = Customer::find($customer_id);
             $previewtype = $request->previewtype;
-            $customerReports = PaymentReceipt::whereorder_type('Sale')->wherecustomer_id($customer_id)->whereBetween('date', array($from, $to))->get();
+
+            if($store_id == 'All'){
+                $store = 'All';
+                $customerReports = PaymentReceipt::whereorder_type('Sale')->wherecustomer_id($customer_id)->whereBetween('date', array($from, $to))->get();
             $preBalance = PaymentReceipt::whereorder_type('Sale')->whereorder_type_id(2)->wherecustomer_id($customer_id)->where('date', '<', $from)->sum('amount');
-
-
+            }else{
+                $store = Store::find($store_id);
+                $customerReports = PaymentReceipt::whereorder_type('Sale')->wherestore_id($store_id)->wherecustomer_id($customer_id)->whereBetween('date', array($from, $to))->get();
+                $preBalance = PaymentReceipt::whereorder_type('Sale')->wherestore_id($store_id)->whereorder_type_id(2)->wherecustomer_id($customer_id)->where('date', '<', $from)->sum('amount');
+            }
             if ($previewtype == 'htmlview') {
                 return view('backend.common.customer_ledgers.reports', compact('customerReports', 'preBalance', 'customers', 'from', 'to', 'customer_id','stores','store_id','store','customer','digit'));
             }else{
@@ -85,6 +90,7 @@ class CustomerLedgerController extends Controller
     }
     public function show($id)
     {
+
     }
 
     public function edit($id)

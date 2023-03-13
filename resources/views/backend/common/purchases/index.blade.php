@@ -63,7 +63,7 @@
                                 <thead>
                                 <tr>
                                     <th>Sl</th>
-                                    <th>Entry Date</th>
+                                    <th>Purchase Date</th>
                                     <th>Store</th>
                                     <th>Supplier</th>
                                     <th>Total Quantity</th>
@@ -83,7 +83,7 @@
                                 <tfoot>
                                 <tr>
                                     <th>Sl</th>
-                                    <th>Entry Date</th>
+                                    <th>Purchase Date</th>
                                     <th>Store</th>
                                     <th>Supplier</th>
                                     <th>Total Quantity</th>
@@ -172,7 +172,7 @@
                 ajax: "{{ route(Request::segment(1).'.purchases.index') }}",
                 columns: [
                     {data: 'id', name: 'id'},
-                    {data: 'entry_date',name: 'entry_date'},
+                    {data: 'purchase_date',name: 'purchase_date'},
                     {data: 'store',name: 'store'},
                     {data: 'supplier',name: 'supplier'},
                     {data: 'total_qty',name: 'total_qty'},

@@ -128,7 +128,7 @@
                         @foreach ($storeWisePurchaseReports as $sale)
                             <tr class="">
                                 <td>{{ $loop->index + 01 }}</td>
-                                <td>{{ @$sale->entry_date }}</td>
+                                <td>{{ @$sale->purchase_date }}</td>
                                 <td>{{ @$sale->supplier->name }}</td>
                                 <td>{{ @$sale->id }}</td>
                                 <td class="text-right"> {{ @$sale->total_vat }}</td>
