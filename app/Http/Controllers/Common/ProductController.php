@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Common;
 
+use DB;
 use App\Helpers\ErrorTryCatch;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -40,6 +41,9 @@ class ProductController extends Controller
                     ->addIndexColumn()
                     ->addColumn('category', function ($products) {
                         return $products?->category?->name;
+                    })
+                    ->addColumn('unit', function ($products) {
+                        return $products?->unit?->name;
                     })
                     ->addColumn('status', function ($data) {
                         if ($data->status == 0) {
@@ -89,6 +93,7 @@ class ProductController extends Controller
             $product->category_id = $request->category_id;
             $product->unit_id = $request->unit_id;
             $product->name = $request->name;
+            $product->stock_low_qty = $request->stock_low_qty;
             $product->created_by_user_id = Auth::User()->id;
             $product->save();
             DB::commit();
@@ -130,6 +135,7 @@ class ProductController extends Controller
             $product->category_id = $request->category_id;
             $product->unit_id = $request->unit_id;
             $product->name = $request->name;
+            $product->stock_low_qty = $request->stock_low_qty;
             $product->updated_by_user_id = Auth::User()->id;
             $product->save();
             DB::commit();

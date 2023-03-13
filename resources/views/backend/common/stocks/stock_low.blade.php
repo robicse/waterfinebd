@@ -1,5 +1,5 @@
 @extends('backend.layouts.master')
-@section("title","Products Lists")
+@section("title","Stocks Lists")
 @push('css')
     <!-- DataTables -->
     <link rel="stylesheet" href="{{asset('backend/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
@@ -12,13 +12,13 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Products</h1>
+                    <h1>Stock Lows</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item active"><a
                                 href="{{route(Request::segment(1).'.dashboard')}}">Home</a></li>
-                        <li class="breadcrumb-item active">products</li>
+                        <li class="breadcrumb-item active">Stock Lows</li>
                     </ol>
                 </div>
             </div>
@@ -29,67 +29,21 @@
     <section class="content">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">Product Lists</h3>
-                            <div class="float-right">
-                                @can('products-create')
-                                {{-- <a href="{{ @url('/backend/demo_xlsx/product.xlsx') }}"> <button class="btn btn-info">
-                                        Download Demo <i class="fa fa-download"></i>
-                                    </button></a> --}}
-                                <a href="{{route(Request::segment(1).'.products.create')}}">
-                                    <button class="btn btn-success">
-                                        <i class="fa fa-plus-circle"></i>
-                                        Add
-                                    </button>
-                                </a>
-                                @endcan
+                @if(!empty($stores))
+                    @foreach($stores as $key => $store)
+
+                        <div class="col-md-4">
+                            <div class="widget-small primary coloured-icon"><i class="icon fa fa-users fa-3x"></i>
+                                <div class="info">
+                                    <h4><a href="{{  url(Request::segment(1) . '/stock-low-list-details/'.$store->id)}}">{{$store->name}}</a></h4>
+
+                                    <p><b>Show Low Stock </b></p>
+                                </div>
                             </div>
                         </div>
-                        <!-- /.card-header -->
-                        <div class="card-body table-responsive">
-                            @if ($errors->any())
-                                <div class="alert alert-danger">
-                                    <ul>
-                                        @foreach ($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endif
-                            <table class="table table-bordered table-striped data-table">
-                                <thead>
-                                <tr>
-                                    <th>Sl</th>
-                                    <th>Product Name</th>
-                                    <th>Category Name</th>
-                                    <th>Unit Name</th>
-                                    <th>Low Stock Qty</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                                </thead>
-                                <tbody>
 
-                                </tbody>
-                                <tfoot>
-                                <tr>
-                                    <th>Sl</th>
-                                    <th>Product Name</th>
-                                    <th>Category Name</th>
-                                    <th>Unit Name</th>
-                                    <th>Low Stock Qty</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-                        <!-- /.card-body -->
-                    </div>
-                    <!-- /.card -->
-                </div>
+                    @endforeach
+                @endif
                 <!-- /.col -->
             </div>
             <!-- /.row -->
@@ -156,27 +110,16 @@
                     'colvis'
 
                 ],
-                ajax: "{{ route(Request::segment(1).'.products.index') }}",
+                ajax: "{{ route(Request::segment(1).'.stocks.index') }}",
                 columns: [
                     {data: 'id', name: 'id'},
-                    {
-                        data: 'name',
-                        name: 'name'
-                    },
-                    {
-                        data: 'category',
-                        name: 'category'
-                    },
-                    {
-                        data: 'unit',
-                        name: 'unit'
-                    },
-                    {
-                        data: 'stock_low_qty',
-                        name: 'stock_low_qty'
-                    },
-                    {data: 'status'},
-                    {data: 'action', name: 'action', orderable: false, searchable: false},
+                    {data: 'purchase.entry_date',name: 'purchase.entry_date'},
+                    {data: 'store.name',name: 'store.name'},
+                    // {data: 'category',name: 'category'},
+                    {data: 'product.name',name: 'product.name'},
+                    {data: 'qty',name: 'qty'},
+                    {data: 'purchase_price',name: 'purchase_price'},
+                    {data: 'sale_price',name: 'sale_price'},
                 ]
             });
         });

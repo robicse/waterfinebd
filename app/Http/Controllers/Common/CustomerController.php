@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Common;
 
+
 use DataTables;
 use App\Models\User;
 use App\Models\Customer;

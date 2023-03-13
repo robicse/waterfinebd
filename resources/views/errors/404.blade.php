@@ -1,4 +1,5 @@
-@extends('layouts.frontend')
+@extends('backend.layouts.master')
+@section("title","Stocks Lists")
 
 @section('title','Not Found')
 @section('content')
@@ -24,13 +25,13 @@
                                 </p>
                             </div>
                         </div>
-                     
+
                         <form class="d-flex m-auto mt-3" action="{{url('/search')}}" method="get" role="search" >
                             @csrf
                             <input class="form-control w-75 top-search-box" value="{{Request::segment(2)}}" name="keyword" required type="search" placeholder="Search" aria-label="Search">
                             <button class="btn top-search-btn" aria-label="Left Align" type="submit"><img src="{{url('storage/app/files/shares/backend/icon/search.webp?timestamp=1646411368')}}" width="24" height="24"  alt="search icon"></button>
                         </form>
-                        
+
                     </div>
                     <div class="col-md-3"></div>
                 </div>

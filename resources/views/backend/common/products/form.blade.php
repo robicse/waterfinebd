@@ -5,6 +5,7 @@ $email_required = '';
     @include('backend.common.component.category')
     @include('backend.common.component.unit')
     @include('backend.common.component.name')
+    @include('backend.common.component.stock_low_qty')
 </div>
 @if($product)
 @include('backend.common.component.update')

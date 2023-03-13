@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Common;
 
+use DB;
 use DataTables;
 use Carbon\Carbon;
 use App\Models\PaymentReceipt;

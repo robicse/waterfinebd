@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Common;
 
+use DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use DataTables;

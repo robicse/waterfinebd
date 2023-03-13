@@ -23,6 +23,7 @@ return new class extends Migration
             $table->foreign('vat_id')->references('id')->on('vats')->onDelete('cascade');
             $table->string('name');
             $table->string('barcode')->nullable();
+            $table->integer('stock_low_qty')->default(0);
             $table->tinyInteger('status')->default(1);
             $table->bigInteger('created_by_user_id')->unsigned()->nullable();
             $table->foreign('created_by_user_id')->references('id')->on('users')->onDelete('cascade');
