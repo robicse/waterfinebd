@@ -29,6 +29,7 @@ use App\Http\Controllers\Common\CustomerLedgerController;
 Route::post('update-status', [CommonController::class, 'updateStatus'])->name('updateStatus');
 Route::get('purchase-relation-data',[CommonController::class, 'PurchaseRelationData']);
 Route::get('sale-relation-data',[CommonController::class, 'SaleRelationData']);
+Route::get('sale-return-relation-data',[CommonController::class, 'SaleReturnRelationData']);
 Route::post('find-product-info', [CommonController::class, 'FindProductInfo']);
 Route::post('get-store-customer', [CommonController::class, 'FindCustomerInfo']);
 
@@ -56,6 +57,7 @@ Route::resource('sales', SaleController::class);
 Route::get('sales-prints/{id}/{pagesize}', [SaleController::class, 'salePrintWithPageSize']);
 Route::get('/sales-invoice-pdf/{id}', [SaleController::class, 'saleInvoicePdfDownload']);
 Route::resource('sale-returns', SaleReturnController::class);
+Route::get('sale-info', [SaleReturnController::class, 'saleInfo'])->name('sale.info');
 Route::resource('customer-receipts', CustomerReceiptController::class);
 Route::get('customer-due-balance-info/{id}', [CustomerReceiptController::class, 'customerDueBalanceInfo']);
 Route::resource('customer-dues', CustomerDueController::class);

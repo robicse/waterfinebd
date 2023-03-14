@@ -21,7 +21,7 @@ $status = '1';
             ]) !!}
         </div>
     </div>
-    {{-- <div class="col-md-3">
+    <div class="col-md-3">
         <div class="form-group">
             <label>Store <span class="required">*</span></label>
             {!! Form::select('store_id', @$stores, null, [
@@ -29,7 +29,8 @@ $status = '1';
                 'class' => 'form-control select2',
                 'placeholder' => 'Select One',
                 'required',
-                'autofocus'
+                'autofocus',
+                'disabled'
             ]) !!}
         </div>
     </div>
@@ -40,10 +41,11 @@ $status = '1';
                 'id' => 'customer_id',
                 'class' => 'form-control select2',
                 'placeholder' => 'Select One',
-                'required'
+                'required',
+                'disabled'
             ]) !!}
         </div>
-    </div> --}}
+    </div>
     @include('backend.common.component.comments')
     {{-- @include('backend.common.component.status') --}}
 </div>

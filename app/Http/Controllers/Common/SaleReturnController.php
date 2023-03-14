@@ -6,11 +6,16 @@ use DB;
 use App\Helpers\ErrorTryCatch;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\PaymentReceipt;
+use App\Models\OrderType;
+use App\Models\PaymentType;
 use App\Models\Category;
+use App\Models\Unit;
+use App\Models\Sale;
 use App\Models\SaleReturn;
 use App\Models\Product;
 use App\Models\Store;
-use App\Models\Sale;
+use App\Models\Package;
 use App\Models\SaleProduct;
 use App\Models\Customer;
 use App\Models\SaleReturnDetail;
@@ -83,11 +88,16 @@ class SaleReturnController extends Controller
 
     public function create()
     {
+        $order_types = OrderType::whereIn('name', ['Cash', 'Credit'])->get();
+        $payment_types = PaymentType::whereIn('name', ['Cash', 'Card', 'Cheque', 'Condition'])->get();
         $stores = Store::wherestatus(1)->pluck('name','id');
-        $sales = Sale::wherestatus(1)->pluck('id','id');
         $customers = Customer::wherestatus(1)->pluck('name','id');
         $categories = Category::wherestatus(1)->get();
-        return view('backend.common.sale_returns.create', compact('stores','sales','customers','categories'));
+        $units = Unit::wherestatus(1)->get();
+        $packages = Package::wherestatus(1)->pluck('name','id');
+
+        $sales = Sale::wherestatus(1)->pluck('id','id');
+        return view('backend.common.sale_returns.create', compact('stores','customers','categories','units','packages','payment_types','order_types','sales'));
     }
 
     public function store(Request $request)
@@ -118,13 +128,13 @@ class SaleReturnController extends Controller
             $sale_return->created_by_user_id = Auth::User()->id;
             if($sale_return->save()){
                 $profit_minus_amount = 0;
-                for($i=0; $i<count($request->category_id); $i++){
+                for($i=0; $i<count($request->product_id); $i++){
                     $saleProduct = SaleProduct::wheresale_id($sale->id)->whereproduct_id($request->product_id[$i])->first();
                     $profit_minus_amount += $saleProduct->per_product_profit * $request->qty[$i];
                     $sale_return_detail = new SaleReturnDetail();
                     $sale_return_detail->sale_return_id = $sale_return->id;
                     $sale_return_detail->store_id = $sale->store_id;
-                    $sale_return_detail->category_id = $request->category_id[$i];
+                    // $sale_return_detail->category_id = $request->category_id[$i];
                     $sale_return_detail->product_id = $request->product_id[$i];
                     $sale_return_detail->qty = $request->qty[$i];
                     $sale_return_detail->amount = $saleProduct->sale_price;
@@ -295,6 +305,24 @@ class SaleReturnController extends Controller
             $options['productOptions'] .= "<option value=''>No Data Found!</option>";
         }
 
+        return response()->json(['success' => true, 'data' => $options]);
+    }
+
+    public function saleInfo(Request $request)
+    {
+        $sale = Sale::findOrFail($request->sale_id);
+        $options = [
+            'storeOptions' => '',
+            'customerOptions' => '',
+        ];
+        $store = Store::findOrFail($sale->store_id);
+        if($store){
+            $options['storeOptions'] .= "<option value='$store->id'>" . $store->name . "</option>";
+        }
+        $customer = Customer::findOrFail($sale->customer_id);
+        if($customer){
+            $options['customerOptions'] .= "<option value='$customer->id'>" . $customer->name . "</option>";
+        }
         return response()->json(['success' => true, 'data' => $options]);
     }
 }

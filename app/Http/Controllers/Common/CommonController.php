@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\Common;
 
 
+use App\Models\Unit;
+use App\Models\Stock;
+use App\Helpers\Helper;
+use App\Models\Product;
+use App\Models\Customer;
+use App\Models\SaleProduct;
 use Illuminate\Http\Request;
 use App\Helpers\ErrorTryCatch;
-use App\Helpers\Helper;
-use App\Models\Customer;
-use App\Models\Stock;
-use App\Models\Product;
-use App\Models\Unit;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Brian2694\Toastr\Facades\Toastr;
@@ -84,6 +85,41 @@ class CommonController extends Controller
         }
 
         return response()->json(['success'=>true,'data'=>$options]);
+    }
+
+    public function SaleReturnRelationData(Request $request)
+    {
+        $sale_id = $request->sale_id;
+        $store_id = $request->store_id;
+        $product_id = $request->current_product_id;
+        $saleProduct = SaleProduct::wheresale_id($sale_id)->wherestore_id($store_id)->whereproduct_id($product_id)->first();
+        if($saleProduct){
+            $options = [
+                'sale_price' => $saleProduct->sale_price,
+                'current_stock' => $saleProduct->already_return_qty,
+                'sale_qty' => $saleProduct->qty,
+                'unitOptions' => '',
+            ];
+
+            $unit_id = $saleProduct->unit_id;
+            if($unit_id){
+                $units = Unit::where('id',$unit_id)->get();
+                if(count($units) > 0){
+                    $options['unitOptions'] = "<select class='form-control' name='unit_id[]' readonly>";
+                    foreach($units as $unit){
+                        $options['unitOptions'] .= "<option value='$unit->id'>$unit->name</option>";
+                    }
+                    $options['unitOptions'] .= "</select>";
+                }
+            }else{
+                $options['unitOptions'] = "<select class='form-control' name='unit_id[]' readonly>";
+                $options['unitOptions'] .= "<option value=''>No Data Found!</option>";
+                $options['unitOptions'] .= "</select>";
+            }
+            return response()->json(['success'=>true,'data'=>$options]);
+        }else{
+            return response()->json(['success'=>true,'data'=>'']);
+        }
     }
 
     // public function FindProductInfo(Request $request)
